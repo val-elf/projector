@@ -1,0 +1,10 @@
+<pj-modal-header>
+	<span ng-if="!item._id">Новая локация</span>
+	<span ng-if="item._id">{{location.name}}</span>
+</pj-modal-header>
+<div class="modal-body">
+	<pj-location-form></pj-location-form>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

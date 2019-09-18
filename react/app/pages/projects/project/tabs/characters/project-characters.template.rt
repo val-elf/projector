@@ -1,0 +1,56 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Loader" from="common/loader" />
+<rt-import name="CharacterCard" from="components/characters" />
+
+<div class="col wide" rt-scope="this.context.t as t; this.state as state">
+	<div class="row wide vmiddle">
+		<h2 class="banner blue">{ t('APP_PROJECT_CHARACTERS') }</h2>
+		<div class="sort brick growth">
+			<span class="control brick" rt-class="{active: state.sort === 'type'}" onClick="{() => this.switchSortBy('type')}">По типу</span>
+			<span class="control brick" rt-class="{active: state.sort === 'artifacts'}" onClick="{() => this.switchSortBy('artifacts')}">По артефактам</span>
+		</div>
+		<Button onClick="{() => this.createCharacter()}"><span class="btn add-item-icon"></span></Button>
+	</div>
+	<Scrollable class="brick" onReachEnd="{({side}) => this.freshList(side)}">
+		<div class="grid list hovered min300">
+			<Fragment rt-repeat="group,index in state.groups" key="{index}">
+				<div rt-if="group.name" class="heading row vmiddle">
+					<div class="brick vmiddle"><h4 class="inline banner light-blue">{ t(group.name) }</h4></div>
+					<div class="category">{ group.description }</div>
+				</div>
+				<div class="row item" rt-repeat="char in group.characters" key="{char.id}">
+					<div class="brick shortspace right">
+						<IconPreview
+							class="active"
+							type="circle"
+							defaultIcon="characters"
+							item="{char}"
+							expanded="{true}"
+							onClick="{() => this.editCharacter(char)}"
+							width="75"
+						/>
+					</div>
+					<div class="info">
+						<h4><UISref to="app.projects.project.characters.character" params="{{ characterId:char.id }}"><a>{ char.name || t('APP_NONAME') }</a></UISref></h4>
+						<div class="category">{ t('APP_CHARACTER_' + char.type) }</div>
+						<div class="description" rt-if="char.role">{ char.role }</div>
+						<Unfolding height="45"><div class="description maxw500">{ char.description }</div></Unfolding>
+					</div>
+					<div class="brick hover-buttons">
+						<Button class="delete btn" onClick="{() => this.deleteCharacter(char)}"><span class="icon16 delete"></span></Button>
+					</div>
+				</div>
+			</Fragment>
+		</div>
+		<Loader local={true} load="{state.load}" />
+	</Scrollable>
+	<Modal ref="{editor => this.characterEditor = editor}" title="{{ propName: 'character.name', defaultValue: t('APP_CHARACTER_NEW')}}">
+		<CharacterCard />
+	</Modal>
+</div>

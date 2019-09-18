@@ -1,0 +1,8 @@
+<span class="brick vmiddle">
+	<div class="brick" style="margin-right: 20px">
+		<label><input type="checkbox" class="vmiddle" checkbox ng-model="galleryCtrl.selectAll" ng-disabled="galleryCtrl.getCollectionLength() === 0" ng-change="galleryCtrl.checkSelection()">
+		<span class="vmiddle">Выбрать все</span></label>			
+	</div>
+	<div class="brick vmiddle" ng-if="galleryCtrl.getSelectedCount()">Выбрано {{galleryCtrl.getSelectedCount()}} из <strong>{{galleryCtrl.getCollectionLength()}}</strong></div>
+	<div class="brick vmiddle" ng-if="!galleryCtrl.getSelectedCount() && galleryCtrl.getCollectionLength()">На странице <strong>{{galleryCtrl.getCollectionLength()}}</strong> элементов <span ng-if="galleryCtrl.getTotalCount">(всего {{galleryCtrl.getTotalCount()}})</span></div>
+</span>

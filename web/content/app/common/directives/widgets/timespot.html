@@ -1,0 +1,10 @@
+<div class="spot" title="{{spot.title}}" ng-class="{selected: $parent.current == spot, virtual: isVirtual, active: isVirtual && spot.active, single: spot.endOffsetX === undefined}" ng-style="{left: spot.startOffsetX + '%', right: (100 - spot.endOffsetX) + '%'}">
+	<div class="title" ng-if="spot.title.length"><span ng-bind="spot.title"></span></div>
+	<div class="start point" ng-if="spot.startOffsetX != undefined" ng-touchstart="startDrag($event, 'start')" ng-mousedown="startDrag($event, 'start')" title="{{spot.startDate | date}}">
+		<div class="date-info" ng-show="spot.startDate" title="{{spot.startDate | datetime}}">{{spot.startDate | datetime}}</div>
+		<div class="icon16 locker" ng-if="spot.locked"></div>
+	</div>
+	<div class="end point" ng-if="spot.endOffsetX != undefined" title="{{spot.endDate | date}}" ng-touchstart="startDrag($event, 'end')" ng-mousedown="startDrag($event, 'end')">
+		<div class="date-info" ng-show="spot.endDate" title="{{spot.endDate | datetime}}">{{spot.endDate | datetime}}</div>
+	</div>
+</div>

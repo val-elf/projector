@@ -1,0 +1,4 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<div class="row" rt-scope="this.context.t as t; this.state as state">
+    <TextField class="wide" label="{t('APP_STORYBOARD_PAGE_NAME')}" value="{state.pageName}" onChange="{(evt) => this.changePageName(evt.target.value)}" />
+</div>

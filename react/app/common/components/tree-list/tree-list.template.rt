@@ -1,0 +1,11 @@
+<rt-import name="TreeListItem" from="./tree-list-item.component" />
+
+<div class="list tree-list" rt-scope="this.state as state">
+	<TreeListItem
+		rt-repeat="item in this.props.source"
+		renderer="{(item, node) => this.renderer(item, node)}"
+		key="{item.id}"
+		item="{item}"
+		selected="{state.selected}"
+	/>
+</div>

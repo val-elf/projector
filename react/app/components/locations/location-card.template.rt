@@ -1,0 +1,31 @@
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="LocationTypes" from="api" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+
+<div rt-scope="this.context.t as t; this.state.location as location" class="minw600">
+	<div class="row">
+		<TextField class="wide" label="Название" defaultValue="{location.name}" required="{true}" onChange="{this.handleChanges('name')}" />
+	</div>
+	<div class="row">
+		<Select class="wide" label="Тип локации" class="minw150" value="{location.locationType || ''}" onChange="{this.handleChanges('locationType')}">
+			<MenuItem rt-repeat="value in Object.keys(LocationTypes)" key="{value}" value="{value}">{ t('APP_LOCATION_' + value) }</MenuItem>
+		</Select>
+	</div>
+	<div class="row">
+		<TextField label="Подтип" class="wide" defaultValue="{ location.subtype }" onChange="{this.handleChanges('subtype')}" />
+	</div>
+	<div class="row">
+		<TextField multiline="{true}" label="Краткое описание" defaultValue="{location.description}" rowsMax="3" class="wide" onChange="{this.handleChanges('description')}" />
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Изображение</div>
+		<div class="brick">
+			<IconPreview item="{location}" width="75" />
+			<FileUploader onLoad="{({ preview }) => {this.setPreview(preview)}}" />
+		</div>
+	</div>
+</div>

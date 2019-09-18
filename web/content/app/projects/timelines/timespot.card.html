@@ -1,0 +1,25 @@
+<pj-modal-header>{{wc.title}}</pj-modal-header>
+<div class="modal-body">
+	<div class="form">
+		<div class="row">
+			<div class="brick size1of4">Название</div><div class="brick size3of4"><input class="wide" type="text" ng-model="wc.title" /></div>
+		</div>
+		<div class="row" ng-if="!spot.endOffsetX"><!-- case when only first point defined -->
+			<span ng-if="!spot.startDate" class="wide"><div class="brick size1of4">Позиция</div><div class="brick size3of4"><input type="number" min="0" max="100" ng-model="wc.startOffsetX"/>%</div></span>
+			<span ng-if="spot.startDate" class="wide"><div class="brick size1of4">Дата</div><div class="brick size3of4"><pj-datepicker ng-model="wc.startDate"></pj-datepicker></div></span>
+		</div>
+		<div class="row" ng-if="spot.endOffsetX && !spot.startDate"><!-- case when both (first and last) points defined -->
+			<div class="brick size1of4">Позиции</div>
+			<div class="brick size3of4">
+				<input type="number" min="0" ng-max="{{wc.endOffsetX}}" ng-model="wc.startOffsetX"/>% &mdash; <input type="number" ng-min="{{wc.startOffsetX}}" max="100" ng-model="wc.endOffsetX"/>%
+			</div>
+		</div>
+		<div class="row" ng-if="spot.endOffsetX && spot.startDate">
+			<div class="brick size1of4">Дата</div>
+			<div class="brick size3of4"><pj-datepicker ng-model="wc.startDate" ng-change="changeStartDate()" min-date="timeline.startDate" max-date="wc.endDate"></pj-datepicker> &mdash; <pj-datepicker min-date="wc.startDate" max-date="timeline.endDate" ng-change="changeEndDate()" ng-model="wc.endDate"></pj-datepicker></div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

@@ -1,0 +1,32 @@
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="UIView" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="ILink" from="common/item-link" />
+<rt-import name="DragNDrop" from="common/drag-n-drop" />
+
+<rt-import name="date" from="projector/services/filters/date" />
+
+<div rt-scope="this.context.t as t">
+	<div class="row wide vmiddle">
+		<h2 class="banner nospace violet"><span>{ t('NAV_TIMELINES') }</span></h2>
+		<Button onClick="{() => this.editTimeline()}"><span class="btn add-item-icon"></span></Button>
+	</div>
+	<div>
+		<DragNDrop>
+			<div class="grid list min300 hovered">
+				<div class="item" draggableItem="{true}" rt-repeat="timeline in this.state.timelines" key="{timeline.id}">
+					<IconPreview class="mrs" item="{timeline}" width="75" height="75" type="circle" onClick="{_ => this.editTimeline(timeline)}"/>
+					<div class="info">
+						<UISref to="app.projects.project.timelines.timeline" params="{{timelineId:timeline.id}}"><a>{timeline.name}</a></UISref>
+						<div>
+							<span class="date"> {date(timeline.startDate)}</span> <span rt-if="timeline.endDate"> &#8212; </span>
+							<span class="date" rt-if="timeline.endDate">{date(timeline.endDate)}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</DragNDrop>
+		<UIView />
+	</div>
+</div>

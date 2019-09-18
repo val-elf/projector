@@ -1,0 +1,4 @@
+<div class="loader" rt-scope="this.state as state" rt-class="{active: state.active}">
+    <div class="spinner"></div>
+    <div class="progress" rt-if="state.progress">{ state.progress }%</div>
+</div>

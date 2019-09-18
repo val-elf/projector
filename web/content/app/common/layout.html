@@ -1,0 +1,12 @@
+<div class="layout" ng-if="user">
+	<div class="header">
+		<pj-menu></pj-menu>
+		<div class="user-info">{{user.login}} | <a ui-sref="logout">Logout</a></div>
+	</div>
+	<div class="content">
+		<ui-view></ui-view>
+	</div>
+	<div class="footer">
+		Wnut (c) 2015
+	</div>
+</div>

@@ -1,0 +1,45 @@
+<div class="row">
+	<div class="brick maxw250">
+		<div class="row vmiddle">
+			<div class="brick search-filter nospace wide"><input type="search" placeholder="Коллекция"/></div>&nbsp;
+			<div class="brick vmiddle"><span class="icon16 add vmiddle" ng-click="ctrl.addNewCathegory()"></span></div>
+		</div>
+		<tree-list ng-if="ctrl.cathegories.length" tree-nodes="ctrl.cathegories" children="children" ng-select="ctrl.selectCathegory()" ng-model="ctrl.selectedCathegory">
+			<div class="row vmiddle">
+				<span class="brick link active shortspace item" ng-class="{selected: ctrl.selectedCathegory === item}">{{item.name}}</span>
+				<span class="brick right">
+					<span class="icon16 add" ng-class="{hovered: ctrl.selectedCathegory !== item}"ng-click="ctrl.addNewCathegory(item, $event)"></span>
+				</span>
+			</div>
+		</tree-list>
+	</div>
+	<div class="brick">
+		<h3><span class="loader-placeholder left" id="documents-loader-place"></span>{{ctrl.selectedCathegory.name}}</h3>
+		<div class="row">
+			<div class="brick size1of2"><pj-gallery-base-controls gallery-ctrl="ctrl"></pj-gallery-base-controls></div>
+			<div class="brick right">
+				<div class="brick search-filter nospace wide">
+					<input type="search" placeholder="Имя документа" />
+				</div>
+			</div>
+		</div>
+		<div pj-scrollable class="wide gallery bricks" min-height="500" max-height="500" on-reach-end="ctrl.loadMoreDocuments(side)">
+			<div ng-if="ctrl.documents.length">
+				<div class="brick item" ng-class="{selected: ctrl.selectedDocuments[doc._id]}" pj-speed-repeat="doc in ctrl.documents" ng-click="ctrl.selectGalleryItem(doc)">
+					<pj-preview item="doc" height="150" width="150" show-info="true" place-type="contain" open-file-info="ctrl.openFileInfo(doc, $event)"></pj-preview>
+				</div>
+			</div>
+			<span class="loader-placeholder scrollpanel" id="endDocuments"></span>
+			<div ng-if="ctrl.loaded && !ctrl.documents.length">
+				Нет документов
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick right">
+				<button ng-click="ctrl.createTextDocument()"><span class="icon16 document"></span> Добавить текстовый документ</button>
+				<button ng-disabled="!ctrl.getSelectedCount()" ng-click="ctrl.deleteSelecteds()"><span class="icon16 delete"></span> Удалить</button>
+				<file-uploader class="right" mode="window" multiple="true" accept="*" close-on-upload="true" on-finish="ctrl.reloadDocuments()" on-pre-load="ctrl.prepareOwner($url, $file)" upload-to="/srv/fileUpload">Загрузить</file-uploader>
+			</div>
+		</div>
+	</div>
+</div>

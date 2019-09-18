@@ -1,0 +1,16 @@
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="ILink" from="common/item-link" />
+
+<div class="grid list hovered min300">
+    <div class="item row" rt-repeat="involvement in this.state.artifacts" key="{involvement.artifact}">
+        <IconPreview class="mrs" item="{involvement}" width="75" type="circle" expanded defaultIcon="artifacts" />
+        <div class="info">
+            <ILink item="{involvement}" type="Artifact"><h4>{ involvement.name }</h4></ILink> <span class="description" rt-if="involvement.subtype"> ({ involvement.subtype })</span>
+            <div class="description">{ involvement.role }</div>
+            <Unfolding height="45">
+                <div class="description">{ involvement.description }</div>
+            </Unfolding>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+.uploader{
+
+
+	table{
+		border-collapse: collapse;
+		tr td, tr th {
+			padding: @_xs @_s;
+		}
+
+		thead{
+			th{
+				border:1px solid @border-color;
+				font-size: 0.85em;
+			}
+		}
+	}
+
+	.progress {
+		position: relative;
+		.text{
+			padding: @_xs @_s;
+		}
+		.indicator {
+			width: 0;
+			position: absolute;
+			height: 100%;
+			background-color: @light-blue-color;
+			color: white;
+			overflow: hidden;
+		}
+	}
+
+	.noitems{
+		height: 250px;
+		border: 1px dashed @blue-color;
+		vertical-align: middle;
+		text-align: center;
+		color: @light-gray;
+		&::before{
+			content: '';
+			display: inline-block;
+			height: 100%;
+			vertical-align: middle;
+		}
+	}
+}

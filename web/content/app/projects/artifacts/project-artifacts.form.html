@@ -1,0 +1,32 @@
+<form class="form" name="artifactForm">
+	<div class="row">
+		<div class="brick size1of5">Название</div>
+		<div class="brick"><input type="text" class="wide" ng-model="artifactCtrl.item.name" ng-required="true" ></div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Тип</div>
+		<div class="brick">
+			<pj-select editable ng-model="artifactCtrl.item.type" placeholder="Тип артефакта" class="minw300">
+				<pj-option ng-repeat="(key,value) in artifactCtrl.artifactTypes" value="{{key}}">{{value}}</pj-option>
+			</pj-select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Подтип</div>
+		<div class="brick">
+			<input type="text" ng-model="artifactCtrl.item.subtype" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Краткая информация</div>
+		<div class="brick">
+			<textarea ng-model="artifactCtrl.item.description" class="wide" rows="3"></textarea>
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Изображение</div>
+		<div class="brick">
+			<pj-preview-uploader item="artifactCtrl.item"></pj-preview-uploader>
+		</div>
+	</div>
+</form>

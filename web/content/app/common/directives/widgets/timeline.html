@@ -1,0 +1,9 @@
+<div class="timeline-body" ng-mousedown="startSpot($event)">
+	<div class="timeline">
+		<time-spot spot="virtualSpot" is-virtual="true"></time-spot>
+		<time-spot ng-repeat="spot in spots" spot="spot" ng-click="selectCurrentSpot($event, spot)"></time-spot>
+	</div>
+	<div class="timelinepoint-virtual animate-show ng-hide" ng-show="showVirtual">
+		<div class="date-info" ng-if="virtDate" ng-bind="virtDate | datetime"></div>
+	</div>
+</div>

@@ -1,0 +1,90 @@
+.brick {
+	display: inline-block;
+	&.growth{
+		flex-grow: 1;
+	}
+}
+
+.vmiddle { vertical-align: middle;}
+.vtop{ vertical-align: top; }
+.vbottom { vertical-align: bottom; }
+
+.line{
+	margin-bottom: @_xs;
+}
+
+.row-item{
+	margin-bottom: @_s;
+}
+
+
+.row{
+	margin-bottom: @_u;
+	display: flex;
+	&.vmiddle{
+		align-items: center;
+	}
+	&.wide{
+		justify-content: space-between;
+	}
+	&.info{
+		margin-bottom: @_m;
+	}
+
+	&.flex-wrap{
+		flex-wrap: wrap;
+		justify-content: space-around;
+	}
+}
+
+.vrow{
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	>* {
+		
+	}
+}
+
+.row, .vrow {
+	>.splitter{
+		display: inline-block;
+		border-left: 2px solid black;
+		opacity: 0.2;
+		height: 20px;
+		margin-left: -1em;
+		margin-right: 1em;
+	}
+	>.brick{
+		display: block;
+		&.row {
+			display: flex;
+			margin-bottom: 0;
+		}
+		margin-right: 2em;
+		&.shortspace{
+			margin-right: 1em;
+		}
+		&.nospace, &:last-child{
+			margin-right: 0;
+		}
+		&:last-child:not([class*=' size']){
+			flex-grow: 1;
+		}
+		&.right{
+			text-align: right;
+		}
+	}	
+}
+
+.hleft{
+	text-align: left;
+}
+
+.hright{
+	text-align: right;
+}
+
+.hcenter{
+	text-align: center;
+}

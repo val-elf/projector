@@ -1,0 +1,7 @@
+{
+	"version": "0.0.1",
+	"name": "projector-localizations",
+	"devDependencies": {
+		"webpack": "^3.10.0"
+	}
+}

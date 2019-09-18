@@ -1,0 +1,7 @@
+<rt-import name="Fragment" from="react" />
+
+<Fragment rt-scope="this.state as state">
+	<div class="tool active" disabled="{!state.selected}" onClick="{() => this.select(true)}">
+		<span class="icon-hand-full"></span>
+	</div>
+</Fragment>

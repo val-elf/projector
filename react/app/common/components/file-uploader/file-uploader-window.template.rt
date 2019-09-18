@@ -1,0 +1,47 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+
+<Fragment rt-scope="this.context.t as t">
+	<table class="wide">
+		<thead>
+			<tr>
+				<th width="40px"></th>
+				<th width="60px">{ t('APP_PREVIEW') }</th>
+				<th>{ t('APP_FILE_NAME') }</th>
+				<th>{ t('APP_SIZE') }</th>
+				<th width="40px"></th>
+			</tr>
+		</thead>
+	</table>
+	<Scrollable maxHeight="500" minHeight="270" class="row-item">
+		<table class="wide">
+			<tbody rt-if="this.state.files.length">
+				<tr rt-repeat="file, index in this.state.files" key="{index}">
+					<td width="40px">{index + 1}</td>
+					<td width="60px" align="center">
+						<IconPreview rt-if="file" height="55" width="55" item="{file}" defaultIcon="{ this.getFileIcon(file) }" />
+					</td>
+					<td><div class="progress"><div class="indicator" style="{{width: file.progress + '%'}}"><div class="text">{file.name}</div></div><div class="text">{file.name}</div></div></td>
+					<td>{file.size}</td>
+					<td width="40px"><span class="icon16 delete" rt-if="!file.uploaded" onClick="{() => this.removeFile(file)}"></span></td>
+				</tr>
+			</tbody>
+			<tbody rt-if="!this.state.files.length">
+				<tr>
+					<td colspan="5">
+						<div class="noitems vmiddle">
+							&lt; { t('APP_NO_FILE_SELECTED') } &gt;
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</Scrollable>
+	<div class="row vmiddle">
+		<div class="brick">
+			<Button variant="fab" disabled="{!this.state.files.length}" onClick="{() => this.startUpload()}"><span class="icon16 start"></span></Button>
+		</div><div class="brick right"><Button onClick="{() => this.selectFiles()}"><span class="icon16 add"></span> { t('APP_ADD') }</Button></div>
+	</div>
+</Fragment>

@@ -1,0 +1,31 @@
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<rt-import name="IconPreview" from="projector/common/components/icon-preview" />
+<rt-import name="Expandable" from="projector/common/components/expandable" />
+<rt-import name="ExpandableHead" from="projector/common/components/expandable" />
+<rt-import name="ExpandableBody" from="projector/common/components/expandable" />
+
+<Expandable rt-scope="this.state as state; this.state.characters as characters; this.context.t as t">
+	<ExpandableHead disabled="{!characters.length}">
+		<h3 class="brick wide" disabled="{!state.totalCharacters}">
+			{ t('APP_CHARACTERS')} <span rt-if="characters.length">({characters.length})</span>
+		</h3>
+		<span class="brick small-button icon16 add" onClick="{() => this.assignCharacters()}"></span>
+	</ExpandableHead>
+	<ExpandableBody>
+		<div class="list hovered" rt-if="characters.length">
+			<div class="item active row vtop" rt-repeat="char in characters" key="{char.character.id}" onClick="{() => this.selectCharacter(char)}" rt-class="{selected: this.state.selected === char}">
+				<IconPreview item="{char.character}" type="circle" expanded="{true}" className="brick shortspace mrs" />
+				<div class="brick">
+					<div>{char.character.name}</div>
+					<div class="notation">
+						<UISref to="app.projects.project.characters.character" params="{{characterId: char.character.id}}">
+							<a>{char.character.type && t(`APP_CHARACTER_${char.character.type}`) || t('APP_UNDEFINED')}</a>
+						</UISref>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ExpandableBody>
+</Expandable>

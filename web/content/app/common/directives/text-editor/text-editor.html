@@ -1,0 +1,28 @@
+<div class="text-editor-container vrow" ng-style="{height: height}">
+	<div>
+		<div class="tool-panel row vmiddle" ng-class="{small: smallButtons, 'flex-wrap': smallButtons}">
+			<pj-select placeholder="Стиль" ng-model="textStyle" ng-change="styleChange()">
+				<pj-option ng-repeat="(key, styleName) in textStyles" value="{{textStyles[key].format}}" ng-bind-html="getStyle(key)"></pj-option>
+			</pj-select>
+			<pj-select placeholder="Шрифт" ng-model="fontName" ng-change="fontChange()">
+				<pj-option>Default</pj-option>
+				<pj-option ng-repeat="(key, fontName) in fontNames" value="{{key}}">{{fontName.title}}</pj-option>
+			</pj-select>
+			<pj-select placeholder="Размер" ng-model="fontSize" ng-change="sizeChange()">
+				<pj-option>Default</pj-option>
+				<pj-option ng-repeat="(key, fontSize) in fontSizes" value="{{key}}">{{fontSize.title}}</pj-option>
+			</pj-select>
+			<button class="button btn" ng-class="{active: styles['bold']}" ng-click="do('bold')"><div class="icon16 bold"></div></button>
+			<button class="button btn" ng-class="{active: styles['italic']}" ng-click="do('italic')"><div class="icon16 italic"></div></button>
+			<button class="button btn" ng-class="{active: styles['underline']}" ng-click="do('underline')"><div class="icon16 underline"></div></button>
+			<button class="button btn" ng-class="{active: styles['alignleft']}" ng-click="do('alignleft')"><div class="icon16 align-left"></div></button>
+			<button class="button btn" ng-class="{active: styles['aligncenter']}" ng-click="do('aligncenter')"><div class="icon16 align-center"></div></button>
+			<button class="button btn" ng-class="{active: styles['alignright']}" ng-click="do('alignright')"><div class="icon16 align-right"></div></button>
+			<button class="button btn" ng-class="{active: styles['alignjustify']}" ng-click="do('alignjustify')"><div class="icon16 align-justify"></div></button>
+			<button class="button btn" ng-class="{active: styles['unordered']}" ng-click="doCommand('InsertUnorderedList')"><div class="icon16 unordered-list"></div></button>
+			<button class="button btn" ng-class="{active: styles['ordered']}" ng-click="doCommand('InsertOrderedList')"><div class="icon16 ordered-list"></div></button>
+			<div class="custom-panel"></div>
+		</div>
+	</div>
+	<div class="text-editor" ng-style="{minHeight: minHeight || (rows * 2) + 'em', maxHeight: maxHeight}" ng-transclude></div>
+</div>

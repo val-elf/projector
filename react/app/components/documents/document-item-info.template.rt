@@ -1,0 +1,9 @@
+<rt-import name="Fragment" from="react" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state">
+    <div class="file-info list" rt-class="{showed: state.showed}" ref="{this.infoElementRef}">
+        <div class="file-name"><a class="active" onClick="(event) => this.openFileInfo(event)">{ this.title }</a></div>
+        <div class="file-size" ng-if="this.itemSize">{ t('APP_PROJECT_SIZE') }: {state.size} <!-- insert filter fileSize --></div>
+        <div class="file-mediatype">{ t('APP_PROJECT_MEDIATYPE') }: {state.type}</div>
+    </div>
+</Fragment>

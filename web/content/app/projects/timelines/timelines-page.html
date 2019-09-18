@@ -1,0 +1,91 @@
+<h2 class="banner violet head">
+	<text-edited ng-model="ctrl.timeline.name" locked="ctrl.timeline.locked" te-change="changeTimeLineName()"></text-edited>
+	<span class="small-button icon16 locker" ng-class="{unlocked: !ctrl.timeline.locked}" ng-click="ctrl.lockTimeline()"></span>
+	<span class="small-button icon16 popup" pj-popup>
+		<div class="list-item" ng-click="ctrl.editTimeline()"><span class="icon16 edit"></span> <span class="link">редактировать</span></div>
+		<div class="list-item" ng-disabled="timeline.locked" ng-click="ctrl.deleteTimeline()"><span class="icon16 delete"></span> <span class="link">удалить</span></div>
+	</span>
+</h2>
+<div class="brick date small" ng-if="ctrl.timeline.startDate">
+	<div>{{ctrl.timeline.startDate | date}}</div>
+	<div>{{ctrl.timeline.endDate | date}}</div>
+</div>
+
+<timeline timeline="ctrl.timeline" on-select-spot="ctrl.selectSpot(current)" on-change-spot="ctrl.timespotChange($spot)"></timeline>
+
+<div ng-show="ctrl.currentSpot" class="spot-card">
+	<h2>
+		<text-edited locked="ctrl.currentSpot.locked" ng-model="ctrl.currentSpot.title" empty-value="Без имени" te-change="ctrl.changeTimeSpotName()"></text-edited>
+		<span class="small-button icon16 locker" ng-class="{unlocked: !ctrl.currentSpot.locked}" ng-click="ctrl.toggleSpotLocked()"></span>
+		<span class="small-button icon16 popup" ng-if="ctrl.currentSpot._id" pj-popup>
+			<div class="list-item" ng-click="ctrl.editSpot()"><span class="icon16 edit"></span> <span class="link">редактировать</span></div>
+			<div class="list-item" ng-click="ctrl.deleteSpot()" ng-disabled="ctrl.currentSpot.locked"><span class="icon16 delete"></span> <span class="link">удалить</span></div>
+		</span>
+	</h2>
+
+	<div class="row" >
+		<div class="brick minw300 maxw350">
+			<button ng-if="!ctrl.currentSpot._id" ng-click="ctrl.deleteFreshSpot()">Отменить</button>
+
+			<div ng-if="!!ctrl.currentSpot._id">
+				<div class="spot-info">
+					<div class="date small" ng-if="ctrl.currentSpot.startDate">
+						<span ng-if="ctrl.currentSpot.endDate">С </span>{{ctrl.currentSpot.startDate | datetime}}
+						<span ng-if="ctrl.currentSpot.endDate"><br> по </span>{{ctrl.currentSpot.endDate | datetime}}
+					</div>
+				</div>
+				<pj-expandable>
+					<pj-expandable-head pj-disabled="!ctrl.currentSpot.characters.length">
+						<h3 ng-disabled="!ctrl.hasCharacters()"><div class="opener"></div>Персонажи <span ng-if="ctrl.characters.length">({{ctrl.characters.length}})</span><span class="small-button icon16 add" ng-click="ctrl.assignCharacters()"></span></h3>
+					</pj-expandable-head>
+					<pj-expandable-body>
+						<div class="list hovered" ng-if="ctrl.currentSpot.characters.length">
+							<div class="item active row vtop" ng-repeat="char in ctrl.characters" ng-click="ctrl.selectChar(char)" ng-class="{selected: ctrl.selectedChar === char}">
+								<pj-preview item="char.source" width="55" class="brick shortspace"></pj-preview>
+								<div class="brick">									
+									<div ng-bind="char.source.name"></div>
+									<div class="notation"><a ui-sref="app.projects-inner.character({projectId:project._id, characterId: char.source._id})">{{char.source.type && ctrl.charTypes[char.source.type].name || 'неопределен'}}</a></div>
+								</div>
+							</div>
+						</div>
+					</pj-expandable-body>
+				</pj-expandable>
+				<pj-expandable>
+					<pj-expandable-head><h3><div class="opener"></div>Локации <span class="small-button icon16 add"></span></h3></pj-expandable-head>
+					<pj-expandable-body></pj-expandable-body>
+				</pj-expandable>
+				<pj-expandable>
+					<pj-expandable-head><h3><div class="opener"></div>Документы <span class="small-button icon16 add"></span></h3></pj-expandable-head>
+					<pj-expandable-body></pj-expandable-body>
+				</pj-expandable>
+			</div>
+		</div>
+		<div class="brick fullscreen-page">
+			<div ng-if="ctrl.selectedItem">
+				<div ng-if="ctrl.selectedChar">
+					<h2>{{ctrl.selectedChar.source.name}}</h2>
+					<div class="row">
+						<div class="brick">
+							<div class="mbs"><pj-preview item="ctrl.selectedChar.source" place-type="origin"></pj-preview></div>
+							<div><button ng-click="ctrl.saveCharDescription()">Сохранить</button></div>
+						</div>
+						<div class="brick">
+							<text-editor rows="20" max-height="400" ng-model="ctrl.selectedChar.data.description" data-options="ctrl.charEditorOptions"></text-editor>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div ng-show="!ctrl.selectedItem && ctrl.currentSpot._id">
+				<div class="row wide">
+					<div class="brick"></div>
+					<div class="brick right vmiddle">
+						<span ng-click="ctrl.fullscreenModeToggle()" class="icon fullscreen"></span>
+						<label class="vmiddle"><span checkbox ng-model="ctrl.spotAutoSave"></span> - Автосохранение</label>
+						<button ng-click="ctrl.saveSpotDocument()">Сохранить</button>
+					</div>
+				</div>
+				<text-editor ng-model="ctrl.currentDocument.content" min-height="400" height="500" ng-change="ctrl.checkSpotToAutoUpdate()" data-options="ctrl.editorOptions"></text-editor>
+			</div>
+		</div>
+	</div>
+</div>

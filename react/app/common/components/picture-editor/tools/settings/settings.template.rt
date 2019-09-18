@@ -1,0 +1,5 @@
+<div class="tool button"
+	rt-scope="this.state as state"
+	rt-class="{ active: state.active }" onClick="{ _ => this.toggleSettings() }">
+	<span class="icon-settings-full settings"></span>
+</div>

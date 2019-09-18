@@ -1,0 +1,56 @@
+<div class="row">
+	<pj-preview item="item" ng-click="$parent.ctrl.editLocation(item)" width="75" place-type="auto" max-height="75" expanded="true"></pj-preview>&nbsp;
+	<div class="brick"><h2 class="banner nospace lime" ng-bind="item.name"></h2></div>
+	<div class="brick">
+		<div class="cathegory">{{item.locationType | locationTypeLocalize}}{{item.subtype ? ', ' + item.subtype : ''}}</div>
+		<div class="description maxw500" ng-bind="item.description"></div>
+	</div>
+</div>
+<hr>
+<pj-tabset class="tab" save-position="true" tab-id="location-tab-{{item._id}}">
+	<pj-tab heading="'Описание'" active="true">
+		<text-editor ng-model="item.info" rows="20" is-base64='true'>
+				<text-editor-panel>
+					<div class="icon fullscreen" ng-click="textEditorCtrl.setToFullScreen()"></div>
+					<button ng-click="locationPageCtrl.save()">Сохранить</button>
+				</text-editor-panel>
+		</text-editor>
+	</pj-tab>
+
+	<pj-tab heading="'Документы'">
+		<pj-cathegorized-documents owner="item"></pj-cathegorized-documents>
+	</pj-tab>
+
+	<pj-tab heading="'Карта'">
+		<div class="row vmiddle">
+			<div class="brick row vmiddle" ng-if="locationPageCtrl._is_inherited">
+				<div class="brick">Базовая карта</div>
+				<div class="brick">
+					<pj-select ng-model="item.parent._location" placeholder="Родительская локация" ng-change="locationPageCtrl.changingLocation()">
+						<pj-option ng-repeat="loc in locations" value="{{loc._id}}">{{loc.name}}</pj-option>
+					</pj-select>
+					<span ng-if="item.parent._location" class="icon16 delete" ng-click="locationPageCtrl.removeParentMap()"></span>
+				</div>
+				<div class="splitter"></div>
+
+				<div class="brick" ng-if="item.parent">
+					Относительный масштаб: <input type="text" ng-disabled="!item.parent._location" ng-model="item.parent.scale" size="4" value="1" ng-change="locationPageCtrl.changeParentScale()">
+				</div>
+			</div>
+			<div class="splitter"></div>
+			<file-uploader uploader-instance-setter="locationPageCtrl.setUploader" on-post-load="locationPageCtrl.prepareLocation($file, $result)" upload-to="/srv/fileUpload?owner={{item._id}}">Добавить картинку</file-uploader>
+			<div class="splitter"></div>
+			<input type="checkbox" ng-model="locationPageCtrl.neighbors" ng-change="locationPageCtrl.changeNeighborsShow()"> - соседи
+		</div>
+		<div class="row">
+			<pj-location-editor location="item"></pj-location-editor>
+		</div>
+		<div class="row">
+			<div class="brick">
+				<button ng-click="locationPageCtrl.save()">Сохранить</button>
+			</div>
+		</div>
+	</pj-tab>
+</pj-tabset>
+
+

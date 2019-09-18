@@ -1,0 +1,49 @@
+<rt-import name="UIView" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+
+<rt-import name="TextEdited" from="projector/common/components/materials" />
+<rt-import name="Popup" from="projector/common/components/popup" />
+<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="Select" from="projector/common/components/materials" />
+
+<div class="brick wide col growth" rt-scope="this.context.t as t; this.state as state">
+	<div class="row wide vmiddle mbm">
+		<div class="row brick">
+			<h2 class="banner nospace violet" rt-if="!this.state.timeline"><span>{ t('NAV_TIMELINES') }</span></h2>
+			<div class="brick" rt-if="this.state.timeline">
+				<h2 class="banner violet head">
+					<TextEdited value="{this.state.timeline.name}" locked="{this.state.timeline.locked}" onChangeComplete="{value => this.changeTimelineName(value)}" />
+					<span class="small-button icon16 locker" rt-class="{unlocked: !this.state.timeline.locked}" onClick="{() => this.toggleLockTimeline()}"></span>
+					<span class="small-button icon16 popup">
+						<Popup>
+							<div class="list-item" onClick="{() => this.editTimeline()}"><span class="icon16 edit"></span> <span class="link">{ t('APP_EDIT')}</span></div>
+							<div class="list-item" rt-props="{disabled: this.state.timeline.locked}" onClick="{() => this.deleteTimeline()}"><span class="icon16 delete"></span> <span class="link">{ t('APP_REMOVE')}</span></div>
+						</Popup>
+					</span>
+				</h2>
+				<div class="brick date small" rt-if="this.state.timeline.startDate">
+					<div>{date(this.state.timeline.startDate)}</div>
+					<div>{date(this.state.timeline.endDate)}</div>
+				</div>
+			</div>
+			<div class="brick minw200">
+				<Select
+					className="wide"
+					label="{t('APP_TIMELINE_SELECT')}"
+					value="{state.timeline && state.timeline.id || ''}"
+					onChange="{(event) => this.setTimeline(event.target.value)}"
+				>
+					<MenuItem rt-repeat="timeline in state.timelines" key="{timeline.id}" value="{timeline.id}">
+						{timeline.name}
+					</MenuItem>
+				</Select>
+			</div>
+		</div>
+		<Button onClick="{() => this.createTimeline()}" className="command"><span class="btn add-item-icon"></span></Button>
+	</div>
+
+	<UIView>
+		<div>This is when no select timeline</div>
+	</UIView>
+</div>

@@ -1,0 +1,12 @@
+<div ng-controller="ProjectTimelinesController as timelineCtrl">
+	<div class="row wide vmiddle">
+		<h2 class="banner nospace violet"><span>Таймлайны</span></h2>
+		<button ng-click="createTimeLine();" class="btn add-item-icon"></button>
+	</div>
+	<div>
+		<ul class="tree">
+			<li ng-repeat="timeline in timelines" tree-node><a ui-sref="app.projects-item.timeline({timelineId:timeline._id})">{{timeline.name}}</a> <span class="date">{{timeline.startDate | datetime}}</span> {{timeline.endDate ? '&mdash;': ''}} <span class="date">{{timeline.endDate | datetime}}</span></li>
+		</ul>
+		<ui-view></ui-view>
+	</div>
+</div>

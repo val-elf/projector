@@ -1,0 +1,56 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="TextEdited" from="common/materials" />
+<rt-import name="Tabset" from="common/tabpanel" />
+<rt-import name="Tab" from="common/tabpanel" />
+<rt-import name="Popup" from="common/popup" />
+<rt-import name="date" from="projector/services/filters/date" />
+
+<rt-import name="CharactersPanel" from="components/timespot" />
+<rt-import name="LocationsPanel" from="components/timespot" />
+<rt-import name="DocumentsPanel" from="components/timespot" />
+<rt-import name="CharacterCard" from="components/timespot" />
+<rt-import name="TimespotText" from="./tabs/timespot-text.component" />
+<rt-import name="TimespotStorytelling" from="./tabs/timespot-storytelling.component" />
+
+<Fragment rt-scope="this.state.timespot as spot; this.context.t as t; this.state as state">
+    <h3>
+        <TextEdited locked="{spot.locked}" value="{spot.title}" onChangeComplete="{value => this.changeTimespotName(value)}" />
+        <span class="small-button icon16 locker" rt-class="{unlocked: !spot.locked}" onClick="{() => this.toggleSpotLocked()}"></span>
+        <span class="small-button icon16 popup">
+            <Popup>
+                <div class="list-item" onClick="{() => this.editSpot()}"><span class="icon16 edit"></span> <span class="link">{ t('APP_EDIT')}</span></div>
+                <div class="list-item" onClick="{() => this.deleteSpot()}" disabled="{spot.locked}"><span class="icon16 delete"></span> <span class="link">{ t('APP_REMOVE')}</span></div>
+            </Popup>
+        </span>
+    </h3>
+    <div class="row growth">
+        <div class="brick minw300 maxw350">
+            <div class="spot-info">
+                <div class="date small" rt-if="spot.startDate">
+                    <span rt-if="spot.endDate">С </span>{date(spot.startDate, 'datetime')}
+                    <span rt-if="spot.endDate"><br/> по {date(spot.endDate, 'datetime')}</span>
+                </div>
+            </div>
+            <CharactersPanel spot="{spot}" onSelect="{(character) => this.selectItem(character)}" />
+            <LocationsPanel location="{state.locations}" onSelect="{(location) => this.selectItem(location)}" />
+            <DocumentsPanel location="{state.docs}" onSelect="{(document) => this.selectItem(document)}" />
+        </div>
+        <div class="brick">
+            <div rt-if="state.selectedItem">
+                <rt-virtual rt-if="this.isTimespotCharacter(this.state.selectedItem)">
+                    <CharacterCard character="{state.selectedItem}" spot="{spot}" />
+                </rt-virtual>
+            </div>
+            <rt-virtual rt-if="!state.selectedItem">
+                <Tabset class="tab" savePosition="true" tabId="timespot-card-{spot.id}">
+                    <Tab label="{'Текст'}">
+                        <TimespotText spot="{spot}" />
+                    </Tab>
+                    <Tab label="{'Раскадровка'}">
+                        <TimespotStorytelling spot="{spot}" />
+                    </Tab>
+                </Tabset>
+            </rt-virtual>
+        </div>
+    </div>
+</div>

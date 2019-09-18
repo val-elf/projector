@@ -1,0 +1,44 @@
+<rt-import name="Loader" from="common/loader" />
+<span
+	rt-scope="this.context.t as t; this.state as state"
+	class="preview"
+	rt-class="{
+		highlighted: this.state.highlighted,
+		[this.props.className]: !!this.props.className,
+		expanded: state.isExpanded,
+		[state.iconType]: !!state.iconType,
+		contained: this.isContained,
+		'expanded-capable': state.expanded
+	}"
+	ref="{this.hostRef}"
+	style="
+		width: {this.width}px;
+		height: {this.height}px;
+		margin-bottom: {state.expandedMargin}px;
+	"
+	onClick="{this.props.onClick}"
+>
+	<div class="preview-image" rt-if="!state.loaded && this.previewImage"
+		style="
+			background-image: url({this.previewImage});
+			width: {this.containerWidth}px;
+			height: {this.containerHeight}px;
+		"></div>
+
+	<div rt-if="(!this.previewImage || state.loaded) && state.defaultIcon"
+		style="
+			width: {this.width}px;
+			height: {this.height}px;
+			maxHeight: {state.maxHeight}px;
+			minWidth: {state.width}px
+		"
+		class="preview-icon vmiddle"
+	>
+		<div class="icon-file-type {state.defaultIcon}"></div>
+		<div class="file-info" rt-if="this.itemTitle && state.showInfo">
+			<div class="file-name"><a href="." onClick="(event) => this.openFileInfo(event)">{this.itemTitle}</a></div>
+		</div>
+	</div>
+
+	<Loader load="{state.loading}" progress="{state.progress}" />
+</span>

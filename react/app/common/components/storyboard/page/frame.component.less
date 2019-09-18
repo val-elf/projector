@@ -1,0 +1,33 @@
+@import (reference) '~styles/base';
+
+.storyboard {
+    &-frame {
+        outline: none;
+        position: absolute;
+        background-color: @paper-white;
+        &:not(.selected) {
+            .controls {
+                display: none;
+            }
+        }
+        &.selected {
+            z-index: 10;
+            .storyboard-frame_inner {
+                border: 2px solid blue;
+            }
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+            background-color: @selected-color;
+        }
+
+        &_inner {
+			border: 1px solid blue;
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: 50% 50%;
+        }
+    }
+    &-intersection {
+        position: absolute;
+        border:1px solid blue;
+    }
+}

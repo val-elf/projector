@@ -1,0 +1,42 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Search" from="common/materials" />
+<rt-import name="TreeList" from="common/tree-list" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="CategoryCard" from="./category-card.component" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state; this.state.selected as selected">
+	<div class="row vmiddle">
+		<div class="brick nospace wide">
+			<Search className="wide" label="{ t('APP_PROJECT_COLLECTION') }"
+				onKeyPress="{(event) => this.applyFilter(event)}"
+				onFocus="{() => this.searchFocused = true}"
+				onBlur="{() => this.searchFocused = false}"
+				onChange="{event => this.setFilter(event.target.value)}" />
+		</div>
+		<div class="brick"><span class="icon16 add" onClick="{(event) => this.addNewCategory(state.owner, event)}"></span></div>
+	</div>
+	<div class="brick">
+		<Scrollable>
+			<TreeList
+				rt-if="state.categories.length"
+				source="{state.categories}"
+				onSelect="{(category) => this.selectCategory(category)}"
+				selected="{selected}"
+				renderer="renderTreeNode"
+			>
+				<rt-template prop="renderTreeNode" arguments="item, node">
+					<div class="row vmiddle">
+						<span class="brick link active shortspace item" rt-class="{selected: selected === item}">{ this.getMatchedName(item, node) }</span>
+						<span class="brick right">
+							<span class="icon16 add" rt-class="{hovered: selected !== item}" onClick="{event => this.addNewCategory(item, event)}"></span>
+						</span>
+					</div>
+				</rt-template>
+			</TreeList>
+		</Scrollable>
+	</div>
+	<Modal ref="{modal => this.createCategoryWindow = modal}" title="{t('APP_GALLERY_CREATE_CATEGORY')}" minWidth="500">
+		<CategoryCard />
+	</Modal>
+</Fragment>

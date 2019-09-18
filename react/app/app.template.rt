@@ -1,0 +1,26 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="UIRouter" from="@uirouter/react" />
+<rt-import name="UIView" from="@uirouter/react" />
+<rt-import name="pushStateLocationPlugin" from="@uirouter/react" />
+<rt-import name="Modal" from='common/materials' />
+<rt-import name="Login" from="projector/components/authorization" />
+<rt-import name="AppContext" from="./app.context" />
+
+<Fragment>
+	<AppContext.Provider value="{{
+		t: this.context.t
+	}}">
+		<UIRouter rt-if="this.service.authorized && this.state.navigation" plugins="{[pushStateLocationPlugin]}" states="{this.state.navigation}">
+			<UIView />
+		</UIRouter>
+
+		<Login rt-if="!this.service.authorized" rt-scope="this.context.t as t" onAuthorize="{(authData) => this.authorize(authData)}">
+			<div>
+				<h4>{ t('AUTH_REQUIRED') }</h4>
+				<div>{ t('AUTH_LOGIN_TEXT') }</div>
+			</div>
+		</Login>
+
+		<Modal ref="{this._modal}"></Modal>
+	</AppContext.Provider>
+</Fragment>

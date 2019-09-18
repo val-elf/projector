@@ -1,0 +1,48 @@
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="Loader" from="common/loader" />
+<rt-import name="ArtifactCard" from="components/artifacts/artifact-card.component" />
+
+<div class="col wide" rt-scope="this.state as state; this.context.t as t">
+	<div class="row wide">
+		<h2 class="banner light-blue nospace">Артефакты</h2>
+		<Button onClick="{() => this.createArtifact()}"><span class="add-item-icon" ></span></Button>
+	</div>
+	<div class="brick">
+		<Scrollable onReachEnd="{({side}) => this.refreshList(side)}">
+			<div class="grid list hovered min300">
+				<div class="row item" rt-repeat="art in state.artifacts" key="{art.id}">
+					<div class="brick shortspace right">
+						<IconPreview
+							item="{art}"
+							class="active"
+							onClick="{() => this.editArtifact(art)}"
+							width="75"
+							expanded="{true}"
+							type="circle"
+							defaultIcon="artifacts"
+						/>
+					</div>
+					<div class="info">
+						<h4><UISref to="app.projects.project.artifacts.artifact" params="{{artifactId: art.id}}"><a>{art.name}</a></UISref></h4>
+						<div class="category"><span>{ t('APP_ARTIFACT_' + art.type) }</span><span rt-if="art.subtype">, { art.subtype }</span></div>
+						<Unfolding height="45"><div class="description maxw500">{ art.description }</div></Unfolding>
+					</div>
+					<div class="brick hover-buttons">
+						<Button class="delete btn" onClick="{() => this.deleteArtifact(art)}"><span class="icon16 delete"></span></Button>
+						<div class="characters-count" rt-if="art.characters && art.characters.length">{ art.characters.length }</div>
+					</div>
+				</div>
+			</div>
+			<Loader load="{state.load}" />
+		</Scrollable>
+	</div>
+
+	<Modal ref="{(editor) => this.editor = editor}" title="{{propName: 'artifact.name' || 'APP_ARTIFACT_NEW'}}">
+		<ArtifactCard />
+	</Modal>
+</div>

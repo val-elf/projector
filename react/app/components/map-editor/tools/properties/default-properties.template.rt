@@ -1,0 +1,33 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+
+<Fragment rt-scope="this.context.t as t">
+    <div class="brick row vmiddle">
+        <div class="brick nowrap">
+            <Select class="minw200" value="{this.state.parentId}" label="Родительская локация" onChange="{evt => this.changeParentLocation(evt.target.value)}">
+                <MenuItem rt-repeat="loc in this.state.locations" key="{loc.id}" value="{loc.id}">{loc.name}</MenuItem>
+            </Select>
+            <span rt-if="parent" class="icon16 delete" onClick="{() => this.removeParentLocation()}"></span>
+        </div>
+    </div>
+    <div class="splitter"></div>
+    <FileUploader
+        label="Добавить картинку"
+        onPostload="{(file, result) => this.prepareLocation(file, result)}"
+        uploadTo="/srv/upload?owner={location.id}"
+        showPreview="{false}"
+    />
+    <div class="splitter"></div>
+    <div class="brick">
+        <Select class="minw250" value="{this.state.selected}" label="{t('APP_LOCATION_SELECT_ITEM')}" onChange="{evt => this.changeSelectedItem(evt.target.value)}">
+            <MenuItem rt-repeat="item, index in this.tool.map.items" key="{index}" value="{item}">
+                { item.name }
+            </MenuItem>
+        </Select>
+    </div>
+    <Checkbox label="соседи" value="{this.neighbors}" onChange="{(state) => this.changeNeighborsShow(state)}" />
+</Fragment>

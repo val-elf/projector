@@ -1,0 +1,8 @@
+<div rt-scope="this.state as state" class="canvas-square" ref="{ this.squareRef }">
+	<div class="canvas-square_item"
+		rt-repeat="square, index in this.squares"
+		key="{index}"
+		rt-class="{ selected: state.square === index, marked: !!state.marked[index], [state.marked[index]]: !!state.marked[index] }"
+		onClick="{ _ => this.selectSquare(index) }">
+	</div>
+</div>

@@ -1,0 +1,18 @@
+<rt-import name="TextField" from="@material-ui/core" />
+
+<div class="text-edited brick vmiddle text-edited-field" rt-scope="this.context.t as t" onMouseEnter="{() => this.setState({hovered: true})}" onMouseLeave="{() => this.setState({hovered: false})}">
+	<span ref="{this._displayer}" class="actioned" rt-class="{edited: this.state.edited}" onClick="{() => this.editMode()}">{this.state.value}</span>
+	<TextField
+		rt-if="this.state.edited && !this.props.locked"
+		inputRef="{this._textField}"
+		fullWidth
+		value="{this.state.value}"
+		onChange="{this.changeValue()}"
+		onBlur="{() => this.updateChange()}"
+		onKeyPress="{(e) => this.checkKey(e)}"
+		required="{true}"
+		error="{!this.state.value}"
+		helperText="{!this.state.value ? t('APP_IS_REQUIRED') : ''}"
+	></TextField>
+	<span class="text-edited-icon" rt-if="!this.props.locked && (this.state.hovered || this.state.edited)" onClick="{() => this.editMode()}"></span>
+</div>

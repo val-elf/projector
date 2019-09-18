@@ -1,0 +1,175 @@
+@import (reference) '~styles/colors';
+
+.brick {
+	h1, h2, h3, h4, h5, h6 {
+		&.inline {
+			margin: 0;
+		}
+	}
+}
+
+.brick, .row, .col {
+	&.growth{
+		flex-grow: 1;
+		height: 100%;
+	}
+}
+
+/*
+.vmiddle {
+  >*{
+	  vertical-align: middle;
+  }
+}
+.vtop{ vertical-align: top; }
+.vbottom { vertical-align: bottom; }
+*/
+
+.line{
+	margin-bottom: @_xs;
+}
+
+/*
+.row-item{
+	margin-bottom: @_s;
+}
+*/
+
+.col {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	height: 100%;
+
+	&.brick {
+		margin-right: 2em;
+	}
+}
+
+.grid {
+	display: grid;
+	&.list {
+		gap: @_s;
+		&, &.hovered {
+			.item {
+				margin: 0;
+				justify-content: space-around;
+				&.fit-content {
+					padding: 0;
+				}
+			}
+		}
+	}
+	.heading {
+		grid-column-start: 1;
+		grid-column-end: -1;
+		&:not(:first-child) {
+			margin-top: 1em;
+			padding-top: 0.5em;
+			border-top: 1px @border-color solid;
+		}
+	}
+	&.min100 { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+	&.min150 { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+	&.min200 { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));}
+	&.min300 { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));}
+	&.min400 { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+	&.min500 { grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); }
+}
+
+.row{
+	margin-bottom: @_u;
+	display: flex;
+	justify-content: start;
+	/* flex-shrink: 0; */
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+	&.vmiddle{
+		align-items: center;
+	}
+	&.vbottom {
+		align-items: flex-end;
+	}
+	&.wide{
+		justify-content: space-between;
+	}
+	&.single {
+		height: 100%;
+	}
+	&.info{
+		margin-bottom: @_m;
+	}
+
+	&.wrap{
+		flex-wrap: wrap;
+		justify-content: space-around;
+	}
+
+	&.list {
+		flex-wrap: wrap;
+	}
+}
+
+.row, .col {
+	&.nospace {
+		margin-bottom: 0;
+	}
+
+	>.splitter{
+		display: inline-block;
+		border-left: 2px solid black;
+		opacity: 0.2;
+		height: 20px;
+		margin-left: -1em;
+		margin-right: 1em;
+	}
+	>.brick{
+		display: block;
+		&[class*=" size"] {
+			flex-shrink: 0;
+		}
+		&.row {
+			display: flex;
+		}
+		margin-right: 2em;
+		&.shortspace{
+			margin-right: 1em;
+		}
+		&.nospace, &:last-child{
+			margin-right: 0;
+		}
+		&:last-child:not([class*=' size']){
+			flex-grow: 1;
+			&.rest {
+				flex-grow: 0;
+			}
+		}
+		&.right{
+			text-align: right;
+		}
+	}
+	>.col {
+		display: flex;
+	}
+}
+
+.col {
+	>.brick:last-child {
+		height: 1px;
+		flex-grow: 1;
+	}
+}
+
+.hleft{
+	text-align: left;
+}
+
+.hright{
+	text-align: right;
+}
+
+.hcenter{
+	text-align: center;
+}

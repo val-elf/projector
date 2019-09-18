@@ -1,0 +1,18 @@
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="ILink" from="common/item-link" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<div class="item" rt-scope="this.state as state; this.state.char as char; this.props.item as involve">
+    <IconPreview class="mrs" item="{char}" width="75" type="circle" expanded="true" onClick="{_ => this.openDetails()}"/>
+    <div class="info">
+        <ILink item="{char}">
+            <h4>{ char.name }</h4>
+        </ILink>
+        <div class="description">{ involve.role }</div>
+        <Unfolding height="45"><div class="description">{ involve.description }</div></Unfolding>
+    </div>
+    <div class="controls hover-buttons">
+        <Button class="btn delete" onClick="{_ => this.removeInvolved()}"><span class="icon16 delete"></span></Button>
+    </div>
+</div>

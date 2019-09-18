@@ -1,0 +1,30 @@
+<form class="form" name="locationForm">
+	<div class="row">
+		<div class="brick size1of5">Название</div>
+		<div class="brick"><input type="text" class="wide" ng-model="locationCtrl.item.name" ng-required="true" ></div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Тип локации</div>
+		<div class="brick">
+			<pj-select placeholder="тип локации" class="minw150" ng-model="locationCtrl.item.locationType">
+				<pj-option ng-repeat="(value, name) in locationCtrl.locationTypes" value="{{value}}">{{name}}</pj-option>
+			</pj-select>
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Подтип</div>
+		<div class="brick"><input type="text" ng-model="locationCtrl.item.subtype" class="size1of3"></div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Краткое описание</div>
+		<div class="brick">
+			<textarea ng-model="locationCtrl.item.description" rows="3" class="wide"></textarea>
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Изображение</div>
+		<div class="brick">
+			<pj-preview-uploader item="locationCtrl.item"></pj-preview-uploader>
+		</div>
+	</div>
+</form>

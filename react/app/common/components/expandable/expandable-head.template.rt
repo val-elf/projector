@@ -1,0 +1,4 @@
+<div class="expanded-head row vmiddle">
+	<div class="brick icon" disabled="{this.props.disabled}" onClick="{() => this.toggleExpanded()}" rt-class="{expand: !this.state.expanded, collapse: this.state.expanded}"></div>
+	{ this.props.children }
+</div>

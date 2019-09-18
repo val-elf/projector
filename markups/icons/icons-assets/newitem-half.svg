@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="19.781" height="23.688" viewBox="0 0 19.781 23.688">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #390;
+        fill-rule: evenodd;
+        opacity: 0.5;
+      }
+    </style>
+  </defs>
+  <path id="newitem-half.svg" class="cls-1" d="M8.9,38.938c3.687-.187,13.229-3.511,16.042-5.167,0.688,4.969-.687,15.479-2.312,19.792C19,56,10.229,57.875,5.354,57.375,6.667,51.688,8.958,43.625,8.9,38.938ZM21,41v5H16v5H11V46H5.938V41H11V36h5v5" transform="translate(-5.344 -33.781)"/>
+</svg>

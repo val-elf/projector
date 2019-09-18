@@ -1,0 +1,111 @@
+<!Doctype html5>
+<html>
+	<head>
+		<!-- injector:css -->
+		<link rel="stylesheet" href="/index.css">
+		<!-- endinjector -->
+
+		<base href="/">
+	</head>
+	<body ng-app="projector">
+		<projector-message-center></projector-message-center>
+		<pj-loader></pj-loader>
+		<ui-view></ui-view>
+		<!-- injector:js -->
+		<script src="/vendors.js"></script>
+		<script src="/app/api/app.js"></script>
+		<script src="/app/api/artifacts/artifacts.service.js"></script>
+		<script src="/app/api/cathegories/cathegories.service.js"></script>
+		<script src="/app/api/characters/characters.service.js"></script>
+		<script src="/app/api/documents/documents.service.js"></script>
+		<script src="/app/api/locations/locations.service.js"></script>
+		<script src="/app/api/misc/angular-locale_ru.js"></script>
+		<script src="/app/api/navigation/navigation.service.js"></script>
+		<script src="/app/api/owners/abstract-owner.service.js"></script>
+		<script src="/app/api/preview/preview-image.service.js"></script>
+		<script src="/app/api/projects/projects.service.js"></script>
+		<script src="/app/api/timelines/timelines.service.js"></script>
+		<script src="/app/api/timelines/timespots.service.js"></script>
+		<script src="/app/api/users/users.service.js"></script>
+		<script src="/app/common/_common.js"></script>
+		<script src="/app/common/constants/artifact-settings.constants.js"></script>
+		<script src="/app/common/constants/character-settings.constants.js"></script>
+		<script src="/app/common/constants/font-settings.constants.js"></script>
+		<script src="/app/common/constants/location-settings.constants.js"></script>
+		<script src="/app/common/directives/projector-loader.directive.js"></script>
+		<script src="/app/common/directives/projector-message-center.directive.js"></script>
+		<script src="/app/common/directives/text-editor/text-editor.directive.js"></script>
+		<script src="/app/common/directives/ui/common-buttons.directive.js"></script>
+		<script src="/app/common/directives/ui/file-uploader.directive.js"></script>
+		<script src="/app/common/directives/ui/infinityScroll.directive.js"></script>
+		<script src="/app/common/directives/ui/popup.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-checkbox.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-datepicker.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-dynamic-items.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-expandable.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-file-icon.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-modal-header.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-preview-uploader.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-preview.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-scrollable.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-select.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-speed-repeat.directive.js"></script>
+		<script src="/app/common/directives/ui/projector-tabs.directive.js"></script>
+		<script src="/app/common/directives/ui/text-edited.directive.js"></script>
+		<script src="/app/common/directives/ui/touches.directive.js"></script>
+		<script src="/app/common/directives/ui/tree-list.directive.js"></script>
+		<script src="/app/common/directives/widgets/projector-canvas.directive.js"></script>
+		<script src="/app/common/directives/widgets/projector-cathegorized-documents.directive.js"></script>
+		<script src="/app/common/directives/widgets/projector-document-form.directive.js"></script>
+		<script src="/app/common/directives/widgets/projector-gallery-base-controls.js"></script>
+		<script src="/app/common/directives/widgets/projector-gallery.directive.js"></script>
+		<script src="/app/common/directives/widgets/timeline.direcitve.js"></script>
+		<script src="/app/common/directives/widgets/timespot.directive.js"></script>
+		<script src="/app/common/filters/datetime.filter.js"></script>
+		<script src="/app/common/filters/filesize.filter.js"></script>
+		<script src="/app/common/filters/sanitize.filter.js"></script>
+		<script src="/app/common/navigation/pj-menu.directive.js"></script>
+		<script src="/app/common/services/alert.service.js"></script>
+		<script src="/app/common/services/eventful.factory.js"></script>
+		<script src="/app/common/services/loader.service.js"></script>
+		<script src="/app/common/services/modal.service.js"></script>
+		<script src="/app/dashboard/dashboard.js"></script>
+		<script src="/app/dashboard/projects-list.direcitve.js"></script>
+		<script src="/app/files/_file.js"></script>
+		<script src="/app/files/file.controller.js"></script>
+		<script src="/app/projects/_projects.js"></script>
+		<script src="/app/projects/artifacts/project-artifacts.directive.js"></script>
+		<script src="/app/projects/artifacts/projector-artifact.page.directive.js"></script>
+		<script src="/app/projects/cathegories/cathegory.card.controller.js"></script>
+		<script src="/app/projects/characters/character.card.controller.js"></script>
+		<script src="/app/projects/characters/character.page.controller.js"></script>
+		<script src="/app/projects/documents/document-card.directive.js"></script>
+		<script src="/app/projects/locations/editor/location-editor.controller.js"></script>
+		<script src="/app/projects/locations/editor/location-editor.directive.js"></script>
+		<script src="/app/projects/locations/editor/location-map.controller.js"></script>
+		<script src="/app/projects/locations/editor/location-map.directive.js"></script>
+		<script src="/app/projects/locations/editor/shape/boundary.factory.js"></script>
+		<script src="/app/projects/locations/editor/shape/image.factory.js"></script>
+		<script src="/app/projects/locations/editor/shape/mgrid.factory.js"></script>
+		<script src="/app/projects/locations/editor/shape/shape.factory.js"></script>
+		<script src="/app/projects/locations/editor/tools/add.tool.js"></script>
+		<script src="/app/projects/locations/editor/tools/pane.tool.js"></script>
+		<script src="/app/projects/locations/editor/tools/pen.tool.js"></script>
+		<script src="/app/projects/locations/editor/view-port.factory.js"></script>
+		<script src="/app/projects/locations/location-page.directive.js"></script>
+		<script src="/app/projects/locations/locations.directive.js"></script>
+		<script src="/app/projects/project-form.directive.js"></script>
+		<script src="/app/projects/project-view.controller.js"></script>
+		<script src="/app/projects/projects-list.controller.js"></script>
+		<script src="/app/projects/tabs/projector-artifacts.controller.js"></script>
+		<script src="/app/projects/tabs/projector-characters.controller.js"></script>
+		<script src="/app/projects/tabs/projector-documents.controller.js"></script>
+		<script src="/app/projects/tabs/projector-locations.controller.js"></script>
+		<script src="/app/projects/tabs/projector-timelines.controller.js"></script>
+		<script src="/app/projects/timelines/project-timeline.controller.js"></script>
+		<script src="/app/projects/timelines/timeline.card.controller.js"></script>
+		<script src="/app/projects/timelines/timespot.card.controller.js"></script>
+		<script src="/app/settings/_settings.js"></script>
+		<!-- endinjector -->
+	</body>
+</html>

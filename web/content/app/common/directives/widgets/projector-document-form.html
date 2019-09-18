@@ -1,0 +1,65 @@
+<div ng-if="mediatype === 'image'" class="row">
+	<div class="brick"
+		ng-style="{
+			backgroundImage: 'url(/srv/file/' + document._file._id + ')',
+			backgroundSize: docCtrl.type || 'contain',
+			backgroundPosition: docCtrl.lpos + ' ' + docCtrl.tpos,
+			cursor: docCtrl.nonMovable ? 'default' : docCtrl.type === 'auto' ? 'zoom-out' : 'zoom-in'
+		}"
+		style="background-color: #EEEEEE; min-width: 600px; width:600px; height: 600px; background-repeat: no-repeat;"
+		ng-mousemove="docCtrl.mouseMove($event)"
+		ng-click="docCtrl.togglePreviewMode()"
+	></div>
+	<div class="mini-preview hidden" ng-class="{active: !docCtrl.nonMovable && docCtrl.type === 'auto'}">
+		<img ng-src="/srv/file/{{document._file._id}}" width="120px">
+		<div class="outview" ng-style="{width: docCtrl.outWidth, height: docCtrl.outHeight, left: docCtrl.minlpos, top: docCtrl.mintpos}"></div>
+	</div>
+	<div class="brick row">
+		<div class="free-form">
+			<div class="section">
+				<div class="field-name">Название:</div>
+				<input type="text" ng-model="_document.title" class="wide">
+			</div>
+			<div class="section">
+				<div class="field-name">Описание:</div>
+				<text-editor ng-model="_document.description" rows="10" small-buttons="true"></text-editor>
+			</div>
+
+			<div class="section buttons right">
+				<common-buttons></common-buttons>
+				<!--button class="btn-primary">Сохранить</button -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div ng-if="mediatype === 'video'" class="row">
+	<video controls>
+		<source ng-src="{{'/srv/file/' + document._file._id + '?transcoded=true'}}" type="video/ogg" />
+	</video>
+</div>
+
+<div style="max-width: 800px" ng-if="mediatype === 'application' && mime==='application/vnd.openxmlformats-officedocument.wordprocessingml.document'">
+	<text-editor max-height="400" rows="20" ng-model="fileData"></text-editor>
+</div>
+
+<div style="max-width: 800px" ng-if="mime === 'base64/html'">
+	<text-editor class="line" max-height="400" rows="20" ng-model="_document.content" data-options="docCtrl.editorOptions">
+		<text-editor-panel>
+			<div class="icon fullscreen" ng-click="textEditorCtrl.setToFullScreen()"></div>
+			<button ng-click="$parent.docCtrl.saveDocument()">Сохранить</button>
+		</text-editor-panel>
+	</text-editor>
+	<div class="row">
+		<div class="brick">Превью</div>
+		<div class="brick">
+			<pj-preview-uploader item="_document"></pj-preview-uploader>
+		</div>
+	</div>
+	<div class="row">
+		<div class="brick right">
+			<button ng-click="docCtrl.saveDocument(true)">Сохранить и закрыть</button>
+		</div>
+	</div>
+</div>
+<!--div>MDT: {{mediatype}}, {{mime}}</div-->

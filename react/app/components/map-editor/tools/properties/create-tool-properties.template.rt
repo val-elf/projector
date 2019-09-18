@@ -1,0 +1,6 @@
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="IconButton" from="@material-ui/core" />
+<div>
+    <Button class="panel-button" variant="outlined"><span class="icon-city-full"></span></Button>
+    <Button class="panel-button"><span class="icon-geopoint-full"></span></Button>
+</div>

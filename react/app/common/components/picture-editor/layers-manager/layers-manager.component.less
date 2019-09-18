@@ -1,0 +1,55 @@
+@import (reference) '~styles/base';
+
+.picture-editor {
+	&_panel {
+		.picture-editor {
+			&_layers {
+				min-width: 300px;
+				max-height: 500px;
+			}
+			&_layer {
+				display: flex;
+				align-items: center;
+				&.item {
+					&:hover {
+						background-color: @soft-gray;
+					}
+					justify-content: space-between;
+				}
+				&.active {
+					border: 2px solid red;
+				}
+				&-preview {
+					flex-shrink: 0;
+					margin-right: 1em;
+					border: 1px solid @easy-gray;
+					background-image: url('/assets/img/transparent.gif');
+					background-size: 8px;
+				}
+				&-visible {
+					width: 20px;
+					height: 20px;
+					border: 1px solid red;
+					flex-shrink: 0;
+					margin-right: 10px;
+				}
+				&-title {
+					flex-grow: 1;
+				}
+			}
+			&_actions {
+				display: flex;
+				&-button {
+					border: 1px solid red;
+					width: 32px;
+					height: 32px;
+					&.layer {
+						&-remove {
+							width: 32px;
+						}
+					}
+				}
+			}
+		}
+	}
+}

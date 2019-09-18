@@ -1,0 +1,6 @@
+<div class="authorization vmiddle">
+	<div class="error" ng-if="error">{{error.message}}</div>
+	<div class="row"><div class="brick size1of3">Login:</div><div class="brick size2of3"><input class="wide" type="text" ng-model="login" autocomplete="on"/></div></div>
+	<div class="row"><div class="brick size1of3">Password:</div><div class="brick size2of3"><input class="wide" type="password" ng-model="password"/></div></div>
+	<button ng-click="authorize()">Login</button>
+</div>

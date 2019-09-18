@@ -1,0 +1,10 @@
+<pj-modal-header>
+	<span ng-if="!item._id">Новый документ</span>
+	<span ng-if="item._id" ng-bind="item.name"></span>
+</pj-modal-header>
+<div class="modal-body">
+	<pj-document-card document="document"></pj-document-card>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

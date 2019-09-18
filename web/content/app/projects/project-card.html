@@ -1,0 +1,26 @@
+<div>
+	<form name="projectForm" ng-if="mode === 'edit'">
+		<div class="row">
+			<div class="brick size1of5">Название</div><div class="brick size4of5"><input type="text" class="wide" ng-model="_wc_project.name" ng-required="true"></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Описание</div><div class="brick size4of5"><textarea class="wide" ng-model="_wc_project.description" rows="6"></textarea></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Изображение</div><div class="brick size4of5">
+				<div class="row">
+					<div ng-if="projectCtrl.filePreview.data.preview" class="brick">
+						<div class="project-preview" ng-style="{height: projectCtrl.filePreview.data.height/projectCtrl.filePreview.data.width * 74, backgroundImage: 'url(data:' + projectCtrl.filePreview.data.type + ';base64,'+ projectCtrl.filePreview.data.preview+')'}"></div>
+					</div>
+					<div class="brick">
+						<file-uploader ng-model="projectCtrl.filePreview"></file-uploader>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<div class="row info" ng-if="mode === 'view'">
+		<div class="comments" ng-bind="project.description"></div></div>
+	</div>
+</div>

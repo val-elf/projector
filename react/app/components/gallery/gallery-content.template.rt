@@ -1,0 +1,52 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="GalleryControls" from="./gallery-controls.component" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Loader" from="common/loader" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Search" from="common/materials" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="DocumentFolder" from="components/document-folder" />
+<rt-import name="GalleryContentItem" from="./gallery-content-item.component" />
+
+<div class="brick col" rt-scope="this.context.t as t; this.state as state; this.state.gallery as gallery; this.state.category as category">
+    <h3 class="row">
+        <div class="brick">{ category.name }</div>
+        <div class="brick" rt-if="gallery && gallery.length">
+    		<Search className="wide" label="{ t('APP_SEARCH') }" onChange="{({target}) => this.setSearchString(target.value)}" />
+	    </div>
+    </h3>
+    <div class="row wide vmiddle" rt-if="gallery">
+        <GalleryControls
+            onSelectAll="{(value) => this.selectAll(value)}"
+            selectedCount="{this.selectedCount}"
+            totalCount="{this.totalCount}"
+            collectionLength="{gallery.length}"
+            documents="{gallery}"
+        />
+        <div class="row brick rest right vmiddle">
+            <FileUploader multiple="{true}" mode="window"
+                uploadTo="/srv/upload?owner={category.id}"
+                onFinish="{() => this.refresh()}"
+                onPreload="{this.props.onPreload}"
+                closeOnUpload="{true}"
+            />
+            <Button disabled="{!this.selectedCount}" onClick="{() => this.deleteSelected()}"><span class="icon16 delete"></span> { t('APP_DELETE') }</Button>
+        </div>
+    </div>
+    <div class="brick">
+        <DocumentFolder rt-if="gallery" type="{state.type}" onScrollEnd="{() => this.readMore()}">
+            <GalleryContentItem
+                rt-repeat="document in gallery"
+                document="{document}"
+                key="{document.id}"
+                selected="{ state.selected[document.id] }"
+                onSelect="{ selected => this.selectItem(document, selected) }"
+                draggableItem="{true}"
+            />
+            <div class="empty-box" rt-if="!state.load && !gallery.length" dangerouslySetInnerHTML="{{__html: t('APP_GALLERY_EMPTY_GALLERY') }}"></div>
+        </DocumentFolder>
+        <Loader load="{state.load}" />
+    </div>
+</div>

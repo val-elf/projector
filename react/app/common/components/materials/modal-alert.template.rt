@@ -1,0 +1,14 @@
+<rt-import name="Modal" from="@material-ui/core" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<Modal open="{this.state.isShow}" rt-scope="this.context.t as t; this.state as state" onClose="{() => this.close()}" className="modal {this.props.className || ''}">
+	<div className="modal-dialog alert" style="{{minWidth: this.props.minWidth, maxHeight: this.props.maxHeight, minHeight: this.props.minHeight}}">
+		<div class="modal-header"><h3>{this.title}</h3></div>
+		<div class="modal-body" style="{{minHeight: this.props.contentMinHeight}}">
+			{ this.children }
+		</div>
+		<div class="modal-footer" rt-if="state.showFooter">
+			<Button onClick="{() => this.close(false)}">Отмена</Button><Button onClick="{() => this.close(true)}">Ok</Button>
+		</div>
+	</div>
+</Modal>

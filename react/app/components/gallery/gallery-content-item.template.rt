@@ -1,0 +1,22 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="DocumentItemInfo" from="components/documents" />
+
+<Fragment rt-scope="this.state as state; this.state.file as file; this.state.document as document; this.context.t as t">
+    <div
+        class="item vmiddle fit-content gallery-item"
+        rt-class="{selected: state.selected}"
+        onClick="{(evt) => this.select(evt)}"
+        ref="{this.itemContainerRef}"
+    >
+        <IconPreview item="{file}"
+            width="150"
+            height="150"
+            highlighted="{false}"
+            defaultIcon="{this.iconType}"
+            loading="{this.fileLoading}"
+            progress="{state.progress}"
+        />
+        <DocumentItemInfo document="{document}" ref="{this.documentInfoRef}" />
+    </div>
+</Fragment>

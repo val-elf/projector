@@ -1,0 +1,34 @@
+.canvas-square {
+	display: inline-grid;
+	width: 90px;
+	height: 90px;
+	grid-template-columns: 30px 30px 30px;
+	grid-template-rows: 30px 30px 30px;
+
+	&_item {
+		border: 1px solid gray;
+		position: relative;
+		&.selected:after {
+			content: '\25C9';
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		&.marked {
+			&:after { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+			&.up:after { content: '\2191'; }
+			&.left:after { content: '\2190'; }
+			&.down:after { content: '\2193'; }
+			&.right:after { content: '\2192'; }
+			&.up-left:after { content: '\2196'; }
+			&.up-right:after { content: '\2197'; }
+			&.down-left:after { content: '\2199'; }
+			&.down-right:after { content: '\2198'; }
+		}
+	}
+}

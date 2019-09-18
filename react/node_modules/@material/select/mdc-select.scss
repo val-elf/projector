@@ -1,0 +1,282 @@
+//
+// Copyright 2017 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+@import "./mixins";
+@import "@material/animation/functions";
+@import "@material/animation/variables";
+@import "@material/typography/mixins";
+@import "@material/theme/mixins";
+@import "@material/ripple/common";
+@import "@material/ripple/mixins";
+@import "@material/rtl/mixins";
+
+$mdc-select-arrow-padding: 26px;
+$mdc-select-label-padding: 16px;
+$mdc-select-menu-transition: transform 180ms $mdc-animation-standard-curve-timing-function;
+
+// postcss-bem-linter: define select
+.mdc-select {
+  @include mdc-select-dd-arrow-svg-bg_;
+  @include mdc-select-container-fill-color(rgba(white, .1));
+  @include mdc-select-ink-color(text-primary-on-light);
+  @include mdc-select-label-color(rgba(black, .6));
+  @include mdc-select-bottom-line-color(rgba(black, .5));
+
+  // Focused state colors
+  @include mdc-select-focused-bottom-line-color(primary);
+  @include mdc-select-focused-label-color(primary);
+  @include mdc-typography(subheading2);
+
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  height: 56px;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  outline: none;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+  overflow: visible;
+
+  @include mdc-rtl {
+    background-position: left 10px center;
+  }
+
+  &__menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-height: 100%;
+    transform-origin: center center;
+    z-index: 4; // Should pop up above everything else. temporary-drawer is next highest at 3.
+  }
+
+  &__surface {
+    @include mdc-typography(subheading2);
+    @include mdc-rtl-reflexive-property(padding, $mdc-select-label-padding, $mdc-select-arrow-padding, ".mdc-select");
+    @include mdc-ripple-surface;
+    @include mdc-ripple-radius;
+    @include mdc-states;
+
+    @include mdc-theme-dark(".mdc-select") {
+      @include mdc-states(white);
+    }
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    display: flex;
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+    height: 56px;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    outline: none;
+    // Resets for <select> element
+    appearance: none;
+    overflow: hidden;
+  }
+
+  &__label {
+    @include mdc-rtl-reflexive-position(left, 16px);
+
+    position: absolute;
+    bottom: 12px;
+    transform-origin: left top;
+    transition: $mdc-select-menu-transition;
+    pointer-events: none;
+    will-change: transform;
+
+    @include mdc-rtl(".mdc-select") {
+      transform-origin: right top;
+    }
+
+    &--float-above {
+      transform: translateY(-40%) scale(.75, .75);
+    }
+  }
+
+  &__selected-text {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 6px;
+    transition:
+      mdc-animation-exit-temporary(opacity, 125ms),
+      mdc-animation-exit-temporary(transform, 125ms);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  &__bottom-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    transform: scaleY(1);
+    transform-origin: bottom;
+    transition: $mdc-select-menu-transition;
+
+    &::after {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      transform: scaleX(0);
+      transition: $mdc-select-menu-transition;
+      opacity: 0;
+      content: "";
+      z-index: 2;
+    }
+  }
+
+  &__bottom-line--active {
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  @include mdc-select-focused-bottom-line_ {
+    &::after {
+      transform: scale(1, 2);
+      opacity: 1;
+    }
+  }
+}
+
+.mdc-select--open {
+  .mdc-select__surface::before {
+    opacity: map-get($mdc-ripple-dark-ink-opacities, "focus");
+
+    @include mdc-theme-dark(".mdc-select") {
+      opacity: map-get($mdc-ripple-light-ink-opacities, "focus");
+    }
+  }
+
+  .mdc-select__selected-text {
+    transform: translateY(8px);
+    transition:
+      mdc-animation-enter(opacity, 125ms, 125ms),
+      mdc-animation-enter(transform, 125ms, 125ms);
+    opacity: 0;
+  }
+
+  .mdc-select__bottom-line {
+    &::after {
+      transform: scaleY(2);
+      opacity: 1;
+    }
+  }
+}
+
+.mdc-select--disabled,
+.mdc-select[disabled] {
+  @include mdc-select-label-color_(text-disabled-on-light);
+  @include mdc-select-dd-arrow-svg-bg_(000000, .38);
+
+  border-bottom-width: 1px;
+  border-bottom-style: dotted;
+  opacity: .38;
+  cursor: default;
+  pointer-events: none;
+  // Imitate native disabled functionality
+  user-select: none;
+
+  .mdc-select__bottom-line {
+    display: none;
+  }
+}
+
+@each $sel in ("mdc-select--disabled", "mdc-select[disabled]") {
+  .#{$sel} {
+    @include mdc-theme-dark(".mdc-select", true) {
+      @include mdc-theme-prop(color, text-disabled-on-dark);
+      @include mdc-select-dd-arrow-svg-bg_(ffffff, .38);
+
+      border-bottom: 1px dotted rgba(white, .38);
+    }
+  }
+}
+
+// postcss-bem-linter: end
+
+.mdc-select__menu {
+  .mdc-list-item {
+    @include mdc-typography(subheading2);
+    @include mdc-theme-prop(color, text-secondary-on-light);
+
+    &[aria-selected="true"] {
+      @include mdc-theme-prop(color, text-primary-on-light);
+    }
+
+    @include mdc-theme-dark(".mdc-select") {
+      @include mdc-theme-prop(color, text-secondary-on-dark);
+
+      &[aria-selected="true"] {
+        @include mdc-theme-prop(color, text-primary-on-dark);
+      }
+    }
+
+    // Styles to override mdc-ripple-radius from mdc-list, which causes display glitches in Chrome
+    // (See https://github.com/material-components/material-components-web/pull/1737#issuecomment-351105800)
+    @include mdc-ripple-radius(50%);
+
+    &::before,
+    &::after {
+      border-radius: 0;
+    }
+  }
+
+  .mdc-list-group,
+  .mdc-list-group > .mdc-list-item:first-child {
+    margin-top: 12px;
+  }
+
+  .mdc-list-group {
+    @include mdc-theme-prop(color, text-hint-on-light);
+
+    font-weight: normal;
+
+    .mdc-list-item {
+      @include mdc-theme-prop(color, text-primary-on-light);
+    }
+  }
+
+  @include mdc-theme-dark(".mdc-select") {
+    .mdc-list-group {
+      @include mdc-theme-prop(color, text-hint-on-dark);
+
+      .mdc-list-item {
+        @include mdc-theme-prop(color, text-primary-on-dark);
+      }
+    }
+  }
+}
+
+// height for option elements cannot be controlled
+// with CSS. Use the font-size rule instead.
+
+// postcss-bem-linter: end
+
+.mdc-select-scroll-lock {
+  overflow: hidden;
+}

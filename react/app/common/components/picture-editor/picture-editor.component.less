@@ -1,0 +1,28 @@
+@import (reference) '~styles/base';
+.picture-editor {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	.canvas {
+		flex-grow: 1;
+		height: 100%;
+		touch-action: none;
+    }
+	&_viewport {
+		position: relative;
+		flex-grow: 1;
+	}
+	&_cursor {
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 10000;
+		pointer-events: none;
+	}
+
+	&_panel {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
+}

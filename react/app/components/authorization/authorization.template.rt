@@ -1,0 +1,22 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<div class="authorization vmiddle" rt-scope="this.context.t as t">
+	<div class="form">
+		<div>{ this.props.children }</div>
+		<div class="error">{this.error}</div>
+		<div class="row">
+			<div class="brick size1of3">{ t('AUTH_LOGIN') }:</div>
+			<div class="brick">
+				<TextField className="wide" type="text" onChange="{this.handleChange('login')}" autocomplete="on" />
+		   	</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of3">{ t('AUTH_PASSWORD') }:</div>
+			<div class="brick">
+				<TextField className="wide"type="password" onChange="{this.handleChange('password')}" />
+			</div>
+		</div>
+		<Button variant="raised" onClick="() => this.auth()">{ t('AUTH_SUBMIT') }</Button>
+	</div>
+</div>

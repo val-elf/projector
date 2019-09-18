@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "name": "projector2",
+  "watch": {
+    "start:dev": [
+      "backend/**/*.js",
+      "server/**/*.js",
+      "utils/**/*.js",
+      "app.js",
+      "config.js",
+      "config.local.js"
+    ],
+    "start:prod": [
+      "backend/**/*.js",
+      "server/**/*.js",
+      "utils/**/*.js",
+      "app.js"
+    ],
+    "start:dist": [
+      "backend/**/*.js",
+      "server/**/*.js",
+      "utils/**/*.js",
+      "app.js"
+    ]
+  },
+  "scripts": {
+    "start:dev": "node app.js --dev",
+    "start:dist": "node app.js --dist",
+    "start:prod": "node app.js",
+    "watch": "npm-watch start:dev",
+    "watch:dist": "npm-watch start:dist",
+    "watch:prod": "npm-watch start:prod",
+    "clean": "rimraf dist",
+    "start": "npm run start:dev",
+    "build:webpack": "set NODE_ENV=production && webpack --config webpack.config.prod.js",
+    "build": "npm run clean && npm run build:webpack"
+  },
+  "devDependencies": {
+    "base-64": "^0.1.0",
+    "utf8": "^3.0.0",
+    "rimraf": "^2.5.0"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.3.5",
+    "dom-helpers": "^3.3.1",
+    "exiftool": "0.0.3",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "jimp": "^0.2.13",
+    "jshint": "^2.9.6",
+    "lwip": "0.0.9",
+    "mammoth": "^0.3.30",
+    "md5": "^2.0.0",
+    "mongodb": "",
+    "mongoose": "^4.13.7",
+    "npm-watch": "^0.3.0",
+    "stream-transcoder": "0.0.5"
+  }
+}

@@ -1,0 +1,47 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="UIView" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="FormControl" from="@material-ui/core" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="Search" from="common/materials" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Loader" from="common/loader" />
+
+<rt-import name="ProjectEditor" from="./modals/project-editor.component" />
+<rt-import name="ProjectListCard" from="./project/project-list-card.component" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state">
+	<rt-virtual rt-if="this.routeState.name==='app.projects'">
+		<h1 class="page-head">{ t('APP_PROJECTS') }</h1>
+		<div class="controls">
+			<Button variant="raised" onClick="() => this.createNewProject()" class="btn-primary"><span class="add-item-icon"></span> { t('APP_NEW_PROJECT') }</Button>
+		</div>
+		<div class="filters row vbottom">
+			<div class="brick">
+				<div class="size1of5 minw300">
+					<Search type="search" className="wide" label="{t('APP_SEARCH')}" />
+				</div>
+			</div>
+			<div class="brick vmiddle">
+				<div class="brick vmiddle">
+					<Select
+						label="{ t('APP_SORT_BY') }"
+						onChange="(event) => this.setSort(event)"
+						value={this.state.sortBy}
+					>
+						<MenuItem value="_update._dt">{ t('APP_LAST_CHANGES') }</MenuItem>
+						<MenuItem value="_create._dt">{ t('APP_CREATION_DATE') }</MenuItem>
+					</Select>
+				</div>
+			</div>
+		</div>
+		<Scrollable class="brick growth" sliderClass="projects list hovered" onReachEnd="{({side}) => this.readNext(side)}" height="100%">
+			<ProjectListCard rt-repeat="project in this.state.projects" project="{project}" editor="{this.editor}" key="{project.id}"></ProjectListCard>
+			<Loader local={true} load="{state.load}"></Loader>
+		</Scrollable>
+	</rt-virtual>
+	<ProjectEditor ref="{(editor) => {this.editor = editor;} }"></ProjectEditor>
+	<UIView />
+</Fragment>

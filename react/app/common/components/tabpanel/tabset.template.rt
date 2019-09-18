@@ -1,0 +1,14 @@
+<div class="tabset {this.props.className || ''}" rt-class="{vertical: this.props.vertical}">
+	<ul class="nav-tabs">
+		{ this.state.tabs }
+	</ul>
+	<div class="tab-content">
+		{ this.state.view }
+		<div class="tab-pane"
+			rt-class="{active: index === this.state.tabIndex}"
+			rt-repeat="content, index in this.contents"
+			key="{index}"
+			idt="{this.state.tabIndex}, {index}"
+		>{ content }</div>
+	</div>
+</div>

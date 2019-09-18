@@ -1,0 +1,15 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="PanTool" from="./tools" />
+<rt-import name="PenTool" from="./tools" />
+<rt-import name="CreateTool" from="./tools" />
+
+<Fragment>
+    <div class="toolbox">
+        <PenTool onSelect="{(tool, select) => this.selectTool(tool, select)}" ref="{ penTool => this.tools.penTool = penTool }"/>
+        <PanTool onSelect="{(tool, select) => this.selectTool(tool, select)}" ref="{ panTool => this.tools.panTool = panTool }" />
+        <CreateTool onSelect="{(tool, select) => this.selectTool(tool, select)}" ref="{ createTool => this.tools.createTool = createTool }" />
+    </div>
+    <div class="map-window" ref="{ map => this.mapWindow = map }">
+        <div class="wide map" ref="{root => this.root = root}" tabindex="0"></div>
+    </div>
+</Fragment>

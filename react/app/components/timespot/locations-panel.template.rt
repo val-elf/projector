@@ -1,0 +1,11 @@
+<rt-import name="Expandable" from="projector/common/components/expandable" />
+<rt-import name="ExpandableHead" from="projector/common/components/expandable" />
+<rt-import name="ExpandableBody" from="projector/common/components/expandable" />
+
+<Expandable rt-scope="this.context.t as t">
+	<ExpandableHead>
+		<h3 class="brick wide"><div class="opener"></div>{t('APP_LOCATIONS')}</h3>
+		<span class="brick small-button icon16 add"></span>
+	</ExpandableHead>
+	<ExpandableBody></ExpandableBody>
+</Expandable>

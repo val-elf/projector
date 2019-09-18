@@ -1,0 +1,54 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="DatePicker" from="material-ui-pickers" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="DynamicList" from="common/dynamic-list" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+
+<div class="form" rt-scope="this.context.t as t;this.state.character as char">
+	<div class="row">
+		<TextField label="Имя" ng-required="true" class="wide" defaultValue="{char.name}" onChange="{this.handleChange('name')}" />
+	</div>
+	<div class="row">
+		<TextField label="Полное имя" ng-required="true" class="wide" defaultValue="{char.fullName}" onChange="{this.handleChange('fullName')}" />
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Даты</div>
+		<div class="brick size4of5">
+			<div class="row vmiddle" rt-repeat="container, index in char.dates" key="{index}">
+				<TextField class="brick" label="Определение" size="20" value="{container.type}" onChange="{evt => this.setTypeTo(evt.target.value, container)}" />
+				<DatePicker class="brick" label="Дата" value="{container.date}" onChange="{value => this.setDateTo(value, container)}" />
+				<span class="icon16 delete" onClick="{() => this.removeDate(container)}"></span>
+			</div>
+			<div><Button onClick="{() => this.addDate()}"><span class="btn add-item-icon"></span></Button></div>
+		</div>
+	</div>
+	<div class="row">
+		<Select class="wide" value="{char.type || ''}" label="тип персонажа" onChange="{this.handleChange('type')}">
+			<MenuItem rt-repeat="ctype in this.characterTypes" key="{ctype}" value="{ctype}">{ t('APP_CHARACTER_' + ctype) }</MenuItem>
+		</Select>
+	</div>
+	<div class="row">
+		<TextField label="Краткая информация" multiline="{true}" value="{char.description}" class="wide" rowsMax="5" onChange="{this.handleChange('description')}" />
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Изображение</div>
+		<div class="row brick">
+			<IconPreview item="{char}" width="75"/> <FileUploader onLoad="{({ preview }) => {this.setPreview(preview)}}" />
+		</div>
+	</div>
+	<div class="row">
+		<TextEditor value="{char.bio}" label="Описание (био)" rows="4" maxHeight="250" smallButtons="{true}" onChange="{this.handleChange('bio')}" />
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Теги</div>
+		<div class="brick size4of5"></div>
+	</div>
+	<!-- <div class="row">
+		<div class="brick size1of5">Галерея</div>
+		<div class="brick size4of5"></div>
+	</div>-->
+</div>

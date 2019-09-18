@@ -1,0 +1,14 @@
+<rt-import name="Frame" from="./page/frame.component" />
+<rt-import name="FrameEditor" from="./page/frame-editor.component" />
+
+<div class="page-table" rt-scope="this.state as state; state.frames as frames; this.context.t as t" onClick="{() => this.clearSelected()}">
+    <Frame rt-repeat="frame, index in frames"
+        frame="{frame}"
+        selected="{state.selected === frame}"
+        key="{frame.id}"
+        onSelect="{() => this.selectFrame(frame)}"
+        onMove="{() => this.recalculate(frame)}"
+        distance="{this.distance}"
+    />
+    <FrameEditor ref="{this.editorRef}" />
+</div>

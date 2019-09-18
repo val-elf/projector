@@ -1,0 +1,49 @@
+<div>
+	<div class="row">
+		<div class="brick description shortspace row">
+			<div class="brick"><pj-preview item="character" width="74" ng-click="editCharacter()"></pj-preview></div>
+			<div class="brick">
+				<h2 class="banner blue head">
+					<text-edited ng-model="character.name" locked="character.locked" empty-value="Безымянный"></text-edited>
+					<span class="icon16 locker" ng-class="{unlocked: !character.locked}" ng-click="toggleLocked()"></span>
+					<span class="small-button icon16 popup" pj-popup>
+						<div class="list-item" ng-click="editCharacter()"><span class="icon16 edit"></span> <span class="link">редактировать</span></div>
+						<div class="list-item" ng-disabled="character.locked" ng-click="deleteCharacter()"><span class="icon16 delete"></span> <span class="link">удалить</span></div>
+					</span>
+				</h2>
+			</div>
+			<div class="brick">
+				<span class="bold">{{chartypes[character.type].name}}</span>
+				<div>{{character.description}}</div>
+			</div>
+		</div>
+		<div class="brick" ng-if="character.dates && character.dates.length">
+			<h4>Ключевые даты</h4>
+			<div class="list small">
+				<div class="item" ng-repeat="date in character.dates">{{date.type}}: {{date.date | date}}</div>
+			</div>
+		</div>
+		<div class="brick">
+			<h4>Теги</h4>
+			<div ng-if="!character.tags" class="notation">Теги не определены</div>
+		</div>
+	</div>
+	<pj-tabset class="tab" save-position="true" tab-id="character-tab-{{character._id}}">
+		<pj-tab heading="'Главная'" active="true">
+			<text-editor ng-if="!character.locked" ng-model="character.bio" rows="20"></text-editor>
+			<div ng-if="character.locked" ng-bind-html="character.bio | sanitize"></div>
+		</pj-tab>
+
+		<pj-tab heading="'Галерея'">
+			<ng-include src="'projects/characters/character.gallery.html'" scope="this"></ng-include>
+		</pj-tab>
+
+		<pj-tab heading="'Документы'">
+			<pj-cathegorized-documents owner="character" root-as-owner="false"></pj-cathegorized-documents>
+		</pj-tab>
+
+		<pj-tab heading="'Артефакты'"></pj-tab>
+		<pj-tab heading="'Задачи'"></pj-tab>
+
+	</pj-tabset>
+</div>

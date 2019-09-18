@@ -1,0 +1,8 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Slider" from="common/materials" />
+<div>
+    <Slider value="{this.state.size}" label="{ 'eraser size ' + this.state.size }" type="number" onChange="{ value => this.setSize(value) }" min="1" max="120" step="1" />
+    <Slider value="{this.state.flow}" label="flow" type="number" onChange="{ value => this.setFlow(value) }" step="0.01" />
+    <Slider value="{this.state.hardness}" label="hardness" type="number" onChange="{ value => this.setHardness(value) }" step="0.01" />
+    <Slider value="{this.state.opacity}" label="opacity" type="number" onChange="{ value => this.setOpacity(value) }" step="0.01" />
+</div>

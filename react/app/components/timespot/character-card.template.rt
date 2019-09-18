@@ -1,0 +1,19 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<Fragment rt-scope="this.state as state; state.character as character; state.document as document; this.context.t as t">
+	<div class="row">
+		<div class="brick">
+			<h2>{ character.character.name }</h2>
+			<div class="mbs"><IconPreview item="{character.character}" type="circle" expanded="{true}"/></div>
+			<div><Button className="btn-primary" variant="raised" onClick="{() => this.saveCharacterDescription()}">{ t('APP_SAVE') }</Button></div>
+		</div>
+		<div class="brick">
+			<TextEditor rows="20" maxHeight="400" value="{document.content}" options="{this.charEditorOptions}"
+				onChange="{_ => this.handleChangeDescription(_)}"
+			/>
+		</div>
+	</div>
+</Fragment>

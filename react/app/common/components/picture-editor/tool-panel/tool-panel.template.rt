@@ -1,0 +1,9 @@
+<rt-import name="Fragment" from="react" />
+<Fragment rt-scope="this.state as state">
+	<div class="picture-editor_panel" rt-class="{showed: state.showed}" ref="{ this.rootRef }">
+		<Fragment rt-if="state.showed">
+			<div class="picture-editor_panel-head">{ this.title }</div>
+			{ this.props.children }
+		</Fragment>
+	</div>
+</Fragment>

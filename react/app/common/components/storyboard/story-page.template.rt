@@ -1,0 +1,6 @@
+<rt-import name="PageTable" from="./page-table.component" />
+
+<div class="story-page" rt-scope="this.context.t as t; this.state as state">
+    <h3>{ state.page.name}</h3>
+    <PageTable page="{state.page}" distance="{this.distance}" />
+</div>

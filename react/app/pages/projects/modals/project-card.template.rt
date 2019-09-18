@@ -1,0 +1,45 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+
+<div rt-scope="this.context.t as t">
+	<div rt-if="this.mode === 'edit'">
+		<div class="row mbm">
+			<div class="brick wide">
+				<TextField
+					fullWidth="{true}"
+					label="{t('APP_PROJECT_NAME')}"
+					defaultValue="{this.state.project.name}"
+					required="{true}"
+					onChange="{this.handleChanges('name')}"
+				/>
+			</div>
+		</div>
+		<div class="row mbm">
+			<div class="brick wide">
+				<TextField
+					label="{t('APP_PROJECT_DESCRIPTION')}"
+					fullWidth="{true}"
+					multiline="{true}"
+					defaultValue="{this.state.project.description}"
+					onChange="{this.handleChanges('description')}"
+					multiline="{true}"
+				/>
+			</div>
+		</div>
+		<div class="row mbm">
+			<div class="brick size1of5">{ t('APP_PROJECT_IMAGE') }</div>
+			<div class="brick size4of5">
+				<div class="row">
+					<div class="brick"><IconPreview item="{this.state.project}" width="75" defaultIcon="project"></IconPreview></div>
+					<div class="brick"><FileUploader onLoad="{({ preview }) => {this.setPreview(preview)}}"></FileUploader></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row info" rt-if="this.state.mode === 'view'">
+		<div class="comments">{ this.state.project.description }</div>
+	</div>
+</div>

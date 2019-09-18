@@ -1,0 +1,31 @@
+<rt-import name="ColorPicker" from="common/color-picker" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="ColorSelector" from="./tools" />
+<rt-import name="Move" from="./tools" />
+<rt-import name="Brush" from="./tools" />
+<rt-import name="Eraser" from="./tools" />
+<rt-import name="Picker" from="./tools" />
+<rt-import name="Panoramer" from="./tools" />
+<rt-import name="LayersManager" from="./tools" />
+<rt-import name="Settings" from="./tools" />
+<rt-import name="Page" from="./page" />
+
+<div class="picture-editor" rt-scope="this.state as state;
+    state.colorPickerShowed as colorPickerShowed;">
+    <div class="toolbox">
+		<ColorSelector ref="{this.colorSelectorRef}" />
+		<Move ref="{this.moveRef}" />
+        <Brush color="{this.color}" ref="{this.brushRef}" />
+		<Eraser ref="{this.eraserRef}" />
+        <Picker color="{this.color}" onChange="{ rgb => this.setState({ color: rgb }) }" ref="{this.pickerRef}" />
+		<Panoramer ref="{this.panoramerRef}" />
+		<div class="bottom">
+			<LayersManager ref="{this.layersManagerRef}" document="{this.document}" />
+			<Settings />
+		</div>
+		<ColorPicker value="{this.color}" show="{ colorPickerShowed }" onChange="{ rgb => this.color = rgb }" />
+    </div>
+    <div class="picture-editor_viewport">
+        <Page ref="{this.pageRef}" document="{this.document}" cursor="{state.cursor}" />
+    </div>
+</div>

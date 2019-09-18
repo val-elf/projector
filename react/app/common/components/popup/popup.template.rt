@@ -1,0 +1,6 @@
+<div ref="{this.rootRef}">
+	<div class="popup-panel" rt-class="{displayed: this.state.showPanel}" ref="{this.panelRef}">
+		<div class="blur"></div>
+		{ this.props.children }
+	</div>
+</div>

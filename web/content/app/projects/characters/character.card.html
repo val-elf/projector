@@ -1,0 +1,54 @@
+<pj-modal-header>{{character.name || 'Новый персонаж'}}</pj-modal-header>
+<div class="modal-body">
+	<div class="form">
+		<div class="row">
+			<div class="brick size1of5">Имя</div>
+			<div class="brick size4of5"><input type="text" ng-required="true" class="wide" ng-model="item.name" /></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Даты</div>
+			<div class="brick size4of5">
+				<pj-dynamic-list ng-model="item.dates">
+					<input type="text" placeholder="Определение" size="20" ng-model="item.type"/>&nbsp;<pj-datepicker ng-model="item.date"></pj-datepicker>
+				</pj-dynamic-list>
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Тип</div>
+			<div class="brick size4of5">
+				<pj-select ng-model="item.type" placeholder="тип персонажа">
+					<pj-option ng-repeat="(chartype, type) in chartypes" value="{{chartype}}">{{type.name}}</pj-option>
+				</pj-select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Краткая информация</div>
+			<div class="brick size4of5">
+				<textarea ng-model="item.description" class="wide" rows="3"></textarea>
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Изображение</div>
+			<div class="brick">
+				<pj-preview-uploader item="item"></pj-preview-uploader>
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Описание (био)</div>
+			<div class="brick size4of5">
+				<text-editor ng-model="item.bio" rows="4" max-height="250" small-buttons="true"></text-editor>
+			</div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Теги</div>
+			<div class="brick size4of5"></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of5">Галерея</div>
+			<div class="brick size4of5"></div>
+		</div>		
+	</div>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

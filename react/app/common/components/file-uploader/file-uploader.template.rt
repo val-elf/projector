@@ -1,0 +1,31 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="FileUploaderWindow" from="./file-uploader-window.component" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state">
+	<rt-virtual rt-if="state.mode === 'window'">
+		<Button onClick="() => this.selectFiles()"><span class="icon16 upload"></span><span>{this.props.children || t('APP_LOADING')}</span></Button>
+	</rt-virtual>
+
+	<rt-virtual rt-if="state.mode === 'button'">
+		<div class="brick row nospace">
+			<div class="brick"><Button onClick="() => this.selectFiles()"><span class="icon16 upload"></span><span>{this.props.children || t('APP_LOADING')}</span></Button></div>
+			<div rt-if="state.mode === 'button' && this.state.files.length > 1">
+				<ul class="files">
+					<li rt-repeat="file,index in this.state.files" key="{index}"><IconPreview item="{file}" width="25" /> {file.name}</li>
+				</ul>
+			</div>
+			<div class="brick" rt-if="state.showPreview && state.mode === 'button' && this.state.file">
+				<div class="preview brick" style="
+					width: 30px;
+					height: {this.previewHeight || '30px'};
+					background-repeat: no-repeat;
+					background-position: 50% 50%;
+					background-size: cover;
+					background-image': url(data: {this.state.file.type}base64{this.state.file.preview.preview});
+				"></div>
+				<div class="file-info"></div>
+			</div>
+		</div>
+	</rt-virtual>
+</Fragment>

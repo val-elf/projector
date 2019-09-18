@@ -1,0 +1,22 @@
+.text-edited, .text-edited *{
+	vertical-align: middle;
+	white-space: nowrap;
+}
+.text-edited {
+	position: relative;
+    padding-right: 32px;
+    display: inline-block;
+	.text-edited-icon{
+		position: absolute;
+		top: 50%;
+		margin-top: -16px;
+	}
+}
+
+.actioned {
+    &.edited {
+        height: 0;
+        display: block;
+        overflow: hidden;
+    }
+}

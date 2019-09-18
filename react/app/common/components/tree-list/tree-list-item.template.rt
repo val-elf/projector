@@ -1,0 +1,19 @@
+<div class="tree-node item"
+	rt-scope="this.props.item as item; this.state.selected as selected"
+	ref="{node => this.element = node}"
+	rt-class="{ open: this.state.opened, selected: this.isSelected }"
+	title="{item.name}"
+	key="{item.id}"
+>
+	<div class="row vmiddle" onClick="{() => this.select()}">
+		<div class="brick opener vmiddle shortspace" onClick="{(event) => this.toggleOpen(event)}" disabled="{!item.children || !item.children.length}"></div>
+		<div class="tree-item-content brick">
+			{ this.props.renderer(item, this) }
+		</div>
+	</div>
+	<div class="children" rt-if="item.children && item.children.length">
+		<rt-virtual rt-repeat="child in item.children">
+			{ this.renderChild(child) }
+		</rt-virtual>
+	</div>
+</div>

@@ -1,0 +1,279 @@
+
+input[type='text'],
+	input[type='password'],
+	input[type='search'],
+	input[type='number'],
+	input[type='date'],
+	button,
+	.button,
+	textarea,
+	.pj-input,
+	.text-editor
+{
+		padding: @_xs @_s;
+		border: 1px solid @border-color;
+		border-radius: 4px;
+		outline: 0;
+		font-size: inherit;
+		color: @input-color;
+		&.ng-invalid{
+			box-shadow: #AA2200 0 0 3px;
+		}
+		&[disabled]{
+			background-color: @disabled-color;
+			color: @gray;
+			box-shadow: none;
+		}
+}
+
+textarea{
+	resize: none;
+	font-family: inherit;
+}
+
+.search-filter{
+	position:relative;
+	display: inline-block;
+	input[type='search']{
+		padding-left: 35px;
+		height: 32px;
+		width: 100%;
+	}
+	&:before{
+		content: "";
+		.search-icon();
+		position: absolute;
+		top:0;
+	}
+}
+
+.pj-input{
+	&.select{
+		display: inline-block;
+		min-height: 32px;
+		width: 200px;
+		position: relative;
+		padding-right: 32px;
+		vertical-align: middle;
+		.active();
+		.displayed{
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.opener{
+			border-left: 1px solid @border-color;
+			position: absolute;
+			right:0;
+			width: 32px;
+			height: 100%;
+			top: 0;
+			text-align: center;
+			&::before{
+				.iconic();
+				.active();
+				background-position: 0 @is * 6;
+				content: "";
+				display: inline-block;
+			}
+		}
+		.popup {
+			position: absolute;
+			left:0;
+			top: 32px;
+			min-width: 200px;
+			border: 1px solid @border-color;
+			border-radius: @_xs;
+			box-shadow: @border-color 0 0 3px;
+			display: none;
+			padding: @_xs 0;
+			z-index: 10;
+			&.active{
+				display: block;
+			}
+			background-color: @white;
+			.option{
+				white-space: nowrap;
+				padding: @_xs @_s;
+				&:hover{
+					background-color: @selected-color;
+				}
+				&.selected{
+					background-color: @active-color;
+					color: @white;
+				}
+			}
+		}
+
+		.placeholder{
+			color: @light-gray;
+		}
+	}
+	&.checkbox{
+		width: 16px;
+		height: 16px;
+		padding: 0;
+		display: inline-block;
+		position: relative;
+		vertical-align: middle;			
+		.icon16{
+			position: absolute;
+			left: 2px;
+			top: -2px;
+		}
+		&[disabled]{
+			/*.icon16{
+				.icon16.checked();
+			}*/
+		}
+	}
+
+}
+
+button{
+	background-color: #EEEEEE;
+	color: @giant-button-color;
+	box-shadow: rgba(0,0,0, 0.3) 0 0 3px;
+
+	&.btn-primary {
+		background-color: @primary-button-color;
+		&[disabled]{
+			background-color: @light-gray;
+		}
+	}
+
+	&.giant{
+		font-size: 3em;
+		background-color: white;
+		border-radius: 15px;
+		padding: @_m;
+		box-shadow: rgba(0,0,0, 0.3) 0 0 10px;
+	}
+	
+	&.green{
+		background-color: @button-green-color;
+		color: @turuoise-color;
+	}
+
+	&.delete{
+		background-color: @red-color;
+		color: @yellow-color;
+	}
+
+	&.btn{
+		vertical-align: middle;		
+	}
+
+	&:active, &.active {
+		background-color: @active-button-color;
+		box-shadow: inset rgba(0, 0, 0, 0.3) 0 0 10px;
+		color: white;
+	}
+
+	&.round16{
+		border-radius: @_l;
+		width: @_m + @_s;
+		height: @_m + @_s;
+		vertical-align: middle;
+		text-align: center;
+		padding: 0;
+	}
+}
+
+.text-editor-container{
+	.tool-panel{
+		.btn{
+			.active();
+			width: 32px;
+			height: 32px;
+			vertical-align: middle;
+			margin-right: 1em;
+			padding:0;
+		}
+		.custom-panel{
+			flex-grow: 1;
+			text-align: right;
+			white-space: nowrap;
+		}
+		&.small{
+			.btn{
+				width: 20px;
+				height: 20px;
+			}
+		}
+		.pj-input{
+			margin-right: 1em;
+			&.select{
+				min-height: 0;
+				padding: 3px 32px 3px 3px;
+				font-size: 0.8em;
+				.opener{
+					width: 20px;					
+					&::before{
+						.iconic16();
+						height: 16px;
+						width: 16px;
+						background-position: 0 @ix * 16;
+					}
+				}
+
+				.popup{
+					h1,h2,h3,h4,h5,h6,p{
+						margin: 0;
+					}
+					&.active{
+						top: 20px;
+					}
+				}
+			}
+		}
+	}
+	.text-editor{
+		flex-grow: 1;
+		p:first-child{
+			margin-top: 0;
+		}
+		overflow: auto;
+	}
+
+	&:-webkit-full-screen{
+		.text-editor {
+			max-height: none !important;
+		}
+	}
+}
+
+
+
+.dynamic-list {
+	.dynamic-item {
+		margin-bottom: @_xs;
+	}
+}
+
+.field-name{
+	font-size: 0.85em;
+	color: @gray;
+}
+
+.free-form {
+	//height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	.section {
+		margin-bottom: @_s;
+		&:last-child{
+			flex-grow: 1;
+			margin-bottom: 0;
+		}
+		&.buttons{
+			display: flex;
+			align-items: flex-end;
+			vertical-align: bottom;
+		}
+		&.right{
+			justify-content: flex-end;
+		}
+	}
+}

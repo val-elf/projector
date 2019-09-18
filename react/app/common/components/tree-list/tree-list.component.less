@@ -1,0 +1,69 @@
+@import (reference) '~styles/base';
+
+.tree-node{
+	font-size:0.95em;
+	.active();
+
+	.opener{
+		.icon16();
+		content: "";
+		display: inline-block;
+		flex-shrink: 0;
+		background-position: 0 @ix;
+	}
+
+	&.item{
+		padding: 0;
+		margin-bottom: 0;
+	}
+
+	>.row{
+		//padding: @_xs / 2;
+		.tree-item-content{
+			padding: @_xs 0 @_xs @_s;
+			vertical-align: middle;
+			display: inline-block;
+			white-space: nowrap;
+			overflow: hidden;
+			>.row{
+				padding-right: @_s;
+				.item{
+					margin-bottom: 0;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+				margin-bottom: 0;
+			}
+		}
+		margin-bottom: 0;
+	}
+
+
+	&.open{
+		>.row>.opener{
+			background-position: 0 @ix * 2;
+		}
+		>.children{
+			display: block;
+		}
+	}
+
+	&.selected>.row{
+		color: white;
+		>.tree-item-content{
+			background-color: @active-color;
+		}
+		a, .link {
+			color: white;
+		}
+	}
+
+	.opener[disabled]{
+		background-position: 0 @ix * 8;
+	}
+
+	.children{
+		.hidden();
+		margin-left: @_s;
+	}
+}

@@ -1,0 +1,8 @@
+<rt-import name="Fragment" from="react" />
+<Fragment rt-scope="this.state as state">
+    <div class="tool button" rt-class="{ active: state.active }" onClick="{() => this.setActive()}">
+		<span class="icon-eyedrop">
+			<span rt-if="state.active" class="icon-eyedrop-half"></span>
+		</span>
+	</div>
+</Fragment>

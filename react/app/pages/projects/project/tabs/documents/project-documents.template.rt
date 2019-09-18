@@ -1,0 +1,40 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="GalleryContent" from="components/gallery" />
+<rt-import name="CategoryPanel" from="components/category-panel" />
+
+<div class="row wide single" rt-scope="this.context.t as t; this.state as state">
+	<div class="col brick maxw250">
+		<div class="row"><h2 class="banner nospace green">{ t('APP_DOCUMENTS') }</h2></div>
+		<CategoryPanel
+			owner="{this.project}"
+			onSelect="{category => this.selectCategory(category)}"
+			prepareTree="{categories => this.prepareTreeView(categories)}"/>
+	</div>
+
+	<GalleryContent rt-if="state.selectedCategory" category="{state.selectedCategory}"
+		ref="{this.galleryRef}"
+		service="{this.documentsService}"
+		count="{80}"
+		onPreload="{(url, file) => this.prepareOwner(url, file)}"
+	/>
+
+	<Modal ref="{(categoryModal) => this.categoryModal = categoryModal}" minWidth="600px" title="{ t('APP_PROJECT_DOCUMENTS_CREATE_CATEGORY')}">
+		<rt-virtual rt-if="state.editedCategory">
+			<TextField label="Название категории" type="text" className="wide" value="{state.editedCategory.name}" onChange="{(event) => this.changeCategoryName(event, state.editedCategory)}" required="{true}" />
+		</rt-virtual>
+	</Modal>
+
+	<Modal ref="{this.alert}" mode="alert" minWidth="700px" title="{ t('APP_PROJECT_DOCUMENTS_DELETE_AGREE') }">
+		<Scrollable maxHeight="300">
+			<ol class="list">
+				<li class="item" rt-repeat="doc in this.selectedDocuments" key="{doc.id}">
+					<span class="row vmiddle wide"><span class="brick">{doc.title}</span> <IconPreview item="{doc}" width="50" /></span>
+				</li>
+			</ol>
+		</Scrollable>
+	</Modal>
+
+</div>

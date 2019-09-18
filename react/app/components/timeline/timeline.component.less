@@ -1,0 +1,50 @@
+@import (reference) '~styles/base';
+
+.timeline-body{
+	height: @_m;
+	position:relative;
+	border-left: 1px solid @border-color;
+	border-right: 1px solid @border-color;
+
+	.timeline {
+		.wide();
+		height: @_s;
+		border-bottom: 1px solid @gray;
+	}
+
+	&.drag-n-drop {
+		.timeline-roller {
+			display: block;
+		}
+	}
+
+	.timelinepoint-virtual{
+		background: @white;
+		border: 1px solid @dirty-white;
+		box-shadow: rgba(0, 0, 0, 0.6) 0 0 10px;
+		position: absolute;
+		width: @_m;
+		height: @_m;
+		border-radius: @_s;
+		margin-left: -@_s;
+		top: 0;
+		opacity: 0.4;
+		.active();
+		z-index: -1;
+		.date-info{
+			display: block;
+		}
+	}
+
+	.date-info {
+		position: absolute;
+		padding: @_xs;
+		font-size: 0.7em;
+		white-space: nowrap;
+		top: -@_m;
+		background: @white;
+		border: 1px solid @border-color;
+		display: none;
+		border-radius: @_xs;
+	}
+}

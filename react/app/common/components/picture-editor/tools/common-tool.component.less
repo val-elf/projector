@@ -1,0 +1,38 @@
+@import (reference) '~styles/base';
+
+.toolbox {
+	flex-shrink: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+
+	padding-right: @_xs;
+	padding-left: @_xs;
+
+	.bottom {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		padding-bottom: @_xs;
+	}
+
+	.tool {
+		font-size: 20px;
+		padding: 4px;
+		margin-right: 0;
+		width: 30px;
+		min-height: 30px;
+		border-radius: 4px;
+		margin-bottom: @_xs;
+		text-align: center;
+		border: 1px solid rgba(0, 0, 0, 0);
+        &.active {
+			border: 1px solid @border-color;
+			box-shadow: 0 0 3px @shadow-gray;
+			background-color: @blue-color-opacity;
+        }
+    }
+
+}

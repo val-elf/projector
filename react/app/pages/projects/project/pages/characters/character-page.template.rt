@@ -1,0 +1,62 @@
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="TextEdited" from="common/materials" />
+<rt-import name="Popup" from="common/popup" />
+<rt-import name="Tabset" from="common/tabpanel" />
+<rt-import name="Tab" from="common/tabpanel" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="date" from="projector/services/filters" />
+<rt-import name="CharacterCard" from="components/characters" />
+<rt-import name="ArtifactsTab" from="./tabs/artifacts-tab.component" />
+
+<rt-import name="Gallery" from="projector/components/gallery" />
+
+<div class="col brick" rt-scope="this.context.t as t; this.state as state; this.state.character as character">
+	<div class="row">
+		<div class="brick description shortspace row">
+			<div class="brick"><IconPreview item="{character}" width="75" onClick="{() => this.editCharacter()}" defaultIcon="characters" type="circle" expanded="true"/></div>
+			<div class="brick">
+				<h2 class="banner blue head">
+					<TextEdited value="{character.name}" locked="{character.locked}" emptyValue="Безымянный" />
+					<span class="icon16 locker" rt-class="{unlocked: !character.locked}" onClick="{() => toggleLocked()}"></span>
+					<Popup>
+						<div class="list-item" onClick="{() => this.editCharacter()}"><span class="icon16 edit"></span> <span class="link">редактировать</span></div>
+						<div class="list-item" disabled="{character.locked}" onClick="{() => this.deleteCharacter()}"><span class="icon16 delete"></span> <span class="link">удалить</span></div>
+					</Popup>
+				</h2>
+			</div>
+			<div class="brick">
+				<span class="bold">{ t('APP_CHARACTER_' + character.type) }</span>
+				<div>{ character.description }</div>
+			</div>
+		</div>
+		<div class="brick" rt-if="character.dates && character.dates.length">
+			<h4>Ключевые даты</h4>
+			<div class="list small">
+				<div class="item" rt-repeat="container, index in character.dates" key="{index}">{container.type}: {date(container.date)}</div>
+			</div>
+		</div>
+		<div class="brick">
+			<h4>Теги</h4>
+			<div rt-if="!character.tags" class="notation">Теги не определены</div>
+		</div>
+	</div>
+	<Tabset savePosition="{true}" tabId="character-tab-{character.id}" class="row">
+		<Tab label="Главная">
+			<TextEditor rt-if="!character.locked" value="{character.bio}" rows="20" />
+			<div rt-if="character.locked">{ character.bio }</div>
+		</Tab>
+
+		<Tab label="Галерея">
+			<Gallery owner="{character}"/>
+		</Tab>
+
+		<Tab label="Документы">
+		</Tab>
+
+		<Tab label="Артефакты">
+			<ArtifactsTab character="{character}" />
+		</Tab>
+		<Tab label="Задачи"></Tab>
+	</Tabset>
+</div>

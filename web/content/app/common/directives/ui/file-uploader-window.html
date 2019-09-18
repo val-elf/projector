@@ -1,0 +1,38 @@
+<pj-modal-header>Загзузка файлов</pj-modal-header>
+<div class="modal-body uploader">
+	<table class="wide">
+		<thead>
+			<tr><th width="40px"></th><th width="60px">превью</th><th>имя файла</th><th>размер</th><th width="40px"></th></tr>
+		</thead>
+	</table>
+	<div pj-scrollable max-height="500" class="row-item">
+		<table class="wide">
+			<tbody ng-if="files.length">
+				<tr ng-repeat="file in files">		
+					<td width="40px">{{$index + 1}}</td>
+					<td width="60px" align="center">
+						<pj-preview ng-if="file.data" height="55" width="55" item="file.data"></pj-preview>
+						<pj-file-icon ng-if="file.fileInfo" file-info="file.fileInfo"></pj-file-icon>
+					</td>
+					<td><div class="progress"><div class="indicator" ng-style="{width: file.progress + '%'}"><div class="text">{{file.name}}</div></div><div class="text">{{file.name}}</div></div></td>
+					<td>{{file.size | fileSize}}</td>
+					<td width="40px"><span class="icon16 delete" ng-if="!file.uploaded" ng-click="removeFile(file)"></span></td>
+				</tr>
+			</tbody>
+			<tbody ng-if="!files.length">
+				<tr>
+					<td colspan="5">
+						<div class="noitems vmiddle">
+							&lt; Нет выбранных файлов &gt;
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="row">
+		<div class="brick">
+			<button class="round16" ng-disabled="!files.length" ng-click="startUpload()"><span class="icon16 start"></span></button>
+		</div><div class="brick right"><button ng-click="selectFilesImp()"><span class="icon16 add"></span> Добавить</button></div>
+	</div>
+</div>

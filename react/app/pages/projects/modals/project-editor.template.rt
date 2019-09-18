@@ -1,0 +1,13 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Modal" from="projector/common/components/materials" />
+<rt-import name="ProjectCard" from="./project-card.component" />
+
+<Fragment rt-scope="this.context.t as t;">
+	<Modal
+		minWidth="600"
+		title="{this.projectName || t('APP_PROJECT_CREATE_NEW')}"
+		ref="{(modal) => {this.modal = modal;}}"
+	>
+		<ProjectCard />
+	</Modal>
+</Fragement>

@@ -1,0 +1,6 @@
+<div ng-if="item.preview.preview" class="brick vtop">
+	<div class="preview" ng-style="{height: preview.data.height/preview.data.width * 74, backgroundImage: 'url(data:image/*;base64,'+ preview.data.preview+')'}"></div>
+</div>
+<div class="brick vtop">
+	<file-uploader ng-model="_preview"></file-uploader>
+</div>

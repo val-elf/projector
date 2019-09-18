@@ -1,0 +1,31 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="DatePicker" from="material-ui-pickers" />
+
+<div rt-scope="this.context.t as t; this.state as state; this.state.timeline as timeline" class="minw300">
+    <div class="mbm">
+        <TextField class="wide"
+            label="{ t('APP_TIMELINE_NAME') }"
+            defaultValue="{timeline.name}"
+            required
+            onChange="{this.handleChange('name')}"
+        />
+    </div>
+    <div class="mbm">
+        <DatePicker label="{ t('APP_TIMELINE_START') }"
+            class="wide"
+            required
+            value="{timeline.startDate}"
+            maxDate="{timeline.endDate || new Date('9999-12-31T00:00:00Z')}"
+            onChange="{this.handleChange('startDate')}"
+        />
+    </div>
+    <div class="mbm">
+        <DatePicker label="{ t('APP_TIMELINE_END') }"
+            class="wide"
+            clearable
+            value="{timeline.endDate}"
+            onChange="{this.handleChange('endDate')}"
+            minDate="{timeline.startDate || new Date('0001-01-01T00:00:00')}"
+        />
+    </div>
+</div>

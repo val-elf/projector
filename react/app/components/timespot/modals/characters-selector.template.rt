@@ -1,0 +1,16 @@
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+
+<Scrollable rt-scope="this.state as state; this.context.t as t">
+    <div class="list hovered">
+        <div class="item" rt-repeat="character in this.state.allCharacters" key="{character.id}" onClick="{() => this.selectCharacter(character)}"
+            rt-class="{selected: state.selected[character.id]}"
+        >
+            <IconPreview item="{character}" width="75" type="circle" expanded />
+            <div class="info">
+                { character.name }
+            </div>
+        </div>
+        <div rt-if="state.allCharacters && !state.allCharacters.length">{ t('APP_TIMESPOT_NO_AVAILABLE_CHARACTERS') }</div>
+    </div>
+</Scrollable>

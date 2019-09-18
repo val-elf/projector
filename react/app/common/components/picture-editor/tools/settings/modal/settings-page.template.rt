@@ -1,0 +1,32 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="ResizeSquare" from="./resize-square.component" />
+
+<div rt-scope="this.state as state; state.document as document; this.context.t as t" class="image-editor_page-settings">
+	<div>
+		<TextField type="number"
+			label="{ t('APP_IMAGE_WIDTH') }"
+			required="{true}"
+			InputProps="{{ inputProps: { min:200, max: 4000 } }}"
+			value="{ state.width }"
+			onChange="{ this.handleChange('width') }"
+		/>px
+		<span class="icon-linkage" rt-class="{selected: state.linked}" onClick="{ _ => this.toggleLinkedState()}"></span>
+		<TextField type="number"
+			label="{ t('APP_IMAGE_HEIGHT') }"
+			required="{true}"
+			InputProps="{{ inputProps: { min:200, max: 4000 } }}"
+			value="{ state.height }"
+			onChange="{ this.handleChange('height') }"
+		/>px
+	</div>
+	<div>
+		<Checkbox label="{ t('APP_IMAGE_RESIZE') }" checked="{state.isResize}" onChange="{ _ => this.setState({ isResize: !state.isResize }) }"/>
+	</div>
+	<div rt-if="!state.isResize" class="align-center">
+		<ResizeSquare
+			expandWidth="{ state.width >= document.width }"
+			expandHeight="{ state.height >= document.height }"
+			onChange="{ square => this.setSquare(square) }" />
+	</div>
+</div>

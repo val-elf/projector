@@ -1,0 +1,52 @@
+<div
+    rt-scope="this.state as state;
+        state.radius as radius;
+        state.thickness as thickness;
+        state.hue as hue;
+        state.pickerPos as pickerPos;
+        this.tcolorPosition as tcolorPosition;
+        this.valueWidth as valueWidth"
+    class="color-picker_donut" ref="{ this.donutRef }"
+        style="
+            width: { radius * 2 }px;
+            height: { radius * 2 }px;
+        "
+>
+    <div class="donut-shadow donut-shadow_outer"></div>
+    <div class="color-picker_donut-holder" ref="{this.holderRef}"></div>
+    <div class="donut-shadow donut-shadow_inner" style="
+        width: { (radius - thickness) / radius * 100 }%;
+        height: { (radius - thickness) / radius * 100 }%;
+    " ref="{this.innerRef}"></div>
+    <div class="color-picker_donut-slider" style="
+        transform: rotate({hue}deg);
+    ">
+        <div class="donut-slider_marker" style="
+            width: { thickness * 0.5 }px;
+            height: { thickness }px;"></div>
+    </div>
+    <div class="color-picker_donut-value" ref="{this.donutValueRef}"
+        style="
+        left: { tcolorPosition.x }px;
+        top: { tcolorPosition.y }px;
+        transform-origin: { tcolorPosition.cx }px { tcolorPosition.cy }px;
+        width: { valueWidth }px;
+        height: { valueWidth }px;
+        background-image:
+            linear-gradient(150deg, white 0%, rgba(255,255,255, 0) 75%),
+            linear-gradient(30deg, #000000 0%, rgba(0, 0, 0, 0) 75%),
+            radial-gradient(circle at 100%, #{ this.cleanColor } 0%, #{ this.cleanColor } 50%, rgba(128, 128, 128, 1) 100%)
+
+    "></div>
+    <div class="color-picker_marker" style="
+        left: { tcolorPosition.x }px;
+        top: { tcolorPosition.y }px;
+        width: { valueWidth }px;
+        height: { valueWidth }px;
+    ">
+        <div class="donut-value_marker" style="
+            left: { pickerPos.x }px;
+            top: { pickerPos.y }px;
+        "></div>
+    </div>
+</div>

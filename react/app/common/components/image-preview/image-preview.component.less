@@ -1,0 +1,47 @@
+@import (reference) '~styles/base';
+
+.image-container {
+    background-color: #EEEEEE;
+    max-width: 600px;
+    max-height: 600px;
+    background-repeat: no-repeat;
+    transition: background-size 0.1s linear;
+}
+
+.mini-preview {
+    position: absolute;
+    pointer-events: none;
+    padding: @_s;
+    box-shadow: 0 0 @_s @shadow-color;
+    border-radius: @_s + @_xs;
+    top: 50px;
+    left: -70px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    background-color: @white;
+    .canvas {
+        background-size: contain;
+        border-radius: @_xs;
+        position: absolute;
+        opacity: 0.3;
+        z-index: 0;
+    }
+    &.hidden{
+        display: none;
+    }
+    &.active {
+        opacity: 1;
+    }
+    .outview-wrapper {
+        position: relative;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        .outview {
+            position: absolute;
+            border: 1px solid @red-color;
+            background-size: 120px;
+            background-repeat: no-repeat;
+        }
+    }
+}

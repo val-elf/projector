@@ -1,0 +1,19 @@
+<div class="unfolding"
+    rt-class="{
+        hovered: this.state.hovered,
+        freezed: this.freezed
+    }"
+    ref="{this.nodeRef}"
+    style="height: { this.props.height }px"
+>
+    <div class="unfolding-wrapper"
+        style="
+            box-sizing: content-box;
+            max-height: { this.state.height }px
+        "
+    >
+        <div class="unfolding-content" ref="{this.contentRef}">
+            { this.props.children }
+        </div>
+    </div>
+</div>

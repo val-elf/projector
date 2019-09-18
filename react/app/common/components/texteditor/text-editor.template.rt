@@ -1,0 +1,49 @@
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="FormControl" from="@material-ui/core" />
+<rt-import name="Select" from="projector/common/components/materials" />
+
+<div class="text-editor-container col" style="{{height: this.height + 'px'}}" ref="{ this.rootRef }">
+	<div>
+		<div class="tool-panel row vmiddle" rt-class="{small: this.smallButtons, flexWrap: this.smallButtons}" ref="{ this.toolPanelRef }">
+			<Select label="Стиль" value="{this.state.textStyle}" onChange="{this.handleChanges('style')}"
+				ancor="{ this.toolPanel }"
+				MenuProps="{{disableRestoreFocus: true, disableEnforceFocus: true}}"
+				minWidth="120px">
+				<MenuItem rt-repeat="styleName, key in this.textStyles" key="{key}" value="{styleName.format}">{ styleName.title }</MenuItem>
+			</Select>
+			<Select label="Шрифт" value="{this.state.fontName}" onChange="{this.handleChanges('font')}" MenuProps="{{disableRestoreFocus: true, disableEnforceFocus: true}}" minWidth="90px">
+				<MenuItem value="default">Default</MenuItem>
+				<MenuItem rt-repeat="fontName, key in this.fontNames" key="{key}" value="{key}">{fontName.title}</MenuItem>
+			</Select>
+			<Select label="Размер" value="{this.state.fontSize}" onChange="{this.handleChanges('size')}" MenuProps="{{disableRestoreFocus: true, disableEnforceFocus: true}}" minWidth="90px">
+				<MenuItem value="default">Default</MenuItem>
+				<MenuItem rt-repeat="fontSize, key in this.fontSizes" key="{key}" value="{key}">{fontSize.title}</MenuItem>
+			</Select>
+			<Button class="button btn" rt-class="{active: this.styles['bold']}" onClick="{() => this.do('bold')}">
+				<div class="icon16 bold"></div>
+			</Button>
+			<Button class="button btn" rt-class="{active: this.styles['italic']}" onClick="{() => this.do('italic')}">
+				<div class="icon16 italic"></div>
+			</Button>
+			<Button class="button btn" rt-class="{active: this.styles['underline']}" onClick="{() => this.do('underline')}"><div class="icon16 underline"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['alignleft']}" onClick="{() => this.do('alignleft')}"><div class="icon16 align-left"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['aligncenter']}" onClick="{() => this.do('aligncenter')}"><div class="icon16 align-center"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['alignright']}" onClick="{() => this.do('alignright')}"><div class="icon16 align-right"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['alignjustify']}" onClick="{() => this.do('alignjustify')}"><div class="icon16 align-justify"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['unordered']}" onClick="{() => this.doCommand('InsertUnorderedList')}"><div class="icon16 unordered-list"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['ordered']}" onClick="{() => this.doCommand('InsertOrderedList')}"><div class="icon16 ordered-list"></div></Button>
+			<Button class="button btn" rt-class="{active: this.styles['link']}" rt-if="this.options.linkSelector" onClick="{() => this.insertLink()}">
+				<div class="icon16 link"></div>
+			</Button>
+			<Button class="button btn" rt-class="{active: this.styles['image']}" rt-if="this.options.hasPictures" onClick="{() => this.insertPicture()}">
+				<div class="icon16 picture"></div>
+			</Button>
+			<div class="custom-panel">
+				{ this.state.panel }
+			</div>
+		</div>
+	</div>
+	<div class="text-editor" tabindex="0" style="{{minHeight: this.minHeight && (this.minHeight + 'px') || (this.rows * 2) + 'em', maxHeight: this.maxHeight + 'px'}}">
+	</div>
+</div>

@@ -1,0 +1,142 @@
+@import (reference) '~styles/base';
+
+.spot{
+	.active();
+	height: @_xs;
+	margin-top: 7px;
+	position: absolute;
+	background-color: @light-blue-color;
+	opacity: 0.7;
+
+	.title{
+		position: absolute;
+		left: @_s;
+		right: @_s;
+		//width: 100%;
+		text-align: center;
+		top: -@_m;
+		z-index: 1;
+		opacity: 0.3;
+		font-size: 0.7em;
+		span {
+			display: inline-block;
+			background-color: rgba(230,230,230, 0.5);
+			padding: @_xs @_s;
+			white-space: nowrap;
+			border-radius: @_xs;
+			border: 1px solid @white;
+			width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	&.selected{
+		height: @_s;
+		margin-top: 5px;
+		background-color: @soft-blue-color;
+		// z-index: 2;
+		opacity: 1;
+		.title{
+			opacity: 1;
+			font-size: 1em;
+			left: @_s + @_xs /2;
+			right: @_s + @_xs /2;
+			&.single{
+				left: auto;
+				right: auto;
+			}
+		}
+		.point{
+			border-radius: @_s + @_xs;
+			width: @_m + @_xs;
+			height: @_m + @_xs;
+			margin-left: -@_s - @_xs / 2;
+			margin-right: -@_s - @_xs / 2;
+			margin-top: -7.5px;
+
+			.date-info {
+				display: block;
+			}
+
+			.locker{
+				left: 4px;
+				top: 2px;
+			}
+
+		}
+	}
+
+	&.virtual {
+		display: none;
+		opacity: 0.4;
+		&.active{
+			display: block;
+		}
+	}
+
+	&.single{
+		.title {
+			left: auto;
+			right: auto;
+			max-width: 200px;
+			top: -@_l + @_s;
+		}
+		.date-info {
+			top: @_m;
+			left: @_m;
+		}
+	}
+
+	&.created {
+		opacity: 0.9;
+		.point {
+			&.start, &.end {
+				background-color: @gray;
+			}
+		}
+	}
+
+	.point{
+
+		border: 2px solid red;
+
+		.active();
+		background: @white;
+		border: 1px solid @dirty-white;
+		box-shadow: rgba(0, 0, 0, 0.6) 0 0 10px;
+		position: absolute;
+		width: @_m;
+		height: @_m;
+		border-radius: @_s;
+		margin-left: -@_s;
+		margin-top: -7px;
+
+		&.virtual{
+			top: 0;
+			opacity: 0.4;
+		}
+
+		&.start{
+			background-color: @green-color;
+			border-color: @dark-green-color;
+			left:0;
+		}
+
+		&.end{
+			right: 0;
+			margin-right: -@_s;
+			background-color: @red-color;
+			border-color: @dark-red-color;
+		}
+
+		.locker {
+			position: absolute;
+			left: 1px;
+			top: 0px;
+			opacity: 0.5;
+		}
+	}
+
+}
+

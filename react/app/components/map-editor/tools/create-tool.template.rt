@@ -1,0 +1,9 @@
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="Fragment" from="react" />
+
+<Fragment rt-scope="this.state as state">
+	<div class="tool active" disabled="{!state.selected}" onClick="{() => this.select()}">
+		<span class="icon-newitem-full"></span>
+	</div>
+</Fragment>

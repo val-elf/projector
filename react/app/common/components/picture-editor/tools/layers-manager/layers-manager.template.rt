@@ -1,0 +1,10 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="LayersManager" from="../../layers-manager" />
+<Fragment rt-scope="this.state as state; this.editor as editor">
+    <div class="tool button" rt-class="{ active: state.active }" onClick="{() => this.toggleActive()}">
+		<span class="icon-layers">
+			<span rt-if="state.active" class="icon-layers-half"></span>
+		</span>
+	</div>
+	<LayersManager showed="{ state.active }" document="{editor.document}" />
+</Fragment>

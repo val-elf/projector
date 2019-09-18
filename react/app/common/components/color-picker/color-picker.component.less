@@ -1,0 +1,161 @@
+@import (reference) '~styles/base';
+
+svg.clipper {
+    width: 0;
+    height: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.color-picker {
+    position: absolute;
+    z-index: 1000;
+    top: 0px;
+    left: 0px;
+    transition: opacity 0.3s;
+    opacity: 1;
+    pointer-events: none;
+    &:not(.showed) {
+        display: none;
+        opacity: 0;
+    }
+    &_donut {
+        pointer-events: all;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        &-holder{
+            width:100%;
+			height:100%;
+			border-radius: 50%;
+			clip-path: url(#clipper);
+			touch-action: none;
+			position: relative;
+			overflow: hidden;
+			canvas {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+				width: 110%;
+				height: 110%;
+			}
+            /*background: conic-gradient(
+                rgb(255, 0, 0) 0%,
+                rgb(255, 255, 0) 17%,
+                rgb(0, 255, 0) 33%,
+                rgb(0, 255, 255) 50%,
+                rgb(0, 0, 255) 67%,
+                rgb(255, 0, 255) 83%,
+                rgb(255, 0, 0) 100%
+            );*/
+        }
+        .donut-shadow {
+            position: absolute;
+            border-radius: 50%;
+            left: 0;
+            top: 0;
+            margin: 50% 0 0 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.15);
+            &_outer {
+                width: 100%;
+                height: 100%;
+                box-shadow: 0 0 5px black;
+            }
+            &_inner {
+                box-shadow: inset 0 0 5px black;
+                pointer-events: all;
+                touch-action: none;
+            }
+        }
+        &-slider {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+            .donut-slider {
+                &_marker {
+                    cursor: pointer;
+                    border: 1px solid @white;
+                    border-radius: 30%;
+                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+                }
+            }
+        }
+        &-value {
+            clip-path: url('#triangular');
+            position: absolute;
+            touch-action: none;
+        }
+    }
+    &_marker {
+        position: absolute;
+        pointer-events: none;
+        .donut-value {
+            &_marker {
+                position: absolute;
+                width: 15px;
+                height: 15px;
+                margin-left: -7.5px;
+                margin-top: -7.5px;
+                border-radius: 50%;
+                border: 1px solid @white;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+                cursor: pointer;
+            }
+        }
+    }
+    &_saturation {
+        width: 100%;
+        position: absolute;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        pointer-events: all;
+        touch-action: none;
+        .pointer {
+            position: absolute;
+            height: 100%;
+            width: 10px;
+            margin-left: -5px;
+            border: 1px solid white;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        }
+    }
+    &_value {
+        position: absolute;
+        top: 0;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        pointer-events: all;
+        touch-action: none;
+        .pointer {
+            position: absolute;
+            height: 10px;
+            margin-top: -5px;
+            width: 100%;
+            border: 1px solid white;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        }
+    }
+    &_display-color {
+        display: flex;
+        padding: @_xs @_s;
+        justify-content: center;
+        align-content: center;
+        position: absolute;
+        min-width: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        pointer-events: all;
+    }
+}

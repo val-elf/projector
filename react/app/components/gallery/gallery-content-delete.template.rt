@@ -1,0 +1,14 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Scrollable" from="common/scrollable" />
+
+<Fragment>
+    <Scrollable>
+        <div class="list hovered">
+            <div class="item" rt-repeat="item in this" key="{item.id}">
+                <IconPreview item="{item.file || item}" width="55" height="55" highlighted="{false}" />
+                <div class="info">{ item.title || item.name || item.file }</div>
+            </div>
+        </div>
+    </Scrollable>
+</Fragment>

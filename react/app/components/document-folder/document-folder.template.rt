@@ -1,0 +1,21 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="DragNDrop" from="common/drag-n-drop" />
+<rt-import name="Scrollable" from="common/scrollable" />
+
+<Fragment rt-scope="this.state as state">
+	<rt-virtual rt-if="state.type === 'horizontal'">
+		<div class="scroller leftside" ng-click="slideLeft()"></div>
+		<div class="scroller rightside" ng-click="slideRight()"></div>
+		<div class="content"><div class="wrapper">{ this.props.children }</div></div>
+		<div class="hslider"></div>
+	</rt-virtual>
+	<rt-virtual rt-if="state.type === 'bricks'">
+		<Scrollable onReachEnd="{({side}) => this.reachSide(side)}">
+			<DragNDrop>
+				<div class="grid list hovered min150">
+					{ this.props.children }
+				</div>
+			</DragNDrop>
+		</Scrollable>
+	</rt-virtual>
+</Fragment>

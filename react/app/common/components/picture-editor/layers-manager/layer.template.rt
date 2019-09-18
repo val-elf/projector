@@ -1,0 +1,11 @@
+<div rt-scope="this.layer as layer"
+	class="picture-editor_layer item"
+	rt-class="{selected: this.active}"
+	onClick="{() => this.select()}"
+>
+	<div class="picture-editor_layer-visible" onClick="{evt => this.toggleVisible(evt)}">{ layer.isVisible ? '+' : ''}</div>
+	<div class="picture-editor_layer-preview">
+		<canvas ref="{this.canvasRef}" />
+	</div>
+	<div class="picture-editor_layer-title">{ this.layer.name }</div>
+</div>

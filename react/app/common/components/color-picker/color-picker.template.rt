@@ -1,0 +1,27 @@
+<rt-import name="HueSelector" from="./hue-selector.component" />
+<rt-import name="SaturationSelector" from="./saturation-selector.component" />
+<rt-import name="ValueSelector" from="./value-selector.component" />
+
+<div class="color-picker" rt-scope="
+	this.id as id;
+	this.state as state;
+	state.value as value;
+	state.hsv as hsv;
+	state.radius as radius;
+	state.thickness as thickness;
+	state.color as color;
+	this.context.t as t"
+	rt-class="{ showed: state.show }"
+	ref={this.pickerRef}
+	style="left: {state.x}px; top: {state.y}px;"
+>
+	<HueSelector hsv="{hsv}" radius="{radius}" thickness="{thickness}" onChange="{hsv => this.changeColor(hsv)}" onDragPicker="{delta => this.moveColorPicker(delta)}"/>
+	<SaturationSelector hsv="{hsv}" width="{radius * 2}" thickness="{thickness}" onChange="{hsv => this.changeColor(hsv)}" />
+	<ValueSelector hsv="{hsv}" height="{radius * 2}" thickness="{thickness}" onChange="{hsv => this.changeColor(hsv)}" />
+
+	<div class="color-picker_display-color" style="
+		top: { radius * 2 + thickness * 2 }px;
+		color: #{ this.invColor };
+		background-color: #{this.color};
+	"> #{ this.color.toUpperCase() }</div>
+</div>

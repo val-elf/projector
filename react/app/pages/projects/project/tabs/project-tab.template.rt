@@ -1,0 +1,2 @@
+<rt-import name="UIView" from="@uirouter/react" />
+<UIView />

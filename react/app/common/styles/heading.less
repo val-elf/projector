@@ -1,0 +1,52 @@
+h1, h2, h3, h4, h5, h6{
+	color: @heading-color;
+}
+
+h2, h3, h4 {
+	&.banner {
+		color: white;
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		margin-right: @_s;
+		margin-top: 0;
+
+		border-radius: @_s;
+		position: relative;
+		background-color: green;
+
+		&.nospace{
+			margin-bottom: 0;
+		}
+	}
+}
+
+.banner{
+	padding: 0.5em 1em;
+	&.red { background-color: @red-color; }
+	&.orange { background-color: @orange-color;}
+	&.lime{ background-color: @lime-color;}
+	&.blue { background-color: @blue-color; }
+	&.light-blue{ background-color: @light-blue-color;}
+	&.green { background-color: @green-color; }
+	&.yellow { background-color: @yellow-color; }
+	&.violet { background-color: @violet-color; }
+}
+
+@opacity: 0.7;
+.content h2.banner.head{
+	margin-left: -@_s;
+	&.red { background-color: @red-color-opacity; }
+	&.blue { background-color: @blue-color-opacity; }
+	&.green { background-color: @green-color-opacity; }
+	&.yellow { background-color: @yellow-color-opacity; }
+	&.violet { background-color: @violet-color-opacity; }
+}
+
+.brick,
+.tab-pane{
+	h1, h2, h3, h4, h5, h6{
+		margin-top: 0;
+		margin-bottom: @_xs;
+	}
+}

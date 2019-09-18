@@ -1,0 +1,12 @@
+<rt-import name="TextField" from="@material-ui/core" />
+
+<TextField
+	label="{this.props.label}"
+	type="search"
+	className="{this.props.className}"
+	InputProps="{this.searchProps}"
+	onKeyPress="{this.props.onKeyPress}"
+	onBlur="{this.props.onBlur}"
+	onFocus="{this.props.onFocus}"
+	onChange="{this.props.onChange}"
+/>

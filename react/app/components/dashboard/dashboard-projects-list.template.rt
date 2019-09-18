@@ -1,0 +1,14 @@
+<rt-import name="UISref" from="@uirouter/react" />
+
+<rt-import name="Loader" from="projector/common/components/loader" />
+<rt-import name="IconPreview" from="projector/common/components/icon-preview" />
+
+<div rt-scope="this.state as state">
+	<div class="brick"><Loader load={state.loading} /></div>
+	<div class="list">
+		<div class="item" rt-repeat="project in state.projects" key="{ project.id }">
+			<IconPreview item="{project}" className="mrm" width="25" />
+			<UISref to="app.projects.project" params="{{projectId:project.id}}"><a>{ project.name }</a></UISref>
+		</div>
+	</div>
+</div>

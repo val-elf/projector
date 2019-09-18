@@ -1,0 +1,5 @@
+<div class="image-page" ref="{this.rootRef}" tabindex="0">
+	<div class="image-page_watermark"></div>
+    <div class="image-page_viewport" ref="{this.viewportRef}">
+	</div>
+</div>

@@ -1,0 +1,12 @@
+<div rt-scope="this.state as state; this.props.classes as classes"
+    rt-class="{ [classes.root]: true, [this.props.className]: true }"
+    style="width: {state.width}px;"
+    tabindex="0"
+    ref="{this.rootRef}"
+>
+    <div rt-class="{[classes.line]: true}">
+        <div class="meter" style="width: {this.location}%"></div>
+    </div>
+    <div rt-class="{[classes.marker]: true, draggable: state.drag}" style="left: {this.location}%"></div>
+    <label rt-class="{[classes.label]: true}">{ state.label }</label>
+</div>

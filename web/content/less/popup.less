@@ -1,0 +1,26 @@
+.popup-panel{
+	position: absolute;
+	display: none;
+	z-index: 10;
+	padding: @_s + @_xs;
+	border-radius: @_s;
+	border: 1px solid @border-color;
+	box-shadow: 0 0 3px @shadow-color;
+	.blur{
+		position: absolute;
+		top: -@_xs;
+		left: -@_xs;
+		right: -@_xs;
+		bottom: -@_xs;
+		-webkit-filter: blur(2px);
+		filter: blur(2px);
+		background-color: rgba( 250, 231, 209, 0.7);
+		border-radius: @_s;
+		z-index: -1;
+	}
+
+	&.active{
+		display: block;
+	}
+
+}

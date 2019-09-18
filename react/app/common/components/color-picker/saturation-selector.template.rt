@@ -1,0 +1,18 @@
+<div class="color-picker_saturation"
+    rt-scope="this.state as state;
+    state.width as width;
+    state.value as value;
+    state.thickness as thickness;
+    state.hue as hue;
+    state.saturation as saturation;"
+    style="
+    top: { width + thickness / 2 }px;
+    height: { thickness }px;
+    background-image: linear-gradient(to right, #{this.getColorFromHSV(hue, 0, value)} 0, #{this.getColorFromHSV(hue, 1, value)} 100%)"
+    ref="{this.markerRef}"
+>
+    <div class="pointer" style="
+        position:absolute;
+        left: { saturation * 100 }%
+    "></div>
+</div>

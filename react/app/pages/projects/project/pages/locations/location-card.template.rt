@@ -1,0 +1,41 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Tabset" from="common/tabpanel" />
+<rt-import name="Tab" from="common/tabpanel" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="TextEditorPanel" from="common/texteditor" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="LocationMap" from="components/locations" />
+
+<div class="col brick" rt-scope="this.context.t as t; this.state as state; this.state.location as location; this.state.parent as parent">
+	<div class="row">
+		<IconPreview class="brick shortspaced right" item="{location}" onClick="{() => this.editLocation()}" width="75" defaultHeight="75" place-type="auto" max-height="75" expanded="true" />
+		<div class="brick"><h2 class="banner nospace lime">{ location.name }</h2></div>
+		<div class="brick">
+			<div class="category">{ t('APP_LOCATION_' + location.locationType) }{ location.subtype ? ', ' + location.subtype : '' }</div>
+			<div class="description maxw500">{ location.description }</div>
+		</div>
+	</div>
+	<Tabset class="tab" savePosition="{true}" tabId="location-tab-{location.id}">
+		<Tab label="{ t('APP_DESCRIPTION') }">
+			<TextEditor value="{location.info}" rows="20" ref="{ editor => this.infoEditor = editor }">
+					<TextEditorPanel>
+						<div class="icon fullscreen" onClick="{() => this.infoEditor.setToFullScreen()}"></div>
+						<Button onClick="{() => this.save()}">{ t('APP_SAVE') }</Button>
+					</TextEditorPanel>
+			</TextEditor>
+		</Tab>
+		<Tab label="{ t('APP_DOCUMENTS') }">
+		</Tab>
+		<Tab label="{ t('APP_MAP') }">
+			<div class="col">
+				<LocationMap location="{location}" locations="{state.locations}" ref="{ editor => this.editor = editor }" />
+				<div class="row">
+					<div class="brick">
+						<Button onClick="{() => this.save()}">{ t('APP_SAVE') }</Button>
+					</div>
+				</div>
+			</div>
+		</Tab>
+	</Tabset>
+</div>

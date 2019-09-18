@@ -1,0 +1,13 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="MapEditor" from="components/map-editor" />
+
+<Fragment rt-scope="this.state as state; this.state.location as location">
+	<div class="row vmiddle tools-properties">
+		{ this.getToolProperties() }
+	</div>
+	<div class="row growth">
+		<div class="map-editor" rt-scope="this.context.t as t; this.state as state; this.state.location as location">
+			<MapEditor location="{location}" ref="{ mapEditor => this.mapEditor = mapEditor }" onChangeTool="{ tool => this.setTool(tool) }" />
+		</div>
+	</div>
+</Fragment>

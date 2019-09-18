@@ -1,0 +1,29 @@
+<rt-import name="Fragment" from="react" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state; state.frame as frame">
+    <div class="storyboard-intersection" rt-repeat="isect, index in frame.intersections.filter(({ own }) => own).map(({isect}) => isect)" key="{index}"
+        style="left: {isect.left}px; top: {isect.top}px; width: {isect.width}px; height: {isect.height}px"
+    ></div>
+    <div class="storyboard-frame"
+        tabindex="0"
+        ref="{this.frameRef}"
+        style="
+            left: {frame.left - this.padding}px;
+            top: {frame.top - this.padding}px;
+            padding: {this.padding}px;
+        "
+        onClick="{ evt => this.select(evt) }"
+        rt-class="{selected: this.state.selected}"
+    >
+        <div class="storyboard-frame_inner"
+            style="width: {frame.width}px; height: {frame.height}px; background-image: url('{ state.background }');"
+        >
+            <div class="controls">
+                <div class="icon16 edit" onClick="{() => this.setEditMode()}"></div>
+            </div>
+        </div>
+    </div>
+    <div class="storyboard-intersection" rt-repeat="isect, index in frame.intersections.filter(({ own }) => !own).map(({isect}) => isect)" key="{index}"
+        style="left: {isect.left}px; top: {isect.top}px; width: {isect.width}px; height: {isect.height}px"
+    ></div>
+</Fragment>

@@ -1,0 +1,17 @@
+<div class="project-header row">
+	<div ng-click="processIconClick()" class="icon project-preview active" ng-if="project.preview.preview" ng-style="{height: project.preview.height / project.preview.width * 74, backgroundImage: 'url(data:image/jpg;base64,' + project.preview.preview + ')'}"></div>
+	<div class="brick">
+		<h1>
+			<span ng-if="!project.preview.preview" class="project-icon active" ng-click="processIconClick()"></span>
+			<text-edited ng-if="projectCtrl.state === 'app.projects-item'" edited ng-model="project.name" te-change="updateProjectName()"></text-edited>
+			<span ng-if="projectCtrl.state !== 'app.projects-item'" ng-bind="project.name"></span>
+		</h1>
+		<div class="project-navigation" ng-if="projectCtrl.viewState !== 'base'">
+			<span ng-class="{active: projectCtrl.viewName === item.viewname}" class="nav-item"  ng-repeat="item in menu">
+				<a ui-sref="{{item.state}}({projectId: project._id, tabname:'{{item.tabname}}' })">{{item.title}}</a>
+			</span>
+		</div>
+	</div>
+</div>
+
+<ui-view></ui-view>

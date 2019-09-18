@@ -1,0 +1,11 @@
+<rt-import name="LanguageSwitcher" from="projector/components/language" />
+
+<div class="header">
+	<div class="menu">
+		<rt-virtual rt-repeat="state in this.navigation">
+				<span rt-if="!state.hidden">{this.renderNavItem(state)}</span>
+		</rt-virtual>
+	</div>
+	<LanguageSwitcher />
+	<div class="user-info">{this.state.user.login} | <a onClick="() => this.logout()">Logout</a></div>
+</div>

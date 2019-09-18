@@ -1,0 +1,5 @@
+<div class="text-edited brick vmiddle text-edited-field" ng-mouseenter="showEdit()" ng-mouseleave="hideEdit()">
+	<span class="actioned" ng-transclude ng-bind="viewValue" ng-show="locked || !edited" ng-click="editMode()"></span>
+	<input class="hidden" type="text" ng-model="editValue" ng-blur="updateChange()" ng-change="changeNgValue()" ng-required="true" placeholder="Enter {{type}}"/>
+	<span class="text-edited-icon" ng-show="!locked && (hovered || edited)" ng-click="editMode()"></span>	
+</div>

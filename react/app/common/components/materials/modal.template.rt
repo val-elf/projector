@@ -1,0 +1,14 @@
+<rt-import name="Modal" from="@material-ui/core" />
+
+<Modal rt-scope="this.state as state" open="{this.state.isShow}" onClose="{() => this.close()}" className="modal {state.className || ''}">
+	<div className="modal-dialog" style="{{minWidth: this.state.minWidth + 'px'}}">
+		<div class="modal-header">
+			<div class="modal-title">{this.title}</div>
+			<div class="icon close-icon" onClick="() => this.close() "></div>
+		</div>
+		<div class="modal-body">{this.children}</div>
+		<div class="modal-footer" rt-if="state.showFooter">
+			{ state.footer || this.defaultFooter }
+		</div>
+	</div>
+</Modal>

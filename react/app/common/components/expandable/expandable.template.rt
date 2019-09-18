@@ -1,0 +1,4 @@
+<div class="expandable" rt-class="{expanded: this.state.expanded}">
+	{ this.state.head }
+	{ this.state.body }
+</div>

@@ -1,0 +1,18 @@
+<pj-modal-header>Назначение персонажей на таймспот &laquo;{{timespot.title}}&raquo;</pj-modal-header>
+<div class="modal-body">
+	<div class="row">
+		<div class="brick search-filter"><input type="search" placeholder="Имя персонажа"></div>
+	</div>
+	<div pj-scrollable max-height="500">
+		<div class="list">
+			<div class="item row" ng-repeat="character in ctrl.characters">
+				<div class="brick shortspace"><span checkbox ng-model="ctrl.selected[character._id]"></span></div>
+				<div class="brick shortspace right"><pj-preview item="character"></pj-preview></div>
+				<div class="brick">{{character.name}}</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

@@ -1,0 +1,133 @@
+@import (reference) '~styles/base';
+
+.tabset{
+	display: flex;
+	flex-grow: 1;
+	height: 100%;
+	flex-direction: column;
+
+	&.vertical {
+		height: 100%;
+		flex-direction: row;
+
+		>.nav-tabs{
+			display: inline-block;
+			vertical-align: top;
+			// border-right: 1px solid @border-color;
+			border-bottom-width: 0;
+			padding-top: @_m;
+			flex-shrink: 0;
+			margin-left: 0;
+			li{
+				display: block;
+				text-align: right;
+				padding-left: @_s;
+				margin-bottom: @_s;
+				&.active{
+					padding-left: 0;
+				}
+				&.active a{
+					// border-width: 1px;
+					// border-bottom: 1px solid @border-color;
+					border-right-color: transparent;
+					box-shadow: @soft-gray 0px 0px 3px;
+					background-color: @selected-color;
+				}
+
+			}
+			li a{
+				text-align: left;
+				width: 100%;
+				padding: @_m;
+				border-radius: @_s 0 0 @_s;
+				border-width: 0;
+				margin-right: -1px;
+				background-color: transparent;
+				&:hover {
+					background-color: @selected-color;
+				}
+			}
+		}
+		>.tab-content{
+			&:before{
+				background: -webkit-linear-gradient(left, @hover-color, rgba(255,255,255, 0));
+				border-radius: @_s;
+				width: 50px;
+				height: 100%;
+			}
+			display: block;
+			border-radius: 0 @_s @_s 0;
+			.tab-pane {
+				height: 100%;
+			}
+		}
+	}
+
+	.nav-tabs{
+		list-style-type: none;
+		margin:0;
+		padding:0;
+		display: flex;
+		// border-bottom: 1px solid @border-color;
+		position: relative;
+		flex-shrink: 0;
+		margin-left: @_s;
+		li{
+			display: block;
+			a {
+				display: inline-block;
+				padding: @_xs @_s;
+				margin-right: 1em;
+				border-radius: @_s @_s 0 0;
+				background-color: transparent;
+				&:hover {
+					background-color: @selected-color;
+				}
+			}
+			&.active a{
+				border-bottom-color: transparent;
+				color: @wolf-gray;
+				text-decoration: none;
+				cursor: text;
+				margin-bottom: -1px;
+				// border: 1px solid @border-color;
+				border-bottom: 1px solid transparent;
+				box-shadow: @soft-gray 0px 0px 3px;
+				background-color: @selected-color;
+			}
+		}
+	}
+
+	.tab-content{
+		flex-grow: 1;
+		display: flex;
+		border: none;
+		padding: @_s 0  0 @_m;
+		border-top-width: 0;
+		position:relative;
+		z-index: 1;
+
+		&:before{
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 50px;
+			width: 100%;
+			background: -webkit-linear-gradient(top, @hover-color, rgba(255,255,255, 0));
+			border-radius: @_s;
+		}
+
+		.tab-pane {
+			position: relative;
+			flex-grow: 1;
+			&:not(.active ) {
+				display: none;
+			}
+			&.active{
+				flex-grow: 1;
+				cursor: initial;
+			}
+		}
+	}
+}

@@ -1,0 +1,1 @@
+export { IconPreview } from "./icon-preview.component";

@@ -1,0 +1,26 @@
+<div ng-controller="ProjectLocationsController as ctrl">
+	<div ng-if="ctrl.location">
+		<pj-location-page item="ctrl.location"></pj-location-page>
+	</div>
+	<div ng-if="!ctrl.location">
+		<div class="row wide">
+			<h2 class="banner nospace lime">Локации</h2>
+			<button class="add add-item-icon" ng-click="ctrl.createLocation()"></button>
+		</div>
+		<div pj-scrollable max-height="500">
+			<ul class="items-list hovered">
+				<li class="item" ng-repeat="location in ctrl.locations">
+					<div><pj-preview item="location" ng-click="ctrl.editLocation(location)" width="75"></pj-preview></div>&nbsp;
+					<div class="info">
+						<h4><a ui-sref="app.projects-item.location({itemId: location._id})">{{location.name || 'no named'}}</a></h4>
+						<div class="cathegory">{{location.locationType | locationTypeLocalize}}{{location.subtype ? ', ' + location.subtype : ''}}</div>
+						<div class="description maxw500" ng-bind="location.description"></div>
+					</div>
+					<div class="hover-buttons">
+						<button class="delete btn" ng-click="ctrl.deleteLocation(location)"><span class="icon16 delete"></span></button>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

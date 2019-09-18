@@ -1,0 +1,8 @@
+<div class="scrollable" ng-style="{maxHeight: maxHeight, minHeight: minHeight}">
+	<div class="slider" ng-transclude></div>
+	<div class="shadow-edge start" ng-class="{active: ctrl.getCurrentPos() < 0}"></div>
+	<div class="shadow-edge end" ng-class="{active: ctrl.getCurrentPos() > ctrl.topPos}"></div>
+	<div class="scroll-marker-dock" ng-class="{showed: ctrl.inMove || ctrl.markerDrag, hidden: ctrl.nonmovable}">
+		<div class="scroll-marker" ng-class="{active: ctrl.inMove || ctrl.markerDrag}" ng-style="{top: ctrl.markerPos}"></div>
+	</div>
+</div>

@@ -1,0 +1,23 @@
+<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="TimeSpot" from="../timespot/timespot.component" />
+
+<div class="timeline-body" rt-scope="this.state as state" ref="{this._root}" onMouseDown="{(event) => this.startTimespot(event)}">
+	<div class="timeline">
+		<TimeSpot
+            spot="{this.virtualSpot}"
+            isVirtual="{true}"
+            ref="{(virtual) => this.virtual = virtual}"
+            onСhange="{ (spot) => this.createTimespot(spot) }"
+        />
+        <TimeSpot rt-repeat="spot in this.spots"
+            key="{spot.id}"
+            spot="{spot}"
+            onSpotSelect="{ spot => this.selectSpot(spot) }"
+            selected="{ state.selected === spot }"
+            onChange="{ (spot) => this.updateTimespot(spot) }"
+        />
+	</div>
+	<div class="timelinepoint-virtual animate-show" rt-class="{hidden: !state.showHighlighter}" style="{{left:state.highlighterPosition + '%'}}">
+		<div class="date-info" rt-if="this.virtDate">{ date(this.virtDate) }</div>
+	</div>
+</div>

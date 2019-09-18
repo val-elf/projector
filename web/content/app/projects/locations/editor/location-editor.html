@@ -1,0 +1,18 @@
+<div class="map-editor">	
+	<div class="map-window">
+		<pj-location-map ng-if="parent" item="parent" map-mode="parent"></pj-location-map>
+		<pj-location-map item="location"></pj-location-map>
+	</div>
+	<div class="toolbox">
+		<div class="tool" ng-disabled="mapCtrl.currentTool !== 'pen'" ng-click="mapCtrl.selectTool('pen')"><span class="icon pen"></span></div>
+		<div class="tool" ng-disabled="mapCtrl.currentTool !== 'pane'" ng-click="mapCtrl.selectTool('pane')"><span class="icon pane"></span></div>
+		<div class="tool" ng-disabled="mapCtrl.currentTool !== 'add'" ng-click="mapCtrl.selectTool('add')">
+			<span class="icon add-item-icon"></span>
+			<div class="popup" ng-if="mapCtrl.currentTool === 'add'">
+				<pj-select ng-model="mapCtrl.itemType">
+					<pj-option value="city">Город</pj-option>
+				</pj-select>
+			</div>
+		</div>
+	</div>
+</div>

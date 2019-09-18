@@ -1,0 +1,42 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="ToolPanel" from="../tool-panel" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="Slider" from="common/materials" />
+<rt-import name="DragNDrop" from="common/drag-n-drop" />
+<rt-import name="Layer" from="./layer.component" />
+
+<Fragment rt-scope="this.state as state; this.context.t as t; this.document.activeLayer as layer">
+	<ToolPanel showed="{state.showed}" title="{ t('APP_PICTURES_LAYERS_MANAGER') }">
+		<div class="picture-editor_layer_settings">
+			<div class="row">
+				<div class="brick ovelays">
+					<Select label="layer overlay" onChange="{ evt => this.setLayerOverlay(evt.target.value) }" value="{layer.overlay}">
+						<MenuItem rt-repeat="overlay in this.overlays" key="{overlay}" value="{overlay}">
+							{ overlay }
+						</MenuItem>
+					</Select>
+				</div>
+				<div class="brick opacity">
+					<Slider  value="{layer.opacity}" label="{ 'opacity ' + Math.round(layer.opacity * 100) }" type="number" onChange="{ value => this.setLayerOpacity(value) }" min="0" max="1" step="0.01" />
+				</div>
+			</div>
+		</div>
+		<div class="picture-editor_layers">
+			<Scrollable maxHeight="{500}">
+				<DragNDrop onChangeOrder="{(oldIndex, newIndex) => this.changeLayersOrder(oldIndex, newIndex)}" receivers="{state.actions}">
+					<div class="list hovered">
+						<Layer rt-repeat="layer in this.orderedLayers" layer="{layer}" key="{layer.id}" draggableItem="{true}" />
+					</div>
+				</DragNDrop>
+			</Scrollable>
+		</div>
+		<div class="picture-editor_actions">
+			<div class="picture-editor_actions-button layer-link" onClick="{() => this.linkLayers()}"></div>
+			<div class="picture-editor_actions-button layer-mask" onClick="{() => this.maskLayer()}"></div>
+			<div class="picture-editor_actions-button layer-add" onClick="{() => this.addNewLayer()}"></div>
+			<div class="picture-editor_actions-button layer-remove" ref="{this.removeLayerRef}" onClick="{() => this.removeLayer()}"></div>
+		</div>
+	</ToolPanel>
+</Fragment>

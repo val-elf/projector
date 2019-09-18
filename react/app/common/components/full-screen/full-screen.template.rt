@@ -1,0 +1,4 @@
+<rt-import name="Fragment" from="react" />
+<div class="fullscreen-page" rt-class="{expand: this.state.expand}">
+    { this.props.children }
+</div>

@@ -1,0 +1,69 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="ILink" from="common/item-link" />
+<rt-import name="DragNDrop" from="common/drag-n-drop" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Exchanger" from="common/items-exchanger" />
+<rt-import name="ExchangerPanel" from="common/items-exchanger" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="ArtifactCharactersDetails" from="./artifact-characters-details.component" />
+<rt-import name="Involve" from="./involve.component" />
+
+<Fragment rt-scope="this.artifact as artifact; this.state as state; this.node as node">
+    <Exchanger>
+        <ExchangerPanel
+            name="source"
+            moveTo="target"
+            class="size1of5"
+            title="Доступны"
+            getMovedItemIndex="{involve => this.getCharacterPosition(involve)}"
+            onExchange="{item => this.addInvolvement(item)}">
+            <Scrollable class="brick">
+                <div class="list hovered flyout">
+                    <div class="item"
+                        rt-repeat="character in state.characters"
+                        key="{character.id}"
+                        item="{character}"
+                    >
+                        <IconPreview class="mbxs" item="{character}" width="55" height="55" type="circle" />
+                        <div class="info">
+                            <ILink item="{character}"><h4>{ character.name }</h4></ILink>
+                        </div>
+                    </div>
+                    <div rt-if="state.characters.length === 0">
+                        <span class="comment">{ 'Все персонажи задействованы' }</span>
+                    </div>
+                </div>
+            </Scrollable>
+        </ExchangerPanel>
+        <ExchangerPanel
+            name="target"
+            moveTo="source"
+            title="Задействованы"
+            itemClass="size1of3"
+            ref="{this.involvedRef}"
+        >
+            <Scrollable class="brick">
+                <DragNDrop onChangeOrder="{(oldIndex, newIndex) => this.changeInvolveOrder(oldIndex, newIndex)}">
+                    <div class="grid list min300 hovered flyout">
+                        <Involve
+                            rt-repeat="involve in state.involves"
+                            rt-scope="involve.character as char"
+                            key="{char.id}"
+                            item="{involve}"
+                            onOpenDetails="{_ => this.openDetails(involve)}"
+                            onRemove="{_ => this.removeInvolved(involve)}"
+                            draggableItem="{true}"
+                        />
+                    </div>
+                </DragNDrop>
+            </Scrollable>
+        </ExchangerPanel>
+    </Exchanger>
+
+    <Modal ref="{_ => this.editor = _}" title="{_ => this.getInvolvedTitle(_)}" minWidth="500">
+        <ArtifactCharactersDetails onChange="{_ => this.applyCharacters(_)}" />
+    </Modal>
+</Fragment>

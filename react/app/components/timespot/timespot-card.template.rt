@@ -1,0 +1,31 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="TextField" from="@material-ui/core" />;
+<rt-import name="DateTimePicker" from="material-ui-pickers" />
+
+<div rt-scope="this.context.t as t; this.state as state; this.state.timespot as timespot; this.state.wspot as origin">
+    <div class="row">
+        <TextField  class="wide" label="{ t('APP_TIMESPOT_NAME') }" onChange="{_ => this.setTimespotName(_.target.value)}" value="{ timespot.title }" />
+    </div>
+    <Fragment rt-if="timespot.id">
+        <div class="row">
+            <DateTimePicker
+                ampm="{false}"
+                label="{ t('APP_TIMESPOT_START') }"
+                value="{ timespot.startDate }"
+                maxDate="{ timespot.endDate }"
+                minDate=" { origin.timeline.startDate }"
+                onChange="{ (value) => this.changeStartDate(value) }"
+            />
+        </div>
+        <div class="row">
+            <DateTimePicker
+                ampm="{false}"
+                label="{ t('APP_TIMESPOT_END') }"
+                value="{ timespot.endDate }"
+                minDate="{ timespot.startDate }"
+                maxDate="{ origin.timeline.endDate }"
+                onChange="{ (value) => this.changeEndDate(value) }"
+            />
+        </div>
+    </Fragment>
+</div>

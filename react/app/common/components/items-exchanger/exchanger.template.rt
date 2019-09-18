@@ -1,0 +1,3 @@
+<div class="row single" rt-scope="this.state as state">
+    { state.panels }
+</div>

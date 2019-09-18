@@ -1,0 +1,11 @@
+<div class="gallery {{type}}">
+	<div ng-if="type=='horizontal'">
+		<div class="scroller leftside" ng-click="slideLeft()"></div>
+		<div class="scroller rightside" ng-click="slideRight()"></div>
+		<div class="content"><div class="wrapper" ng-transclude></div></div>
+		<div class="hslider"></div>
+	</div>
+	<div ng-if="type=='bricks'">
+		<div class="content bricks"><div class="wrapper" ng-transclude></div></div>
+	</div>
+</div>

@@ -1,0 +1,7 @@
+<div class="tree-node item" ng-class="{selected: isSelected()}" title="{{nodeTitle}}">
+	<div class="row vmiddle" ng-click="toggleActive($event)">
+		<div class="brick opener vmiddle shortspace" ng-click="toggleNode($event)" ng-disabled="!children.length"></div>
+		<div class="tree-item-content brick" ng-transclude></div>
+	</div>
+	<div class="children"></div>
+</div>

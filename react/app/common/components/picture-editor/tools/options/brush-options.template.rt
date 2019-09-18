@@ -1,0 +1,12 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Slider" from="common/materials" />
+
+<Fragment>
+	<Button class="option-item" onClick="{ _ => this.showSettings() }"><span class="icon-settings-full"></span></Button>
+    <Slider class="option-item" value="{this.state.size}" label="{ 'brush size ' + this.state.size }" type="number" onChange="{ value => this.setSize(value) }" min="1" max="120" step="1" />
+    <Slider class="option-item" value="{this.state.flow}" label="{ 'flow ' + Math.round(this.state.flow * 100) + '%' }" type="number" onChange="{ value => this.setFlow(value) }" step="0.01" />
+    <Slider class="option-item" value="{this.state.hardness}" label="{ 'hardness ' + Math.round(this.state.hardness * 100) + '%' }" type="number" onChange="{ value => this.setHardness(value) }" step="0.01" />
+    <Slider class="option-item" value="{this.state.opacity}" label="{ 'opacity ' + Math.round(this.state.opacity * 100) +'%' }" type="number" onChange="{ value => this.setOpacity(value) }" step="0.01" />
+</Fragment>

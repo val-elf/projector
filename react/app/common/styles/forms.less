@@ -1,0 +1,147 @@
+
+textarea{
+	resize: none;
+	font-family: inherit;
+}
+
+.search-filter{
+	position:relative;
+	display: inline-block;
+	input[type='search']{
+		padding-left: 35px;
+		height: 32px;
+		width: 100%;
+	}
+	&:before{
+		content: "";
+		.search-icon();
+		position: absolute;
+		top:0;
+	}
+}
+
+button{
+	/*background-color: #EEEEEE;
+	color: @giant-button-color;*/
+	/* box-shadow: rgba(0,0,0, 0.3) 0 0 3px; */
+
+	&.command {
+		padding: 5px;
+	}
+
+	&.btn-primary {
+		background-color: @primary-button-color;
+		&[disabled]{
+			background-color: @light-gray;
+		}
+	}
+
+	&.giant{
+		font-size: 3em;
+		background-color: white;
+		border-radius: 15px;
+		padding: @_m;
+		box-shadow: rgba(0,0,0, 0.3) 0 0 10px;
+	}
+
+	&.green{
+		background-color: @button-green-color;
+		color: @turuoise-color;
+	}
+
+	&.delete{
+		background-color: @red-color;
+		color: @yellow-color;
+	}
+
+	&.btn{
+		vertical-align: middle;
+	}
+
+	&:active, &.active {
+		background-color: @active-button-color;
+		box-shadow: inset rgba(0, 0, 0, 0.3) 0 0 10px;
+		color: white;
+	}
+
+	&.round16{
+		border-radius: @_l;
+		width: @_m + @_s;
+		height: @_m + @_s;
+		vertical-align: middle;
+		text-align: center;
+		padding: 0;
+	}
+}
+
+.text-editor-container{
+	.tool-panel{
+		.btn{
+			.active();
+			width: 32px;
+			height: 32px;
+			vertical-align: middle;
+			margin-right: 1em;
+			padding:0;
+		}
+		.custom-panel{
+			flex-grow: 1;
+			text-align: right;
+			white-space: nowrap;
+		}
+		&.small{
+			.btn{
+				width: 20px;
+				height: 20px;
+			}
+		}
+	}
+	.text-editor{
+		flex-grow: 1;
+		p:first-child{
+			margin-top: 0;
+		}
+		overflow: auto;
+	}
+
+	&:-webkit-full-screen{
+		.text-editor {
+			max-height: none !important;
+		}
+	}
+}
+
+
+
+.dynamic-list {
+	.dynamic-item {
+		margin-bottom: @_xs;
+	}
+}
+
+.field-name{
+	font-size: 0.85em;
+	color: @gray;
+}
+
+.free-form {
+	//height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	.section {
+		margin-bottom: @_s;
+		&:last-child{
+			flex-grow: 1;
+			margin-bottom: 0;
+		}
+		&.buttons{
+			display: flex;
+			align-items: flex-end;
+			vertical-align: bottom;
+		}
+		&.right{
+			justify-content: flex-end;
+		}
+	}
+}

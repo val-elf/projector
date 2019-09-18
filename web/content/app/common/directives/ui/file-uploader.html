@@ -1,0 +1,13 @@
+<div class="brick">
+	<div class="row">
+		<div class="brick"><button ng-click="selectFiles()"><span class="icon16 upload"></span><span ng-transclude>Загрузить...</span></button></div>
+		<div ng-if="mode=='button' && files.length>1">
+			<ul class="files">
+				<li ng-repeat="file in files"><file-preview file="file"></file-preview> {{file.name}}</li>
+			</ul>
+		</div>
+		<div class="brick" ng-if="mode=='button' && file">
+			<div class="preview brick" style="width:30px;height:30px; background-repeat:no-repeat; background-position: 50% 50%; background-size: contain;" ng-style="{backgroundImage:'url(data:' + file.data.type + ';base64,'+file.data.preview+')'}"></div><div class="file-info">{{file.name}}</div>
+		</div>
+	</div>
+</div>

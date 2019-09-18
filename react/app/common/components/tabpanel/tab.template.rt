@@ -1,0 +1,6 @@
+<rt-import name="UISref" from="@uirouter/react" />
+
+<li className="tab {this.state.active ? 'active': ''}">
+	<UISref rt-if="this.props.state" to="{this.props.state}"><a>{ this.props.label }</a></UISref>
+	<a rt-if="!this.props.state" onClick="{() => this.select()}">{ this.props.label }</a>
+</li>

@@ -1,0 +1,39 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="LocationCard" from="components/locations" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state">
+	<div rt-if="state.selectedlocation">
+		<!-- <LocationPage item="{this.selectedLocation}" /> -->
+	</div>
+	<div class="col" rt-if="!this.selectedLocation">
+		<div class="row wide">
+			<h2 class="banner nospace lime">Локации</h2>
+			<Button onClick="{() => this.createLocation()}"><span class="add add-item-icon"></span></Button>
+		</div>
+		<div class="brick">
+			<Scrollable onReachEnd="{({side}) => this.freshLocations(side)}">
+				<div class="list hovered">
+					<div class="item row" rt-repeat="location in state.locations" key="{location.id}">
+						<IconPreview class="brick shortspace right" item="{location}" onClick="{() => this.editLocation(location)}" width="75" />
+						<div class="info">
+							<h4><UISref to="app.projects.project.locations.location" params="{{locationId: location.id}}"><a>{ location.name || 'no named' }</a></UISref></h4>
+							<div class="category">{ t('APP_LOCATION_' + location.locationType) }{ location.subtype ? ', ' + location.subtype : '' }</div>
+							<div class="description maxw500">{ location.description }</div>
+						</div>
+						<div class="hover-buttons">
+							<Button onClick="{() => this.deleteLocation(location)}"><span class="icon16 delete"></span></Button>
+						</div>
+					</div>
+				</div>
+			</Scrollable>
+		</div>
+	</div>
+	<Modal ref="{(editor) => this.editor = editor}">
+		<LocationCard />
+	</Modal>
+</Fragment>

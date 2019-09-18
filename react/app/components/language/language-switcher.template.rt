@@ -1,0 +1,5 @@
+<div className="language-select" style="white-space: nowrap">
+	<span rt-repeat="lang in this.languages" key="{lang}">
+		<span onClick="() => this.setLanguage(lang)" class="control {lang === this.props.language ? 'current' : ''}">{ lang }</span> |
+	</span>
+</div>

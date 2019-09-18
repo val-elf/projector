@@ -1,0 +1,7 @@
+<rt-import name="FormControlLabel" from="@material-ui/core" />
+
+<FormControlLabel
+  control="{this.checkboxControl}"
+  label="{this.props.label}"
+>
+</FormControl>

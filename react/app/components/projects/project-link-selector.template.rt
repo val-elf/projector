@@ -1,0 +1,30 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+
+<div rt-scope="this.state as state; this.context.t as t">
+    <Select class="wide" value="{ state.linkType}" onChange=" { evt => this.selectLinkType(evt.target.value) }">
+        <MenuItem value="projectItem">Ссылка на объект проекта</MenuItem>
+        <MenuItem value="external">Общая ссылка</MenuItem>
+    </Select>
+
+    <div rt-if="state.linkType === 'projectItem'">
+        <Select class="row wide" value="{ state.group }" onChange="{ evt => this.selectGroup(evt.target.value)}">
+            <MenuItem rt-repeat="type in this.commonTypes" key="{type}" value="{type}">{ type }</MenuItem>
+        </Select>
+
+        <div rt-if="state.group === 'characters'" class="list hovered">
+            <div rt-repeat="character in this.state.characters" class="item" key="{character.id}">
+                <IconPreview item="{character}" width="50" type="circle" expanded="{true}" />
+                <div class="info">{ character.name }</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div rt-if="state.linkType === 'external'">
+        <TextField label="Адрес ссылки" class="row wide" />
+    </div>
+</div>

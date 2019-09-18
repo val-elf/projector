@@ -1,0 +1,33 @@
+<div class="row" ng-controller="CharacterGalleryController as galleryCtrl">
+	<div class="brick size1of6 maxw300 minw200 shortspace">
+		<h4>Коллекции</h4>
+		<div class="row vmiddle">
+			<div class="brick search-filter nospace wide"><input type="search" placeholder="Коллекция"/></div>&nbsp;
+			<div class="brick vmiddle"><span class="icon16 add vmiddle" ng-click="addNewCathegory(character)"></span></div>
+		</div>
+		<tree-list ng-if="cathegories.length" tree-nodes="cathegories" children="children" ng-select="selectCathegory()" ng-model="galleryCtrl.selectedCathegory">
+			<div class="row vmiddle">
+				<span class="brick link active shortspace item" ng-class="{selected: isSelectedCathegory(item)}">{{item.name}}</span>
+				<span class="brick right">
+					<span class="icon16 add" ng-class="{hovered: !isSelectedCathegory(item)}"ng-click="addNewCathegory(item, $event)"></span>
+				</span>
+			</div>
+		</tree-list>
+	</div>
+	<div class="brick size5of6" ng-if="galleryCtrl.selectedCathegory">
+		<h3>{{galleryCtrl.selectedCathegory.name}}</h3>
+		<div class="row wide vmiddle">
+			<pj-gallery-base-controls></pj-gallery-base-controls>
+			<div class="brick right vmiddle">
+				<file-uploader multiple="true" mode="window" upload-to="/srv/fileUpload?owner={{galleryCtrl.selectedCathegory._id}}"></file-uploader>
+				<button class="vmiddle" ng-disabled="!getSelectedCount()"><span class="icon16 delete"></span> Удалить</button>
+			</div>
+		</div>
+		<pj-gallery ng-if="galleryCtrl.gallery" type="{{galleryType}}">
+			<div class="brick item" ng-repeat="item in galleryCtrl.gallery" ng-class="{selected: galleryCtrl.selected[item._id]}">
+				<pj-preview item="item" width="150" height="150" show-info="true" ng-click="galleryCtrl.selectGalleryItem(item);" place-type="contain"></pj-preview>
+			</div>
+			<div class="empty-box" ng-if="!galleryCtrl.gallery.length">&lt; Пустая галерея &gt;</div>
+		</pj-gallery>
+	</div>
+</div>

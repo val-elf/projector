@@ -1,0 +1,22 @@
+<div class="" ng-controller="ProjectorCharactersController as ctrl">
+	<div class="row wide">
+		<h2 class="banner blue">Персонажи</h2>
+		<button ng-click="ctrl.createCharacter()" class="btn add-item-icon"></button>
+	</div>
+	<div pj-scrollable max-height="500">
+		<ul class="items-list hovered">
+			<li class="item" ng-repeat="char in characters">
+				<div class="shortspace right"><pj-preview class="active" item="char" ng-click="ctrl.editCharacter(char)" width="75"></pj-preview></div>&nbsp;
+				<div class="info">
+					<h4><a ui-sref="app.projects-inner.character({projectId: project._id, characterId:char._id})">{{char.name || 'Безымянный'}}</a></h4>
+					<div class="cathegory" ng-bind="char.type | characterTypeLocalize"></div>
+					<div class="description maxw500" ng-bind="char.description"></div>
+				</div>
+				<div class="brick hover-buttons">
+					<button class="delete btn" ng-click="ctrl.deleteCharacter(char)"><span class="icon16 delete"></span></button>
+				</div>
+			</li>
+		</ul>
+		
+	</div>
+</div>

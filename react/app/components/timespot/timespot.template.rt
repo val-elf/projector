@@ -1,0 +1,30 @@
+<rt-import name="date" from="projector/services/filters/date" />
+
+<div class="spot" title="{this.spot.title}"
+	rt-scope="this.spot as spot"
+	rt-class="{
+		selected: this.state.selected,
+		virtual: this.isVirtual,
+		active: this.isVirtual && this.state.active,
+		single: spot.isAlone
+	}"
+	style="{{left: this.state.startOffsetX + '%', right: (100 - this.state.endOffsetX) + '%'}}"
+	ref="{this._root}"
+>
+
+	<div class="title" rt-if="spot.title"><span>{ spot.title }</span></div>
+	<div
+		class="start point"
+		rt-if="spot.startOffsetX != undefined"
+		title="{date(spot.startDate, 'datetime')}"
+	>
+		<div class="date-info" rt-if="spot.startDate" title="{date(spot.startDate, 'datetime')}">{date(spot.startDate, 'datetime')}</div>
+		<div class="icon16 locker" rt-if="spot.locked"></div>
+	</div>
+	<div
+		class="end point" rt-if="spot.endOffsetX !== undefined"
+		title="{date(spot.endDate)}"
+	>
+		<div class="date-info" rt-if="spot.endDate" title="{date(spot.endDate, 'datetime')}">{date(spot.endDate, 'datetime')}</div>
+	</div>
+</div>

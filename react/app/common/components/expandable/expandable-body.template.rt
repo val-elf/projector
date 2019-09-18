@@ -1,0 +1,5 @@
+<div class="expanded-body" style="{{'maxHeight': this.maxHeight, height: 0}}" ref="{this.bodyRef}">
+	<div class="extendable-content">
+		{ this.props.children }
+	</div>
+</div>

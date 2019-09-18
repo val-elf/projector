@@ -1,0 +1,6 @@
+<div class="menu">
+	<div class="menu-item" ng-repeat="item in list" ng-class="{selected: isActive(item)}">
+		<a ng-if="!isSelected(item)" ui-sref="{{item.state}}">{{item.title}}</a>
+		<span ng-if="isSelected(item)">{{item.title}}</span>
+	</div>
+</div>

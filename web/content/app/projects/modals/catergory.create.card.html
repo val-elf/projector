@@ -1,0 +1,10 @@
+<pj-modal-header>Новая категория {{parent ? 'на базе "' + parent.name + '"' : ''}}</pj-modal-header>
+<div class="modal-body">
+	<div class="row">
+		<div class="brick size1of8">Название категории</div>
+		<div class="brick"><input type="text" class="wide" ng-model="cathegory.name" ng-required="true" /></div>
+	</div>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

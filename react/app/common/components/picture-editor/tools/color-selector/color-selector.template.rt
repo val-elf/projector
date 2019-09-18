@@ -1,0 +1,13 @@
+<div class="tool color-manager" rt-scope="this.state as state">
+	<div
+		class="color-selector"
+		rt-class="{ active: state.active === 'fore' }"
+		onClick="{() => this.toggleColorPicker('fore') }"
+		style="background-color: #{this.color};"></div>
+	<div
+		class="color-selector back"
+		rt-class="{active: state.active === 'back' }"
+		onClick="{() => this.toggleColorPicker('back') }"
+		style="background-color: #{this.bgcolor};"
+	></div>
+</div>

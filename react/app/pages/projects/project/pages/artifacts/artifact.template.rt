@@ -1,0 +1,43 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Modal" from="common/materials" />
+<rt-import name="Unfolding" from="common/unfolding" />
+<rt-import name="FullScreen" from="common/full-screen" />
+<rt-import name="Tabset" from="common/tabpanel" />
+<rt-import name="Tab" from="common/tabpanel" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="TextEditorPanel" from="common/texteditor" />
+<rt-import name="ArtifactCard" from="components/artifacts/artifact-card.component" />
+<rt-import name="ArtifactCharacters" from="./characters/artifact-characters.component" />
+
+<Fragment rt-scope="this.state as state; this.context.t as t">
+	<div class="row brick">
+		<div class="brick"><IconPreview item="{state.artifact}" type="circle" onClick="{() => this.editArtifact()}" width="75" place-type="auto" max-height="75" expanded="true" /></div>
+		<div class="brick"><h2 class="banner light-blue head">{ state.artifact.name }</h2></div>
+		<div class="info">
+			<div class="category">{ t('APP_ARTIFACT_' + state.artifact.type) }{ state.artifact.subtype ? ', ' + state.artifact.subtype : ''}</div>
+			<Unfolding height="75"><div class="description maxw500">{ state.artifact.description }</div></Unfolding>
+		</div>
+	</div>
+	<Tabset class="tab" savePosition="true" tabId="artifact-tab-{state.artifact.id}">
+		<Tab label="{'Описание'}">
+			<FullScreen expand="{ state.fullScreen }" onChange="{ fscreen => this.setFullScreen(fscreen) }">
+				<TextEditor value="{state.artifact.info}" rows="20" options="{this.editorOptions}" onChange="{ _ => this.changeDescription(_) }">
+					<TextEditorPanel>
+						<div class="icon fullscreen" onClick="{ _ => this.toggleFullScreen() }"></div>
+						<Button onClick="{ _ => this.save() }">Сохранить</Button>
+					</TextEditorPanel>
+				</TextEditor>
+			</FullScreen>
+		</Tab>
+		<Tab label="{'Документы'}">
+		</Tab>
+		<Tab rt-if="state.artifact.hasContent" label="{'Персонажи'}">
+			<ArtifactCharacters artifact="{state.artifact}" />
+		</Tab>
+	</Tabset>
+	<Modal ref="{(editor) => this.editor = editor}" title="{{propName: 'artifact.name' || 'APP_ARTIFACT_NEW'}}">
+		<ArtifactCard />
+	</Modal>
+</Fragment>

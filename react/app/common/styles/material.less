@@ -1,0 +1,18 @@
+:root {
+	--mdc-theme-primary: @active-color;
+}
+
+input.mdc-text-field {
+	&__input {
+		border-top: 0;
+		border-right: 0;
+		border-left: 0;
+		border-radius: 0;
+		padding-left: 0;
+		width: 100%;
+	}
+}
+
+.mdc-text-field--upgraded:not(.mdc-text-field--fullwidth):not(.mdc-text-field--box) {
+	display: flex;
+}

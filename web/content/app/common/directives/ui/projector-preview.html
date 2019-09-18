@@ -1,0 +1,16 @@
+<span class="preview {{placeType}}" ng-style="{maxHeight: maxHeight, width: previewCtrl.width, 'min-width': previewCtrl.width, height: previewCtrl.height, marginBottom: expanded ? -previewCtrl.height: '0'}" ng-class="{expanded: previewCtrl.expanded, 'expanded-capable': expanded}">
+	<div class="preview-image" ng-if="previewCtrl.preview || previewCtrl.previewUrl" ng-style="{backgroundImage: previewCtrl.preview && 'url(data:' + previewCtrl.type +';base64,' + previewCtrl.preview +')' || 'url(' + previewCtrl.previewUrl + ')', backgroundSize: (maxHeight && !expanded ? 'auto ' + maxHeight + 'px' : expanded && previewCtrl.width ? previewCtrl.width + 'px auto' : placeType && placeType !== 'origin' && placeType || placeType && 'auto' || 'cover')}"></div>
+
+	<div ng-if="!item.preview && defaultIcon" ng-style="{width: previewCtrl.width, 'min-width': previewCtrl.width, height: previewCtrl.height, maxHeight: maxHeight}" class="preview-icon vmiddle">
+		<div class="icon-file-type {{defaultIcon}}"></div>
+		<div class="file-info" ng-if="previewCtrl.item.title && !showInfo">
+			<div class="file-name"><a href="" ng-click="openFileInfo({$event: $event})">{{previewCtrl.item.title}}</a></div>
+		</div>
+	</div>
+
+	<div class="file-info list" ng-if="showInfo" ng-class="{showed: previewCtrl.showFileInfo}">
+		<div class="file-name item"><a href="" ng-click="openFileInfo({$event: $event})">{{previewCtrl.item.title || previewCtrl.source.name}}</a></div>
+		<div class="file-size item" ng-if="previewCtrl.source.size || previewCtrl.item.metadata.size">Размер: {{previewCtrl.source.size || previewCtrl.item.metadata.size || 0 | fileSize}}</div>
+		<div class="file-mediatype item">Медиатип: {{previewCtrl.previewInfo.mediaType}}</div>
+	</div>
+</span>

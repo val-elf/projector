@@ -1,0 +1,29 @@
+<rt-import name="Fragment" from="react" />
+<rt-import name="Loader" from="common/loader" />
+<rt-import name="FullScreen" from="common/full-screen" />
+<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="TextEditorPanel" from="common/texteditor" />
+<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<Fragment rt-scope="this.state as state; this.context.t as t">
+    <Loader load="{ state.loading }" />
+    <FullScreen
+        rt-if="!state.loading && state.spotDocument"
+        expand="{state.fullScreen}"
+        onChange="{ expand => this.updateFSState(expand) }">
+        <TextEditor
+            value="{state.spotDocument.content}"
+            minHeight="400"
+            height="100%"
+            onChange="{value => this.changeContent(value)}"
+            options="{this.editorOptions}"
+        >
+            <TextEditorPanel>
+                <span onClick="{() => this.fullscreenModeToggle()}" class="icon fullscreen mrm"></span>
+                <Checkbox checked="{state.spotAutoSave}" label="{ t('APP_AUTOSAVE') }" onChange="{(value) => this.setState({ spotAutoSave: value })}" />
+                <Button onClick="{() => this.saveSpotDocument()} ">{ t('APP_SAVE') }</Button>
+            </TextEditorPanel>
+        </TextEditor>
+    </FullScreen>
+</Fragment>

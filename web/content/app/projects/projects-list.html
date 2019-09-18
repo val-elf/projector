@@ -1,0 +1,37 @@
+<h1 class="page-head">Проекты</h1>
+<div class="controls">
+	<button ng-click="projectsCtrl.createNewProject()" class="btn"><span class="add-item-icon"></span> Новый проект</button>
+</div>
+<div class="filters row vmiddle">
+	<div class="brick">
+		<div class="search-filter size1of5 minw300">
+			<input type="search" placeholder="Поиск">
+		</div>
+	</div>
+	<div class="brick vmiddle">
+		<div class="brick vmiddle">Сортировать по </div>
+		<div class="brick vmiddle">
+			<pj-select ng-model="sort" ng-change="changeSort()">
+				<pj-option selected value="_update._dt">Последним изменениям</pj-option>
+				<pj-option value="_create._dt">Дате создания</pj-option>
+			</pj-select>
+		</div>
+	</div>
+</div>
+<ul class="items-list hovered projects size2of3" infinity-scroll on-scroll-end="readNext()">
+	<li ng-repeat="item in projects">
+		<div class="project-icon-place">
+			<pj-preview item="item" width="74" default-icon="project"></pj-preview>
+			<div class="created">cоздан:</div>
+			<div class="date" title="{{item._create._dt | datetime}}">{{item._create._dt | spendDate}}</div>
+		</div>
+		<div class="info">
+			<div class="header"><a ui-sref="app.projects-item({projectId: item._id})">{{item.name}}</a>  <span class="icon16 edit" ng-click="editProject(item)"></span></div>
+			<div class="comments" ng-if="!!item.description" ng-bind="item.description"></div>
+		</div>
+		<div class="hover-buttons">
+			<button class="btn green"><span class="copy-icon"></span> Скопировать</button>
+			<button class="btn delete"><span class="delete-icon"></span> Удалить</button>
+		</div>
+	</li>
+</ul>

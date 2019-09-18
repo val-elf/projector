@@ -1,0 +1,25 @@
+<rt-import name="IconPreview" from="projector/common/components/icon-preview" />
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="Button" from="@material-ui/core" />
+
+<div class="item size1of3" rt-scope="this.state.project as project; this.context.t as t">
+	<div class="project-icon-place">
+		<IconPreview item="{project}" expanded="{true}" type="circle" />
+		<div class="created">{ t('APP_PROJECT_CREATED') }:</div>
+		<div class="date" title="{date(project.create && project.create.dt || '')}">{date(project.create && project.create.dt || '')}</div>
+	</div>
+	<div class="info">
+		<div class="header">
+			<UISref to="app.projects.project" params="{{projectId: project.id}}">
+				<a>{project.name}</a>
+			</UISref>
+			 <span class="icon16 edit" onClick="{() => this.editProject(project)}"></span>
+		</div>
+		<div class="comments" rt-if="!!project.description">{project.description}</div>
+	</div>
+	<!-- div class="hover-buttons">
+		<Button class="btn green mbxs"><span class="copy-icon"></span> <span class="capital">{ t('APP_COPY') }</span></Button>
+		<Button class="btn delete"><span class="delete-icon"></span> <span class="capital">{ t('APP_DELETE') }</span></Button>
+	</div -->
+</div>

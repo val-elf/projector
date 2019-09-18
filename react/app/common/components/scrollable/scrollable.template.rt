@@ -1,0 +1,10 @@
+<div class="scrollable {this.props.className || ''}" style="{{maxHeight: this.props.maxHeight + 'px', minHeight: this.props.minHeight + 'px'}}" ref="{(node) => this.root = node}">
+	<div class="slider {this.props.sliderClass ? this.props.sliderClass : ''}">
+		{ this.props.children }
+	</div>
+	<div class="shadow-edge start"></div>
+	<div class="shadow-edge end"></div>
+	<div class="scroll-marker-dock">
+		<div class="scroll-marker"></div>
+	</div>
+</div>

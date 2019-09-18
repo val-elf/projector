@@ -1,0 +1,16 @@
+<rt-import name="PictureEditor" from="common/picture-editor" />
+<div class="storyboard-frame_editor"
+    rt-class="{active: this.state.active, expanded: this.state.expanded }"
+    onTransitionEnd="{evt => this.finishTransform(evt)}"
+    rt-scope="this.context.t as t; this.state as state; state.frame as frame"
+>
+    <div class="storyboard-frame_editor-controls">
+        <div class="tool-options">{ this.state.toolOptions }</div>
+        <div class="editor-controls">
+			<div class="icon16 delete editor-controls_close" onClick="{(evt) => this.close(evt)}"></div>
+		</div>
+    </div>
+    <div class="storyboard-frame_editor-content" rt-if="state.opened">
+        <PictureEditor ref="{this.pictureEditorRef}" onSelectTool="{ tool => this.selectTool(tool) }" />
+    </div>
+</div>

@@ -1,0 +1,22 @@
+@import (reference) '~styles/base';
+
+.picture-editor_panel {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1000;
+	transition: opacity 0.3s;
+	border-radius: @_xs;
+	padding: 0 @_s @_s @_s;
+	background-color: @rigid-gray;
+	box-shadow: 0 0 @_l @shadow-gray;
+	font-size: 12px;
+	&:not(.showed) {
+		display: none;
+	}
+	&-head {
+		color: @white;
+		padding: @_xs 0;
+		cursor: move;
+	}
+}

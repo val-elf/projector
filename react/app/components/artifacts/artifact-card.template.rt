@@ -1,0 +1,37 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="Select" from="common/materials" />
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="FileUploader" from="common/file-uploader" />
+
+<div class="minw600" rt-scope="this.context.t as t; this.state as state; this.state.artifact as item">
+	<div class="row">
+		<TextField label="Название" class="wide" defaultValue="{item.name}" required="{true}" onChange="{this.handleChange('name')}" />
+	</div>
+	<div class="row">
+		<Select value="{item.type || ''}" label="Тип артефакта" class="wide" onChange="{this.handleChange('type')}">
+			<MenuItem rt-repeat="type in state.types" key="{type}" value="{type}">{ t('APP_ARTIFACT_' + type) }</MenuItem>
+		</Select>
+	</div>
+	<div class="row">
+		<TextField label="Подтип" class="wide" defaultValue="{item.subtype}" onChange="{this.handleChange('subtype')}"/>
+	</div>
+	<div class="row">
+		<TextField multiline="{true}" label="Краткая информация" defaultValue="{item.description}" class="wide" rowsMax="3"  onChange="{this.handleChange('description')}"/>
+	</div>
+	<div class="row">
+		<Checkbox label="Привязка к персонажам" checked="{item.hasContent}" onChange="{this.handleChange('hasContent')}" />
+	</div>
+	<div class="row">
+		<div class="brick size1of5">Изображение</div>
+		<div class="brick row">
+			<IconPreview
+				class="brick"
+				item="{item}"
+				width="75"
+				
+			/> <FileUploader class="brick" onLoad="{({ preview }) => {this.setPreview(preview)}}" />
+		</div>
+	</div>
+</div>

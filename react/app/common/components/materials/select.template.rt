@@ -1,0 +1,14 @@
+<rt-import name="Select" from="@material-ui/core" />
+<rt-import name="FormControl" from="@material-ui/core" />
+<rt-import name="InputLabel" from="@material-ui/core" />
+
+<FormControl className="{this.props.className}">
+	<InputLabel>{this.props.label}</InputLabel>
+	<Select value="{this.state.value || ''}"
+		onChange="{(...args) => { this.props.onChange && this.props.onChange(...args)}}"
+		MenuProps="{ Object.assign({}, this.props.MenuProps) }"
+		style="{{minWidth: this.props.minWidth || 'auto'}}"
+	>
+		{this.props.children}
+	</Select>
+</FormControl>

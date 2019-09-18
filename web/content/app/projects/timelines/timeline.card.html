@@ -1,0 +1,19 @@
+<pj-modal-header>{{ timeline.name || 'Новый Таймлайн'}}</pj-modal-header>
+<div class="modal-body">
+	<div class="form">
+		<div class="row">
+			<div class="brick size1of4">Название</div><div class="brick"><input class="wide" type="text" ng-model="item.name" /></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of4">Начало</div>
+			<div class="brick"><pj-datepicker ng-model="item.startDate" max-date="item.endDate"></pj-datepicker></div>
+		</div>
+		<div class="row">
+			<div class="brick size1of4">Окончание</div>
+			<div class="brick"><pj-datepicker ng-model="item.endDate" min-date="item.startDate"></pj-datepicker></div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<common-buttons></common-buttons>
+</div>

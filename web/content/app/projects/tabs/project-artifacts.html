@@ -1,0 +1,28 @@
+<div ng-controller="ProjectorArtifactsController as ctrl">
+	<div ng-if="ctrl.artifact">
+		<pj-artifact-page item="ctrl.artifact"></pj-artifact-page>
+	</div>
+	<div ng-if="ctrl.artifacts">
+		<div class="row wide">
+			<h2 class="banner light-blue nospace">Артефакты</h2>
+			<button class="btn add-item-icon" ng-click="ctrl.createArtifact()"></button>
+		</div>
+
+		<div pj-scrollable max-height="500">
+			<ul class="items-list hovered">
+				<li class="item" ng-repeat="art in ctrl.artifacts">
+					<div><pj-preview item="art" class="active" ng-click="ctrl.editArtifact(art)" width="75"></pj-preview></div>&nbsp;
+					<div class="info">
+						<h4><a ui-sref="app.projects-item.artifact({itemId: art._id})">{{art.name}}</a></h4>
+						<div class="cathegory"><span ng-bind="art.type | artifactTypeLocalize"></span><span ng-if="art.subtype" ng-bind="', ' + art.subtype"></span></div>
+						<div class="description maxw500" ng-bind="art.description">
+						</div>
+					</div>
+					<div class="brick hover-buttons">
+						<button class="delete btn" ng-click="ctrl.deleteArtifact(art)"><span class="icon16 delete"></span></button>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

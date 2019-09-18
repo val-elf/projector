@@ -1,0 +1,44 @@
+<rt-import name="Fragment" from="react" />
+<Fragment rt-scope="
+    this.state as state;
+    state.preview as preview;
+    state.marker as marker;
+    this.showMiniPreview as showMiniPreview;"
+>
+    <div class="brick image-container"
+        style="
+            width: {state.viewport.width}px;
+            height: {state.viewport.height}px;
+            background-image: url(/srv/file/{state.file.id});
+            background-size: {preview.zoom}%;
+            background-position: {preview.left + ' ' + preview.top};
+            cursor: {preview.movable ? (preview.type === 'auto' ? 'zoom-out' : 'zoom-in') : 'default' };
+        "
+        onMouseMove="{(event) => this.mouseMove(event)}"
+        onWheel="{ event => this.zoom(event) }"
+        onClick="{_ => this.togglePreviewMode(_)}"
+    ></div>
+    <div class="mini-preview {showMiniPreview ? '' : 'hidden'}" rt-class="{active: preview.movable && showMiniPreview}">
+        <div class="canvas"
+            style="
+                width: {marker.preview.width}px;
+                height: {marker.preview.height}px;
+                background-image: url(/srv/file/{state.file.id});
+            "
+        ></div>
+        <div class="outview-wrapper"
+            style="
+                width: {marker.preview.width}px;
+                height: {marker.preview.height}px;
+            "
+        >
+            <div class="outview" style="
+                width: {marker.width}px;
+                height: {marker.height}px;
+                background-position: -{marker.left + 1}px -{marker.top + 1}px;
+                background-image: url(/srv/file/{state.file.id});
+                transform: translate({marker.left}px, {marker.top}px);
+            "></div>
+        </div>
+    </div>
+</Fragment>

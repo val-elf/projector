@@ -1,0 +1,8 @@
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Checkbox" from="common/materials" />
+
+<div rt-scope="this.state as state; this.state.involve as involve">
+    <div class="row"><TextField label="Роль" fullWidth defaultValue="{state.role}" onChange="{this.update('role')}"/></div>
+    <div class="row"><TextField label="Описание" multiline fullWidth rowsMax="7" defaultValue="{state.description}" onChange="{this.update('description')}" rows="4"/></div>
+</div>

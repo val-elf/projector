@@ -1,0 +1,269 @@
+
+@iconssrc: '/img/icons.png';
+@iconssrc16: '/img/icons-16.png';
+@filetypesrc: '/img/ft-icons.png';
+@ix: -16px;
+@is: -32px;
+@if: -55px;
+
+.iconic{
+	width: -@is;
+	height: -@is;
+	display: inline-block;
+	background: url(@iconssrc) no-repeat;
+	vertical-align: middle;
+}
+
+.iconic16{
+	.iconic();
+	background: url(@iconssrc16) no-repeat;
+	width: -@ix;
+	height: -@ix;
+}
+
+
+.icon {
+	.iconic;
+	&.expand{
+		.active;
+		background-position: 0 12 * @is;
+	}
+
+	&.collapse{
+		.active;
+		background-position: 0 13 * @is;
+	}
+
+	&.vmiddle{
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&.fullscreen {
+		.active;
+		background-position: 0 14 * @is;
+	}
+
+	&.pane {
+		.active;
+		background-position: 0 15 * @is;
+	}
+
+	&.pen {
+		.active;
+		background-position: 0 16 * @is;
+	}
+	&.delete{
+		.active;
+		background-position: 0 17 * @is;
+	}
+}
+
+.icon-file-type{
+	display: inline-block !important;
+	background: url(@filetypesrc) no-repeat;
+	width: -@if;
+	height: -@if;
+	vertical-align: middle;
+
+	&.project{
+		background: url('/img/projects/default.png') no-repeat;
+		height: 64px;
+		width: 64px;
+		text-align: center;
+	}
+	&.video {
+		background-position: 0 @if;
+	}
+	&.document {
+		background-position: 0 @if * 2;
+	}
+	&.image {
+		background-position: 0 @if * 3;
+	}
+	&.audio {
+		background-position: 0 @if * 4;
+	}
+	&.artifact {
+		background-position: 0 @if * 5;
+	}
+	&.character{
+			background-position: 0 @if * 9;
+	}
+	&.location {
+		background-position: 0 @if * 6;
+		&.continent {
+			background-position: 0 @if * 7;
+		}
+		&.state{
+			background-position: 0 @if * 8;
+		}
+		&.planet{
+			background-position: 0 @if * 10;
+		}
+	}
+}
+
+.text-edited-icon { 
+	.iconic();
+	.active();
+	background-position: 0 0;
+}
+
+.add-item-icon{
+	.iconic();
+	.active();
+	background-position: 0 @is;
+}
+
+.project-icon{
+	.iconic();
+	.active();
+	background-position: 0 @is * 2;
+}
+
+.search-icon{
+	.iconic();
+	background-position: 0 @is * 3;
+}
+
+.copy-icon{
+	.iconic();
+	.active();
+	background-position: 0 @is * 4;
+}
+
+.delete-icon{
+	.iconic();
+	.active();
+	background-position: 0 @is * 5;
+}
+
+.close-icon {
+	.iconic();
+	.active();
+	background-position: 0 @is * 11;
+}
+
+
+
+/* ---------------------------- 16x16 icons ------------------------*/
+
+.icon16{
+	.iconic16();
+	background-position: 0 -@ix;
+
+	&.hovered{
+		transition: opacity 1s;
+		opacity: 0;
+		&:hover{
+			opacity: 1;
+		}
+	}
+	&.locker{
+		.active();
+		background-position: 0 @ix * 4;
+		&.unlocked{
+			background-position: 0 @ix * 5;
+			opacity: 0.1;
+			transition: opacity 1s;
+			&:hover{
+				opacity: 1;
+			}
+		}
+	}
+
+	&.btn{
+		margin-right: 1em;
+	}
+
+	&.popup{
+		.active();
+		background-position: 0 @ix * 6;
+	}
+
+	&.edit{
+		.active();
+		background-position: 0 0;
+	}
+
+	&.delete{
+		.active();
+		background-position: 0 @ix * 3;
+	}
+
+	&.add{
+		.active();
+		background-position: 0 @ix * 7;
+	}
+
+	&.bold{
+		background-position: 0 @ix * 9;
+	}
+
+	&.italic{
+		background-position: 0 @ix * 10;
+	}
+
+	&.underline{
+		background-position: 0 @ix * 11;
+	}
+
+	&.align-left{
+		background-position: 0 @ix * 12;
+	}
+
+	&.align-center{
+		background-position: 0 @ix * 13;
+	}
+
+	&.align-right{
+		background-position: 0 @ix * 14;
+	}
+
+	&.align-justify{
+		background-position: 0 @ix * 15;
+	}
+
+	&.unordered-list{
+		background-position: 0 @ix * 17;
+	}
+
+	&.ordered-list{
+		background-position: 0 @ix * 18;
+	}
+
+	&.remove{
+		.active();
+		background-position: 0 @ix * 19;
+	}
+
+	&.left-arrow {
+		.active();
+		background-position: 0 @ix * 20;
+	}
+
+	&.right-arrow {
+		.active();
+		background-position: 0 @ix * 21;
+	}
+
+	&.checked {
+		background-position: 0 @ix * 22;
+	}
+
+	&.upload {
+		background-position: 0 @ix * 23;
+	}
+
+	&.start {
+		background-position: 0 @ix * 24;
+	}
+
+	&.document {
+		background-position: 0 @ix * 25;
+	}
+
+}

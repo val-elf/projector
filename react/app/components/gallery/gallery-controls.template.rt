@@ -1,0 +1,14 @@
+<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="Checkbox" from="common/materials" />
+
+<span class="row brick wide vmiddle" rt-scope="this.context.t as t">
+	<div class="brick">
+		<Checkbox className="vmiddle" onChange="{(value) => this.selectAll(value)}" checked="{this.props.selectedCount !== 0 && this.props.selectedCount === this.props.collectionLength}" label="{t('APP_PROJECT_SELECT_ALL')}" disabled="{!this.props.collectionLength}">
+	</div>
+	<div class="brick" rt-if="this.props.selectedCount"> {t('APP_GALLERY_SELECTED', {count: this.props.selectedCount}) } <strong>{ this.props.collectionLength }</strong></div>
+	<div class="brick">
+		<span rt-if="!this.props.selectedCount && this.props.collectionLength"
+			dangerouslySetInnerHTML="{{__html: t(['APP_GALLERY_ON_PAGE_singular', 'APP_GALLERY_ON_PAGE_plural', 'count'], { count: this.props.collectionLength } ) }}"></span>
+		<span rt-if="this.props.totalCount">&#160;({ t('APP_GALLERY_TOTAL', {count: this.props.totalCount }) })</span>
+	</div>
+</span>

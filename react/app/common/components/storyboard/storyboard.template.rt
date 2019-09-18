@@ -1,0 +1,30 @@
+<rt-import name="Button" from='@material-ui/core' />
+<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="StoryPage" from="./story-page.component" />
+
+<div class="row growth" rt-scope="this.context.t as t; this.state as state">
+    <div class="brick story-pages col">
+        <h3 class="row vmiddle">
+            <span class="brick wide">Страницы</span>
+            <Button class="brick" onClick="{ () => this.addNewPage() }">
+                <span class="add-item-icon"></span>
+            </Button>
+        </h3>
+        <div class="brick">
+            <Scrollable>
+                <div class="list hovered">
+                    <div class="item" rt-repeat="page, index in state.pages"
+                        key="{index}"
+                        onClick="{() => this.selectPage(page)}"
+                        rt-class="{ selected: state.selected === page }"
+                    >
+                        <h5>{ page.name }</h5>
+                    </div>
+                </div>
+            </Scrollable>
+        </div>
+    </div>
+    <div class="brick page">
+        <StoryPage rt-if="state.selected" page="{state.selected}" distance="12" />
+    </div>
+</div>

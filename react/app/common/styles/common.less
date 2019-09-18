@@ -1,0 +1,94 @@
+@import (reference) './colors.less';
+* {
+	box-sizing: border-box;
+}
+
+
+.ng-animate.item:not(.left):not(.right) {
+  -webkit-transition: 0s ease-in-out left;
+  transition: 0s ease-in-out left
+}
+
+.date{
+	color: @violet-color;
+	font-size: 0.8em;
+	font-weight: bold;
+	&.small{
+		font-size: 0.75em;
+		color: @green-color;
+		font-weight: normal;
+	}
+}
+
+.control {
+	border-bottom: 1px dashed @link-color;
+	color: @link-color;
+	cursor: pointer;
+	&.brick {
+		margin-right: 1em;
+	}
+	&.active {
+		font-weight: bold;
+	}
+}
+
+.small{
+	font-size: 0.8em;
+}
+
+.bold{
+	font-weight: bold;
+}
+
+.undertext {
+	font-size: 10px;
+}
+
+.comments{
+	font-size:0.75em;
+	color: @blue-color;
+	white-space: pre-wrap;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.notation{
+	font-size: 0.8em;
+	color: @light-gray;
+	font-style: italic;
+}
+
+.clearfix {
+	&::after{
+		content: "";
+		display: block;
+		clear : both;
+	}
+}
+
+.capital {
+	text-transform: capitalize;
+}
+
+ul.tree{
+	list-style-type: none;
+	padding:0;
+	li{
+		padding-left: 16px;
+		position: relative;
+		&::before{
+			.iconic16();
+			content: "";
+			position: absolute;
+			background-position: 0 @ix;
+			left: 0;
+		}
+	}
+}
+
+ul{
+	&.items-list{
+		padding: 0;
+		list-style-type: none;
+	}
+}

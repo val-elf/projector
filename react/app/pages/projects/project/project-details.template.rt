@@ -1,0 +1,63 @@
+<rt-import name="UISref" from="@uirouter/react" />
+<rt-import name="UIView" from="@uirouter/react" />
+<rt-import name="Fragment" from="react" />
+
+<rt-import name="TextField" from="@material-ui/core" />
+
+<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="TextEdited" from="common/materials" />
+<rt-import name="Tabset" from="common/tabpanel" />
+<rt-import name="Tabview" from="common/tabpanel" />
+<rt-import name="Tab" from="common/tabpanel" />
+
+<rt-import name="ProjectCard" from="../modals/project-card.component" />
+
+<Fragment rt-scope="this.context.t as t; this.state as state; this.state.project as project" rt-if="this.state.project">
+	<div class="project-header row brick">
+		<div class="brick">
+			<UISref to="."><a><IconPreview item="{project}" type="circle" expanded="{true}" /></a></UISref>
+		</div>
+		<div class="brick">
+			<h1>
+				<TextEdited value="{project.name}" onChange="{(newName, apply) => this.changeProjectName(newName, apply)}"/>
+				<!--span rt-if="this.stateName !== 'app.projects-item'">{this.project.name}</span -->
+			</h1>
+			<div class="project-navigation" rt-if="this.viewState !== 'base'">
+				<span
+					rt-repeat="item in this.menu"
+					class="nav-item"
+					rt-class="{active: this.state.currentTabName === (item.pageState || item.state)}"
+					key="{item.tabname}">
+					<UISref to="{item.pageState || item.state}"><a>{ t(`NAV_${item.title}`) }</a></UISref>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row brick" rt-if="this.state.dashboardMode">
+		<div class="brick size1of2 minw150 maxw200" rt-if="false">
+			<h2 class="banner red head"><span>{ t('APP_PROJECT_LAST_ACTIVITY') }</span></h2>
+		</div>
+		<div class="brick minw1000">
+			<Tabset vertical="true" className="project-tab">
+				<Tab key="{item.tabname}" rt-repeat="item in this.menu"
+					state="{item.state}"
+					class="{item.tabname}"
+					active="{item.state === this.state.currentTabName}"
+					label="{ t(`NAV_${item.title}`) }"
+				/>
+				<Tabview>
+					<div rt-if="!this.menu.find(item => item.state === this.state.currentTabName)">
+						<ProjectCard project="{project}" mode="view" />
+						<h2 class="banner green"><span>{ t('APP_PROJECT_ACTIVITY') }</span></h2>
+					</div>
+					<UIView />
+				</Tabview>
+			</Tabset>
+		</div>
+	</div>
+
+	<rt-virtual rt-if="!this.state.dashboardMode">
+		<UIView />
+	</rt-virtual>
+</Fragment>

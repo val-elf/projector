@@ -1,0 +1,33 @@
+.expandable{
+	.expanded-body{
+		opacity: 0;
+		transition: height 1s, opacity 1s;
+		overflow: hidden;
+		margin-left: @_xs;
+		padding: 0;
+		.expandable-content{
+			padding: @_xs;
+			.list{
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.expanded-head{
+		h3{margin-bottom: 0;}
+	}
+
+	.expanded-body.mesure {
+		transition: none;
+		opacity: 1;
+		position: absolute;
+		top: -10000px;
+		visible: none;
+	}
+
+	&.expanded{
+		.expanded-body{
+			opacity: 1;
+		}
+	}
+}

@@ -1,0 +1,147 @@
+html{
+	font-family: sans-serif;
+}
+
+@font-face {
+	font-family: "projector";
+	src:url("/assets/fonts/projector.eot");
+	src:url("/assets/fonts/projector.eot?#iefix") format("embedded-opentype"),
+	  url("/assets/fonts/projector.woff") format("woff"),
+	  url("/assets/fonts/projector.ttf") format("truetype"),
+	  url("/assets/fonts/projector.svg#projector") format("svg");
+	font-weight: normal;
+	font-style: normal;
+  }
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before,
+[class*=" icon-"]:after {
+  font-family: "projector" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pencil:before {
+	content: "\e000";
+}
+
+.icon-hand:before {
+    content: "\e001";
+}
+
+.icon-hand-half:before {
+    content: "\e002";
+}
+
+.icon-pen:before {
+    content: "\e003";
+}
+
+.icon-newitem-half:before {
+    content: "\e005";
+}
+
+.icon-geopoint-half:before {
+    content: "\e006";
+}
+
+.icon-pen-half:before {
+    content: "\e007";
+}
+
+.icon-pen-half-1:before {
+    content: "\e008";
+}
+
+.icon-geopoint:before {
+    content: "\e009";
+}
+
+.icon-city-half:before {
+    content: "\e00a";
+}
+
+.icon-city:before {
+    content: "\e00b";
+}
+
+.icon-newitem:before {
+    content: "\e004";
+}
+
+.icon-brush:before {
+    content: "\e00c";
+}
+
+.icon-brush-half:before {
+	content: "\e00d";
+	position: relative;
+	left: 4px;
+	top: 1px;
+}
+
+.icon-eraser:before {
+	content: "\e00e";
+}
+
+.icon-eraser-half:before {
+	content: "\e00f";
+	position: relative;
+	left: 3px;
+}
+
+.icon-eyedrop:before {
+	content: "\e010";
+}
+
+.icon-eyedrop-half:before {
+	content: "\e011";
+	position: relative;
+	top: 10px;
+}
+
+.icon-settings:before {
+	content: "\e012";
+}
+
+.icon-settings-half:before {
+	content: "\e013";
+}
+
+.icon-settings-full {
+	font-size: 21px;
+	min-height: 21px;
+	&:before {
+		content: "\e012";
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+	&:after {
+		content: "\e013";
+		position: absolute;
+		opacity: 0.5;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+.icon-layers:before {
+    content: "\e014";
+}
+
+.icon-layers-half:before {
+    content: "\e015";
+}
+
+.icon-linkage:before {
+	content: "\e016";
+}
