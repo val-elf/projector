@@ -1,5 +1,0 @@
-remote  admin:      user: 'admin', pwd: 'Earlcal10str0'
-        projector:  user: 'projector', pwd: 'Cal10str0'
-
-local   admin:      user: 'valelf', pwd: 'caliostro'
-        projector:  user: 'svetocher', pwd: 'cal10str0'
