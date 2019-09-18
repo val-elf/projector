@@ -1,1 +1,11 @@
 /react/package-lock.json
+/.hg
+/book/*
+/db/*
+/dump/*
+/localization/*
+/markup/*
+/backend/node-modules/*
+/react/node-modules/*
+/trancoder/node-modules/*
+.hgignore
