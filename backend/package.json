@@ -52,7 +52,7 @@
     "mammoth": "^0.3.30",
     "md5": "^2.0.0",
     "mongodb": "",
-    "mongoose": "^4.13.7",
+    "mongoose": "^5.7.8",
     "npm-watch": "^0.3.0",
     "stream-transcoder": "0.0.5"
   }
