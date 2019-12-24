@@ -9,12 +9,11 @@ const Schema = db.Schema;
 
 const reconnect = async () => {
 	try {
-		const res = await db.connect(config.dbLink, {
-			useMongoClient: true,
-			reconnectTries: Number.MAX_VALUE,
-			user: config.dbUser,
-			pass: config.dbPassword,
-			db: 'projector'
+		const { dbHost, dbUser, dbPassword, database } = config;
+		const link = `mongodb://${dbUser}:${dbPassword}@${dbHost}/${database}`;
+		const res = await db.connect(link, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
 		});
 	} catch (error) {
 		console.log('Connection failed', config.dbUser, config.dbPassword);

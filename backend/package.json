@@ -49,10 +49,10 @@
     "jimp": "^0.2.13",
     "jshint": "^2.9.6",
     "lwip": "0.0.9",
-    "mammoth": "^0.3.30",
+    "mammoth": "^1.4.9",
     "md5": "^2.0.0",
-    "mongodb": "",
-    "mongoose": "^4.13.7",
+    "mongodb": "^3.4.1",
+    "mongoose": "^5.8.3",
     "npm-watch": "^0.3.0",
     "stream-transcoder": "0.0.5"
   }
