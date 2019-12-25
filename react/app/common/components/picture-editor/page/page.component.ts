@@ -1,12 +1,13 @@
-import React from 'react';
+import { Component, createRef } from 'react';
 import ResizeObserver from "resize-observer-polyfill";
 import { Layer } from '../document/layer';
 import { Viewport } from '../document/viewport';
-import template from './page.template';
+import template from './page.template.rt';
 import './page.component.less';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
+import { PictureDocument } from '../document/document';
 
-export class Page extends React.Component {
+export class Page extends Component {
 
 	static contextTypes = {
 		editor: PropTypes.object.isRequired
@@ -22,20 +23,30 @@ export class Page extends React.Component {
 
     state = {
         width: 800,
-		height: 600
+		height: 600,
+		document: undefined,
+		cursor: undefined
     }
 
 	zoomMul = 1.25;
+	viewport: Viewport;
+	resizeObserver: ResizeObserver;
+	ctx: CanvasRenderingContext2D;
+	cursorCanvas: HTMLCanvasElement;
+	altPressed: boolean;
+	ctrlPressed: boolean;
+	spacePressed: boolean;
+	cursorPos: { x: number, y: number };
 
-    rootRef = React.createRef();
-    get root() { return this.rootRef.current; }
+    rootRef = createRef();
+    get root(): HTMLElement { return this.rootRef.current as HTMLElement; }
 
-	viewportRef = React.createRef();
-    get viewportNode() { return this.viewportRef.current; }
+	viewportRef = createRef();
+    get viewportNode(): HTMLElement { return this.viewportRef.current as HTMLElement; }
 
 	get width() { return this.state.width; }
 	get height() { return this.state.height; }
-	get document() { return this.state.document; }
+	get document(): PictureDocument { return this.state.document; }
 	get cursor() { return this.state.cursor; }
 
 	get layers() { return this.document.layers; }
@@ -51,7 +62,7 @@ export class Page extends React.Component {
 	componentDidUpdate(pprop, pstate) {
 		const { cursor } = this.state;
 		if (pstate.document !== this.state.document) {
-			state.document.on('update', () => this.redraw());
+			this.state.document.on('update', () => this.redraw());
 		}
 		if (pstate.cursor !== cursor) {
 			cursor.onChangeCursor(() => this.cursorMove());
@@ -65,15 +76,14 @@ export class Page extends React.Component {
 
 		doc.on('update', () => this.redraw());
 		this.viewportNode.appendChild(this.viewport.canvas);
-		this.ctx = this.viewport.context;
 
 		this.resizeObserver = new ResizeObserver(evt => {
             this.checkDimenstions(evt);
 		});
-		this.resizeObserver.observe(this.root.parentNode);
+		this.resizeObserver.observe(this.root.parentNode as Element);
 
 		this.cursorCanvas = document.createElement('canvas');
-		this.cctx = this.cursorCanvas.getContext('2d');
+		this.ctx = this.cursorCanvas.getContext('2d');
 		this.cursorCanvas.className = 'picture-editor_cursor';
 		this.viewportNode.appendChild(this.cursorCanvas);
 
@@ -82,33 +92,10 @@ export class Page extends React.Component {
 		this.addEventListener('keyup', this.keyRelease);
 		this.viewport.canvas.addEventListener('pointermove', this.cursorMove);
 		this.viewport.window.addEventListener('wheel', this.setZoom);
-
-		this.watermark = this.root.querySelector('.image-page_watermark');
-		Object.assign(this.watermark.style, {
-			width: `${doc.width}px`,
-			height: `${doc.height}px`
-		});
-	}
-
-	freshWatermark() {
-		const { document: doc } = this;
-		const { viewport } = doc;
-		const left = this.pan.x < 0 ? 0 : this.pan.x;
-		const top = this.pan.y < 0 ? 0 : this.pan.y;
-		let width = doc.width * this.zoom;
-		let height = doc.height * this.zoom;
-		if (width > viewport.width) width = viewport.width;
-		if (height > viewport.height) height = viewport.height;
-		Object.assign(this.watermark.style, {
-			width: `${width}px`,
-			height: `${height}px`,
-			left: `${left}px`,
-			top: `${top}px`
-		});
 	}
 
 	componentWillUnmount() {
-		this.resizeObserver.unobserve(this.root.parentNode);
+		this.resizeObserver.unobserve(this.root.parentNode as Element);
 		this.removeEventListener('keydown',this.keyCheck);
 		this.removeEventListener('keyup', this.keyRelease);
 		this.viewport.canvas.removeEventListener('contextmenu', this.preventContext);
@@ -127,7 +114,6 @@ export class Page extends React.Component {
 	preventContext = evt => evt.preventDefault();
 
 	keyCheck = evt => {
-		// console.log('evt', evt);
 		switch(evt.key) {
 			case 'Alt':
 				if (!this.altPressed) {
@@ -234,12 +220,12 @@ export class Page extends React.Component {
 	}
 
 	getAbsLocation(ax, ay) {
-		const { x, y } = this.viewport.bounding;
+		const { x, y } = this.viewport.bounding as DOMRect;
 		return { x: ax - x, y: ay - y };
 	}
 
 	getLocation(ax, ay) {
-		const { x, y } = this.viewport.bounding;
+		const { x, y } = this.viewport.bounding as DOMRect;
 		const dx = this.pan.x < 0 ? 0 : this.pan.x;
 		const dy = this.pan.y < 0 ? 0 : this.pan.y;
 		const ox = ax - x - dx, oy = ay - y - dy;
@@ -248,7 +234,7 @@ export class Page extends React.Component {
 	}
 
     checkDimenstions(evt) {
-        const parent = this.root.parentNode;
+        const parent = this.root.parentNode as HTMLElement;
 		const { width, height } = parent.getBoundingClientRect();
         Object.assign(this.root.style, {
             width: `${width}px`,
@@ -257,10 +243,10 @@ export class Page extends React.Component {
 		this.viewport.resize(width, height);
 	}
 
-	cursorMove = evt => {
+	cursorMove = (evt?) => {
 		const { cursor } = this;
 		if (cursor) {
-			const boundary = this.viewport.bounding;
+			const boundary = this.viewport.bounding as DOMRect;
 			if (evt) {
 				const { pageX: x, pageY: y } = evt;
 				this.cursorPos = { x, y };
@@ -269,16 +255,15 @@ export class Page extends React.Component {
 				const { x, y } = this.cursorPos;
 				const { dx, dy } = { dx: x - boundary.x - cursor.left, dy: y - boundary.y - cursor.top};
 				const { width, height } = cursor.canvas;
-				this.cctx.clearRect(0, 0, boundary.width, boundary.height);
-				this.cctx.drawImage(cursor.canvas, 0, 0, width, height, dx, dy, width, height);
+				this.ctx.clearRect(0, 0, boundary.width, boundary.height);
+				this.ctx.drawImage(cursor.canvas, 0, 0, width, height, dx, dy, width, height);
 			}
 		}
 	}
 
 	mergeLayers() {
 		// context.canvas - is a base canvas for workbanch
-		const { view } = this.document.getView();
-		this.viewport.putImage(view);
+		this.viewport.redraw();
 	}
 
 	mergeToActive(layer) {
@@ -289,7 +274,7 @@ export class Page extends React.Component {
 
     generateWorkingLayer() {
 		const { width, height } = this.viewport;
-		const layer = new Layer({ width, height, working: true }, this);
+		const layer = new Layer({ width, height, working: true, name: '', id: Layer.generateId() }, this.document);
 		this.virtuals.push(layer);
         return layer;
     }
@@ -299,18 +284,9 @@ export class Page extends React.Component {
 		if (cindex > -1) this.virtuals.splice(cindex, 1);
 	}
 
-	hideViewport() {
-		this.viewport.style.display = 'none';
-	}
-
-	showViewport() {
-		this.viewport.style.removeProperty('display');
-	}
-
 	redraw() {
 		//this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
 		this.mergeLayers();
-		this.freshWatermark();
 	}
 
     render() {

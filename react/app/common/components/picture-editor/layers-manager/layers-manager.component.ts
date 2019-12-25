@@ -1,8 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { Layer } from '../document/layer';
 import template from './layers-manager.template.rt';
 import './layers-manager.component.less';
+import { PictureDocument } from '../document/document';
 
 export class LayersManager extends React.Component {
 	static contextTypes = {
@@ -18,7 +19,11 @@ export class LayersManager extends React.Component {
 		return newState;
 	}
 
-	state = {};
+	state: {
+		document?: PictureDocument,
+		showed?: boolean,
+		active?: Layer
+	} = {};
 
 	overlays = [
 		'normal',
@@ -89,7 +94,7 @@ export class LayersManager extends React.Component {
 		const { active } = this.state;
 		let index = layers.length;
 		if (active) index = layers.indexOf(active) + 1;
-		const newLayer = new Layer({ name: `Layer ${layers.length}`, id: layers.length }, this.document);
+		const newLayer = new Layer({ name: `Layer ${layers.length}`, id: `${layers.length}` }, this.document);
 		layers.splice(index, 0, newLayer);
 		this.page.redraw();
 		this.document.setActiveLayer(newLayer);

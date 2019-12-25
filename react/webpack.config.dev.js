@@ -12,6 +12,7 @@ module.exports = Object.assign({}, defaultConfig, {
 		'webpack-hot-middleware/client',
 		'./app/index.js'
 	],
+	mode: 'development',
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: 'bundle.js',
@@ -32,26 +33,45 @@ module.exports = Object.assign({}, defaultConfig, {
 	],
 	module: {
 		rules: [
-			{test: /\.rt$/, loaders: ['react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app')},
+			{ test: /\.rt$/, loaders: ['react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app') },
+			{ test: /\.ts$/, loaders: ['ts-loader'], include: path.join(__dirname, 'app') },
 			{
 				test: /\.js?$/,
-				loader: 'babel-loader',
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [
+							"@babel/react",
+						],
+						plugins: [
+							"@babel/plugin-proposal-class-properties",
+							[
+								require("babel-plugin-transform-builtin-extend"),
+								{
+									"globals": [
+										"Array"
+									]
+								}
+							]
+						]
+					}
+				},
 				include: path.resolve(__dirname, 'app')
 			},
-			{test: /\.less$/, use: [
-				{loader: 'style-loader'},
-				{
-					loader: 'css-loader',
-					options: {
-						alias: {
-							projector: path.resolve(__dirname, './app')
+			{
+				test: /\.less$/,
+				use: [
+					{ loader: 'style-loader' },
+					{
+						loader: 'css-loader',
+						options: {
+							import: true
 						},
 					},
-				},
-				{loader: 'less-loader'},
+					{loader: 'less-loader'},
 			]},
-			{test: /\.css$/, loader: 'style-loader!css-loader'},
-			{test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192'} // inline base64 URLs for <=8k images, direct URLs for the rest
+			{ test: /\.css$/, loader: 'style-loader!css-loader' },
+			{ test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' } // inline base64 URLs for <=8k images, direct URLs for the rest
 		]
 	}
 });

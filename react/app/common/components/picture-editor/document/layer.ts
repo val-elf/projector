@@ -1,5 +1,7 @@
 import { EventEmitter } from './event-emitter';
 import { getBoundary } from '../utils';
+import { ILayerData } from './models';
+import { PictureDocument } from './document';
 
 const overlayMapping = {
 	'source-over': 'normal',
@@ -21,13 +23,36 @@ const overlayMapping = {
 	'luminosity': 'luminosity'
 }
 
+interface ILayerState {
+	document: PictureDocument;
+	working: boolean;
+	data: ILayerData;
+	active: boolean;
+	composite: string;
+	opacity: number;
+	offsetX: number;
+	offsetY: number;
+	isVisible: boolean;
+}
+
 export class Layer extends EventEmitter {
+	private _width: number;
+	private _height: number;
+	private _name: string;
+	private _working: Layer;
+	state: ILayerState;
+
+	id: string;
 	canvas = document.createElement('canvas');
 	mergedCanvas = document.createElement('canvas');
 	ctx = this.canvas.getContext('2d');
 	mergedCtx = this.mergedCanvas.getContext('2d');
 
-	constructor(data, doc){
+	static generateId() {
+		return (Math.random() * 100000).toFixed(0);
+	}
+
+	constructor(data: ILayerData, doc: PictureDocument){
 		super();
 		const { composite, opacity, offsetX, offsetY, active, width, height, isVisible, name, working, id } = data;
 		this._width = width !== undefined ? width : doc.width;
@@ -72,7 +97,7 @@ export class Layer extends EventEmitter {
 	get context() { return this.ctx; }
 
 	get opacity() {
-		let { opacity } = this.state;
+		let { opacity } : { opacity: number } = this.state;
 		if (opacity === undefined) opacity = 1;
 		return opacity;
 	}
@@ -112,7 +137,12 @@ export class Layer extends EventEmitter {
 		if (nwidth > dwidth) nwidth = dwidth;
 		if (nheight > dheight) nheight = dheight;
 
-		if (!this._working) this._working = new Layer({ width: nwidth, height: nheight }, this.document);
+		if (!this._working) this._working = new Layer({
+			width: nwidth,
+			height: nheight,
+			name: 'working',
+			id: Layer.generateId()
+		}, this.document);
 		else this._working._resize(nwidth, nheight);
 
 		this._working.offsetX = pan.x < 0 ? -pan.x / zoom : 0;
@@ -212,7 +242,7 @@ export class Layer extends EventEmitter {
 	}
 
 	get merged() {
-		return getMerged();
+		return this.getMerged();
 	}
 
 	resizeTo(width, height, dx, dy) {
@@ -273,7 +303,7 @@ export class Layer extends EventEmitter {
 			this.ctx.drawImage(ncnv, 0, 0);
 		}
 		this.ctx.save();
-		this.ctx.globalAlpha = opacity;
+		this.ctx.globalAlpha = this.opacity;
 		this.ctx.globalCompositeOperation = composite;
 		this.ctx.drawImage(source, 0, 0);
 		this.ctx.restore();

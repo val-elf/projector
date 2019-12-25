@@ -1,7 +1,7 @@
 export class EventEmitter {
-	_procs = {};
+	_procs: { [key: string]: Function[] } = {};
 
-	on(event, cb) {
+	on(event: string, cb: Function) {
 		let proc = this._procs[event];
 		if (!proc) {
 			proc = [];
@@ -10,14 +10,14 @@ export class EventEmitter {
 		if (!proc.includes(cb)) proc.push(cb);
 	}
 
-	off(event, cb) {
+	off(event: string, cb: Function) {
 		let procs = this._procs[event];
 		if (procs && procs.includes(cb)) {
 			procs.splice(procs.indexOf(cb), 1);
 		}
 	}
 
-	trigger(event, ...params) {
+	trigger(event: string, ...params: any[]) {
 		const proc = this._procs[event] || [];
 		proc.forEach(cb => cb(...params));
 	}

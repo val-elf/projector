@@ -1,25 +1,25 @@
 export class Canvas {
-	data = [];
+	data: number[] = [];
 	width = 0;
 	height = 0;
 
-	constructor (width=0, height=0) {
+	constructor (width = 0, height = 0) {
 		this.width = width;
 		this.height = height;
 		this.data = new Array(width * height * 4);
 	}
 
-	_getPoint(pos, data) {
+	_getPoint(pos, data?) {
 		if (!data) data = this.data;
 		return [data[pos], data[pos + 1], data[pos + 2], data[pos + 3]];
 	}
 
-	_setPoint(pos, dt, data) {
+	_setPoint(pos: number, dt, data?) {
 		if (!data) data = this.data;
-		data[pos, dt[0]];
-		data[pos + 1, dt[1]];
-		data[pos + 2, dt[2]];
-		data[pos + 3, dt[3]];
+		data[pos] = dt[0];
+		data[pos + 1] = dt[1];
+		data[pos + 2] = dt[2];
+		data[pos + 3] = dt[3];
 	}
 
 	resize(nwidth, nheight) {
@@ -62,7 +62,7 @@ export class Canvas {
 	fill(color) {
 		const filled = new Array(this.width * this.height);
 		filled.fill(color);
-		this.data = filled.flat();
+		this.data = (filled as any).flat();
 	}
 
 	clear() {

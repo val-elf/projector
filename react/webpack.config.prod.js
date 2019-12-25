@@ -17,6 +17,7 @@ module.exports = Object.assign({}, defaultConfig, {
 	entry: [
 		'./app/index.js'
 	],
+	mode: 'production',
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: 'bundle.js',
@@ -47,11 +48,7 @@ module.exports = Object.assign({}, defaultConfig, {
 						// {loader: 'style-loader'},
 						{
 							loader: 'css-loader',
-							options: {
-								alias: {
-									projector: path.resolve(__dirname, './app')
-								},
-							},
+							options: { import: true },
 						},
 						{loader: 'less-loader'}
 					],

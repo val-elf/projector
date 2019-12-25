@@ -1,8 +1,12 @@
 import { EventEmitter } from './event-emitter';
+import { PictureDocument } from './document';
 
 export class Viewport extends EventEmitter {
+	document: any;
+	window: HTMLElement;
+	view: any;
 
-	constructor(doc, window) {
+	constructor(doc: PictureDocument, window: HTMLElement) {
 		super();
 		this.canvas.className = 'image-page_viewport-canvas';
 		this.document = doc;
@@ -35,7 +39,7 @@ export class Viewport extends EventEmitter {
 		const lpoint = pan.x + dwidth;
 		if (lpoint > this._width) rwidth -= lpoint - this._width;
 		if (pan.x < 0) rwidth += pan.x;
-		return rwidth;
+		return Math.round(rwidth);
 	}
 	get height() {
 		const { height: dheight } = this.viewDocumentDimensions;
@@ -44,7 +48,7 @@ export class Viewport extends EventEmitter {
 		const tpoint = pan.y + dheight;
 		if (tpoint > this._height) rheight -= tpoint - this._height;
 		if (pan.y < 0) rheight += pan.y;
-		return rheight;
+		return Math.round(rheight);
 	}
 
 	getLayerLocation(pos) {
@@ -59,12 +63,14 @@ export class Viewport extends EventEmitter {
 	set zoom(value) {
 		this._zoom = value;
 		this._recalculateDimensions();
+		this._refresh();
 		this.trigger('change');
 	}
 	get pan() { return this._pan; }
 	set pan(value) {
 		Object.assign(this._pan, value);
 		this._recalculateDimensions();
+		this._flat();
 		this.trigger('change');
 	}
 
@@ -97,7 +103,7 @@ export class Viewport extends EventEmitter {
 	}
 
 	_recalculateDimensions() {
-		const { pan, width, height } = this;
+		const { pan } = this;
 		const { width: dwidth, height: dheight } = this.viewDocumentDimensions;
 		const isFlyout = pan.x > this._width || pan.y > this._height ||
 			-pan.x > dwidth || -pan.y > dheight;
@@ -117,24 +123,35 @@ export class Viewport extends EventEmitter {
 			backgroundPositionX: `-${ xshift }px`,
 			backgroundPositionY: `-${ yshift }px`
 		});
+	}
+
+	_flat() {
+		const { width, height } = this;
 		if (this.canvas.width !== width || this.canvas.height !== height) {
 			Object.assign(this.canvas, { width, height });
-			//this.putImage(this.document._view);
+			if (!this.view) this.redraw(); else this.putImage();
+		}
+	}
+
+	_refresh() {
+		const { width, height } = this;
+		if (this.canvas.width !== width || this.canvas.height !== height) {
+			Object.assign(this.canvas, { width, height });
 			this.redraw();
 		}
 	}
 
-	redraw() {
-		const { view } = this.document.getView();
-		this.putImage(view);
+	redraw() { // should be called when we change the zoom of picture
+		this.view = this.document.getView();
+		this.putImage();
 	}
 
-	putImage(image) {
-		const { width, height, _zoom: zoom } = this;
+	putImage() {
+		const { view, width, height, _zoom: zoom } = this;
 		if (width == 0 || height == 0) return;
 		this.ctx.clearRect(0, 0, width, height);
 		this.ctx.imageSmoothingEnabled = zoom <= 1;
-		this.ctx.drawImage(image,
+		this.ctx.drawImage(view.view,
 			0, 0, width / zoom, height / zoom, // source coords / dims
 			0, 0, width, height // viewport coords / dims
 		);

@@ -1,9 +1,13 @@
-export const getBoundary = ctx => {
+export const getBoundary = (ctx: CanvasRenderingContext2D) => {
 	let { width, height } = ctx.canvas;
 	const pixels = ctx.getImageData(0, 0, width, height);
 	const l = pixels.data.length;
-	let top, left, right, bottom;
-	let x, y;
+	let top: number,
+		left: number,
+		right: number,
+		bottom: number;
+	let x: number,
+		y: number;
 	for (let i = 0; i < l; i += 4) {
 		if (pixels.data[i + 3] !== 0) {
 			x = (i / 4) % width;

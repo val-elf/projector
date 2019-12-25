@@ -1,6 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import template from './layer.template';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import { Layer as ILayer } from '../document/layer';
+import template from './layer.template.rt';
 
 const pwidth = 75;
 
@@ -20,10 +21,13 @@ export class Layer extends React.Component {
 	get editor() { return this.context.editor; }
 	get page() { return this.editor.page; }
 
-	state = {};
+	state: {
+		layer?: ILayer
+	} = { };
 
 	canvasRef = React.createRef();
-	get canvas() { return this.canvasRef.current; }
+	ctx: CanvasRenderingContext2D;
+	get canvas() { return this.canvasRef.current as HTMLCanvasElement; }
 	get layer() { return this.state.layer; }
 	get name() { return this.layer.name; }
 	get active() { return this.layer.active; }

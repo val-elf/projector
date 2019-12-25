@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { EventEmitterInterface } from '../document/event-emitter';
+import { EventEmitter } from '../document/event-emitter';
 import './common-tool.component.less';
 
 class EventComponent extends React.Component {
@@ -90,4 +90,4 @@ export class CommonTool extends EventComponent {
     }
 }
 
-Object.assign(CommonTool, EventEmitterInterface);
+Object.assign(CommonTool, EventEmitter);

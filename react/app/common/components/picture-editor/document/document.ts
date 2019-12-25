@@ -1,15 +1,25 @@
 import { mockLayers } from './layers-mock';
 import { Layer } from './layer';
 import { EventEmitter } from './event-emitter';
+import { Viewport } from './viewport';
+import { ILayerData } from './models';
 
 export class PictureDocument extends EventEmitter {
-	_layers = [];
+	_layers: Layer[] = [];
+	_width: number;
+	_height: number;
+	_active: Layer;
+	_view: HTMLCanvasElement;
+	_ctx: CanvasRenderingContext2D;
+	_image: HTMLImageElement;
+	_viewport: Viewport;
+
 	get layers() { return this._layers; }
 	get width() { return this._width; }
 	get height() { return this._height; }
 	get activeLayer() { return this._active; }
 
-	constructor(width, height, layers = mockLayers) {
+	constructor(width: number, height: number, layers: ILayerData[] = mockLayers) {
 		super();
 		this._width = width;
 		this._height = height;
@@ -25,7 +35,7 @@ export class PictureDocument extends EventEmitter {
 			return nlay;
 		});
 		if (!this._layers.length) {
-			const defaultLayer = new Layer({ id: 0 }, this);
+			const defaultLayer = new Layer({ id: '0', name: '' }, this);
 			defaultLayer.fill('#FFFFFF');
 			this._layers.push(defaultLayer);
 		}
@@ -39,7 +49,7 @@ export class PictureDocument extends EventEmitter {
 
 	get preview() {
 		if (!this._image) this._image = new Image();
-		const view = this.getView();
+		const { view } = this.getView();
 		this._image.src = view.toDataURL('image/png');
 		return this._image;
 	}
@@ -58,17 +68,17 @@ export class PictureDocument extends EventEmitter {
 		return { view: this._view, width, height };
 	}
 
-	set viewport(viewport) {
+	set viewport(viewport: Viewport) {
 		this._viewport = viewport;
 	}
 	get viewport() { return this._viewport; }
 
 	createNewLayer() {
-		const layer = new Layer({}, this);
+		const layer = new Layer({ id: Layer.generateId(), name: 'New Layer' }, this);
 		this.addLayer(layer);
 	}
 
-	setActiveLayer(layer) {
+	setActiveLayer(layer: Layer) {
 		this._active = layer;
 		this.layers.forEach(lr => lr.switchActiveTo(layer === lr));
 		this.trigger('changeActiveLayer', layer);
@@ -78,11 +88,11 @@ export class PictureDocument extends EventEmitter {
 		this.trigger('update');
 	}
 
-	addLayer(layer) {
+	addLayer(layer: Layer) {
 		this._layers.push(layer);
 	}
 
-	resize({ width, height, square }) {
+	resize({ width, height, square }: { width: number, height: number, square?: number}) {
 		const dx = width / this._width;
 		const dy = height / this._height;
 		let stretch = false;

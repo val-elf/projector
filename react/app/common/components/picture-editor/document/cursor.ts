@@ -1,4 +1,10 @@
 export class Cursor {
+	canvas: HTMLCanvasElement;
+	ctx: CanvasRenderingContext2D;
+	left: number;
+	top: number;
+	changeCallback: Function;
+
 	constructor() {
 		this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -17,7 +23,7 @@ export class Cursor {
 
 	get context() { return this.ctx; }
 
-	onChangeCursor(cb) {
+	onChangeCursor(cb: Function) {
 		this.changeCallback = cb;
 	}
 

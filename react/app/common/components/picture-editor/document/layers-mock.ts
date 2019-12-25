@@ -1,4 +1,6 @@
-export const mockLayers = [
+import { ILayerData } from './models';
+
+export const mockLayers: ILayerData[] = [
 	/*{
 		//active: true,
 		img: '/srv/file/5c3716387ea9e45ea4d9c8f7',
@@ -52,4 +54,4 @@ export const mockLayers = [
 		img: '/assets/img/layer-sample.png',
 		name: 'layer 10'
 	},*/
-].map((l, index) => Object.assign(l, { id: index }));
+].map((l, index) => Object.assign(l, { id: index.toFixed(0) }));
