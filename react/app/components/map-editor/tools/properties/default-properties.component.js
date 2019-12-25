@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import template from './default-properties.template.rt';
-import { store } from 'projector/index';
+import { store } from '~/index';
 import './default-properties.component.less';
 
 export class DefaultProperties extends React.Component {
@@ -36,7 +36,7 @@ export class DefaultProperties extends React.Component {
 	changeParentLocation(value) {
 		let { parent, location } = this.state;
 		const parentId = value;
-		const newLocation = this.state.locations.find(loc => loc.id === parentId);		
+		const newLocation = this.state.locations.find(loc => loc.id === parentId);
 		if (!parent) {
 			const offset = newLocation.position;
 			const scale = 1 / newLocation.scale;
@@ -50,7 +50,7 @@ export class DefaultProperties extends React.Component {
 		this.setState({ parent, parentId, location });
         store.dispatch({ type: 'LOCATION_CHANGE_PARENT', parent: location.parent });
     }
-    
+
     changeSelectedItem(item) {
         this.setState({ selected: item });
         this.map.selectItem(item, true);

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import template from "./project-details.template";
 import { ProjectTabMenu } from "./project.module";
-import { AppContext } from '~/app/app.context';
+import { AppContext } from '~/app.context';
 
 export class ProjectDetails extends React.Component {
 	static contextTypes = {

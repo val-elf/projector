@@ -1,4 +1,4 @@
-import { App } from 'projector/app.component';
+import { App } from '~/app.component';
 
 export class ModalService {
     static async open(modalTypeOrElement, options) {

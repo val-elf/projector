@@ -1,5 +1,5 @@
 import SVG from 'svg.js';
-import { Eventful } from 'projector/common/eventful';
+import { Eventful } from '~/common/eventful';
 import { Viewport } from './viewport';
 import { Shape } from './shape';
 import { Image } from './image';
@@ -71,7 +71,7 @@ export class Map extends Eventful {
 		this.vrect = this.paper.rect(100, 100).attr({stroke: '#AA0000', 'stroke-width': 1, fill: 'none'});
 		this.vrect.hide();
 		this.freshViewport();
-		this.viewport.on('changeView', () => this.changeView());		
+		this.viewport.on('changeView', () => this.changeView());
 	}
 
 	freshViewport() {

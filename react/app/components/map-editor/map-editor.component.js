@@ -3,9 +3,9 @@ import SVG from 'svg.js';
 import PropTypes from "prop-types";
 import { MapHost, LocationMap, ParentMap, MerchatorGrid, Boundary, Viewport } from "./map";
 import template from './map-editor.template';
-import { getPointHolder } from 'projector/common/utils';
+import { getPointHolder } from '~/common/utils';
+import { store } from '~/index';
 import './map-editor.component.less';
-import { store } from 'projector/index';
 
 export class MapEditor extends React.Component {
 	static contextTypes = {

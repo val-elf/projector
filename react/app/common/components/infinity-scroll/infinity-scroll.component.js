@@ -1,5 +1,5 @@
 import React from "react";
-import $q from "~/app/common/defer.js";
+import $q from "~/common/defer.js";
 
 export class InfinityScroll extends React.Component {
 	constructor(props){

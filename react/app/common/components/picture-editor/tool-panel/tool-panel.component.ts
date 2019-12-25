@@ -1,9 +1,18 @@
-import React from 'react';
-import template from './tool-panel.template';
-import { clearSelection } from 'projector/common/utils';
+import * as React from 'react';
+import template from './tool-panel.template.rt';
+import { clearSelection } from '~/common/utils';
 import './tool-panel.component.less';
 
-export class ToolPanel extends React.Component {
+interface ToolPanelProps {
+	title: string;
+}
+
+interface ToolPanelState {
+	showed: boolean;
+	location: { x: number, y: number }
+}
+
+export class ToolPanel extends React.Component<ToolPanelProps, ToolPanelState> {
 	static getDerivedStateFromProps(props, state) {
 		const newState = Object.assign({}, state);
 		const { showed } = props;
@@ -12,9 +21,10 @@ export class ToolPanel extends React.Component {
 	}
 
 	state = { showed: false, location: { x: 0, y: 0 } };
+	ancor: { x: number, y: number };
 
 	rootRef = React.createRef();
-	get root() { return this.rootRef.current; }
+	get root() { return this.rootRef.current as HTMLElement; }
 	get title() { return this.props.title; }
 
 	componentDidMount() {

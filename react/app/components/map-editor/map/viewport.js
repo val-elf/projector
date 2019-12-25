@@ -1,7 +1,7 @@
-import { Eventful } from 'projector/common/eventful';
+import { Eventful } from '~/common/eventful';
 
 export class Viewport extends Eventful {
-	
+
 	offset = { x: 0, y: 0 };
 	zoomFactor = 1;
 	base = 1;

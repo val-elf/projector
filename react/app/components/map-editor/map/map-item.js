@@ -1,4 +1,4 @@
-import { Eventful } from 'projector/common/eventful';
+import { Eventful } from '~/common/eventful';
 
 export class MapItem extends Eventful{
 	dragHandler = event => {
@@ -17,15 +17,15 @@ export class MapItem extends Eventful{
 
 		if (itemGenerator) {
 			this.item = itemGenerator(this._group);
-	
+
 			this._group.add(this.item);
-	
+
 			const clicker = event => {
 				this.trigger('click', this);
 			}
 			this.item.on('click', clicker);
 			this.item.on('touchend', clicker);
-	
+
 			this.item.on('mousedown', event => document.addEventListener('mousemove', this.dragHandler));
 			this.item.on('mouseup', event => document.removeEventListener('mousemove', this.dragHandler));
 			this.item.on('touchstart', event => document.addEventListener('touchmove', this.dragHandler));

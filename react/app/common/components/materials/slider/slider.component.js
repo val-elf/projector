@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from './slider.styles';
-import { clearSelection } from 'projector/common/utils';
+import { clearSelection } from '~/common/utils';
 import template from './slider.template';
 
 class SliderComponent extends React.Component {

@@ -1,6 +1,6 @@
 import React from 'react';
 import template from './artifact-characters-details.template';
-import { InvoledCharacter } from 'projector/api/models';
+import { InvoledCharacter } from '~/api/models';
 
 export class ArtifactCharactersDetails extends React.Component {
     static getDerivedStateFromProps(props, state) {

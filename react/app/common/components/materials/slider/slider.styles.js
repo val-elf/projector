@@ -1,4 +1,4 @@
-import { color2RGBA, RGB2rgba } from 'projector/common/colors';
+import { color2RGBA, RGB2rgba } from '~/common/colors';
 
 export const styles = theme => {
     // console.log('THM', theme);

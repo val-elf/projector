@@ -1,6 +1,6 @@
 // import React from 'react';
-import { hex2RGB } from 'projector/common/colors';
-import { clearSelection } from 'projector/common/utils';
+import { hex2RGB } from '~/common/colors';
+import { clearSelection } from '~/common/utils';
 import { CommonTool } from '../common-tool.component';
 import { Cursor } from '../../document/cursor';
 import { BrushOptions } from '../options/brush-options.component';

@@ -1,5 +1,5 @@
 import { CommonTool } from '../common-tool.component';
-import { clearSelection } from 'projector/common/utils';
+import { clearSelection } from '~/common/utils';
 
 export class Move extends CommonTool {
 

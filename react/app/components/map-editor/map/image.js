@@ -1,5 +1,5 @@
 import { MapItem } from './map-item';
-import { apiUrl } from 'projector/index';
+import { apiUrl } from '~/index';
 
 export class Image extends MapItem {
 	constructor(map, data) {

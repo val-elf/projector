@@ -1,5 +1,5 @@
 import React from 'react';
-import { Service } from '~/app/api/engine';
+import { Service } from '~/api/engine';
 import { UISref } from '@uirouter/react';
 
 export class ILink extends React.Component {

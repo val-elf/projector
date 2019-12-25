@@ -13,9 +13,9 @@ import moment from 'moment';
 import "./index.less";
 
 import { App } from './app.component';
-import { Project } from "projector/services/project-reducer";
-import { MUITheme } from 'projector/common/mui-theme';
-import { Service } from "projector/api/engine";
+import { Project } from "~/services/project-reducer";
+import { MUITheme } from '~/common/mui-theme';
+import { Service } from "~/api/engine";
 
 let _api = document.head.querySelector(`meta[name='apiUrl']`).attributes['content'].value;
 export const apiUrl = _api[0] !== '/' ? `/${_api}` : _api;

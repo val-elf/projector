@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { RGB2hex } from 'projector/common/colors';
-import template from './color-selector.template';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
+import { RGB2hex } from '~/common/colors';
+import template from './color-selector.template.rt';
 import './color-selector.component.less';
 
 export class ColorSelector extends React.Component {

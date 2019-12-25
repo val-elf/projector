@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CharactersService } from 'api';
 import template from './project-link-selector.template.rt';
-import { AppContext } from '~/app/app.context';
+import { AppContext } from '~/app.context';
 
 export class ProjectLinkSelector extends React.Component {
     static contextTypes = {

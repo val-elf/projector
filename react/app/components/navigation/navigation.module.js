@@ -1,6 +1,6 @@
-import { Dashboard } from 'projector/pages/dashboard/dashboard.component';
-import { ProjectsModule } from "projector/pages/projects/projects.module";
-import { Layout } from "projector/pages/layout.component";
+import { Dashboard } from '~/pages/dashboard/dashboard.component';
+import { ProjectsModule } from "~/pages/projects/projects.module";
+import { Layout } from "~/pages/layout.component";
 
 export default {
 	_map: [
