@@ -35,7 +35,7 @@
     "md2-colorpicker": "0.0.1-alpha.0",
     "md5": "^2.0.0",
     "mongodb": "",
-    "mongoose": "^4.13.6",
+    "mongoose": "^5.8.3",
     "node-promise": "^0.5.12",
     "raphael": "^2.2.7",
     "restangular": "^1.6.1",
