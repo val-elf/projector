@@ -1,4 +1,4 @@
-<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="date" from="~/services/filters/date" />
 
 <div class="spot" title="{this.spot.title}"
 	rt-scope="this.spot as spot"

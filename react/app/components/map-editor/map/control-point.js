@@ -1,5 +1,5 @@
-import { Eventful } from '~/common/eventful';
-import { getPointHolder } from '~/common/utils';
+import { Eventful } from 'common/eventful';
+import { getPointHolder } from 'common/utils';
 import utils from './2d-utils';
 
 export class ControlPoint extends Eventful {

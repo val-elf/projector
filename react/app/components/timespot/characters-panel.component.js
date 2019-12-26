@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { TimespotCharacter } from 'api';
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { CharactersSelector } from './modals/characters-selector.component';
 import template from "./characters-panel.template";
 

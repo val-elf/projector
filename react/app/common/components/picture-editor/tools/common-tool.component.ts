@@ -1,9 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
+import * as PropTypes from 'prop-types';
 import { EventEmitter } from '../document/event-emitter';
 import './common-tool.component.less';
+import { IEditor } from '../models/editor.model';
 
-class EventComponent extends React.Component {
+class EventComponent<P = {}, S = {}> extends React.Component<P, S> {
 	_callbacks = {};
 	on(event, cb) {
 		let procs = this._callbacks[event];
@@ -28,20 +29,28 @@ class EventComponent extends React.Component {
 	}
 }
 
-export class CommonTool extends EventComponent {
+export interface CommonToolState {
+	active?: boolean | undefined;
+	temporary?: boolean | undefined;
+}
+
+export class CommonTool<P, S extends CommonToolState>
+			extends EventComponent<P, S> {
     static contextTypes = {
         editor: PropTypes.object.isRequired
     }
 
-    state = {
-        active: false,
-	}
+    state: S = {
+		active: false,
+		temporary: false
+	} as S;
 
 	paused = false;
+	locked: boolean;
 
-	get editor() { return this.context.editor; }
-	get page() { return this.context.editor.page; }
-	get viewport() { return this.page.viewport; }
+	get editor(): IEditor { return this.context.editor; }
+	get page() { return this.editor.page; }
+	get viewport() { return this.document.viewport; }
 	get isActive() { return this.state.active; }
 	get document() { return this.editor.document; }
 	get activeLayer() { return this.document.activeLayer; }
@@ -57,7 +66,7 @@ export class CommonTool extends EventComponent {
 	getCursor() {}
 	refreshCursor() {}
 
-	temporaryActivate() {
+	temporaryActivate(evt: any) {
 		this.activate();
 		this.setState({ active: true, temporary: true });
 	}

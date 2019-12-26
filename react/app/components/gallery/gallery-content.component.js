@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FilesService } from 'api';
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import template from './gallery-content.template';
 import deleteTemplate from './gallery-content-delete.template';
 import './gallery-content.component.less';

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { NewStoryPage } from './modals/new-story-page.component';
 import { pages, selected } from './mocks';
 import template from './storyboard.template';

@@ -14,7 +14,7 @@ import "./index.less";
 
 import { App } from './app.component';
 import { Project } from "~/services/project-reducer";
-import { MUITheme } from '~/common/mui-theme';
+import { MUITheme } from 'common/mui-theme';
 import { Service } from "~/api/engine";
 
 let _api = document.head.querySelector(`meta[name='apiUrl']`).attributes['content'].value;

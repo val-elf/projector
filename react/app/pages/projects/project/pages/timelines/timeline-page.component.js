@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import template from "./timeline-page.template";
-import { store } from "projector/index";
+import { store } from "~/index";
 
 export class TimelinePage extends React.Component {
 

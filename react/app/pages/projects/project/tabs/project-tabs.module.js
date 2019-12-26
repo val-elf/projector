@@ -6,8 +6,8 @@ import { ProjectLocations } from "./locations/project-locations.component";
 import { ProjectTasks } from "./tasks/project-tasks.component";
 import { ProjectTab } from "./project-tab.component";
 
-import { ArtifactsService } from "projector/api/models";
-import { CharactersService } from "projector/api/models/character.model";
+import { ArtifactsService } from "~/api/models";
+import { CharactersService } from "~/api/models/character.model";
 
 const routes = [
 	{

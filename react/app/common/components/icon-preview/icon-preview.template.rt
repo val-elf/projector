@@ -1,4 +1,4 @@
-<rt-import name="Loader" from="common/loader" />
+<rt-import name="Loader" from="controls/loader" />
 <span
 	rt-scope="this.context.t as t; this.state as state"
 	class="preview"

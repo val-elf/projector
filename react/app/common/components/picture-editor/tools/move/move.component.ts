@@ -1,7 +1,9 @@
 import { CommonTool } from '../common-tool.component';
-import { clearSelection } from '~/common/utils';
+import { clearSelection } from 'common/utils';
+import { ICoordinates } from 'controls/picture-editor/models/editor.model';
 
-export class Move extends CommonTool {
+export class Move extends CommonTool<{}, {}> {
+	ancor: ICoordinates;
 
 	activate() {
 		this.viewport.window.addEventListener('mousedown', this.startMove);

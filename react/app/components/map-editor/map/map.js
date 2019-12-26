@@ -1,5 +1,5 @@
 import SVG from 'svg.js';
-import { Eventful } from '~/common/eventful';
+import { Eventful } from 'common/eventful';
 import { Viewport } from './viewport';
 import { Shape } from './shape';
 import { Image } from './image';

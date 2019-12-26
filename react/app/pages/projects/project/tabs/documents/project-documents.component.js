@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import template from "./project-documents.template.rt";
-import { DocumentsService } from "projector/api/models/document.model";
+import { DocumentsService } from "~/api/models/document.model";
 
 export class ProjectDocuments extends React.Component {
 	static contextTypes = {

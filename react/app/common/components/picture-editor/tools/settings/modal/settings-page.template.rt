@@ -1,5 +1,5 @@
 <rt-import name="TextField" from="@material-ui/core" />
-<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="Checkbox" from="controls/materials" />
 <rt-import name="ResizeSquare" from="./resize-square.component" />
 
 <div rt-scope="this.state as state; state.document as document; this.context.t as t" class="image-editor_page-settings">

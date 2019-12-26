@@ -1,15 +1,15 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="TextField" from="@material-ui/core" />
 <rt-import name="Button" from="@material-ui/core" />
-<rt-import name="Modal" from="common/materials" />
-<rt-import name="Scrollable" from="common/scrollable" />
-<rt-import name="TreeList" from="common/tree-list" />
-<rt-import name="FileUploader" from="common/file-uploader" />
-<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Modal" from="controls/materials" />
+<rt-import name="Scrollable" from="controls/scrollable" />
+<rt-import name="TreeList" from="controls/tree-list" />
+<rt-import name="FileUploader" from="controls/file-uploader" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="DocumentFolder" from="components/document-folder" />
+<rt-import name="CategoryPanel" from="components/category-panel" />
 <rt-import name="GalleryControls" from="./gallery-controls.component" />
 <rt-import name="GalleryContent" from="./gallery-content.component" />
-<rt-import name="CategoryPanel" from="components/category-panel" />
 
 <div class="row single" rt-scope="this.state as state; this.context.t as t">
 	<div class="col brick size1of6 maxw300 minw200 shortspace">

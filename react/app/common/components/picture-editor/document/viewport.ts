@@ -1,5 +1,6 @@
 import { EventEmitter } from './event-emitter';
 import { PictureDocument } from './document';
+import { ICoordinates } from '../models/editor.model';
 
 export class Viewport extends EventEmitter {
 	document: any;
@@ -17,7 +18,7 @@ export class Viewport extends EventEmitter {
 	_width = 0; // width of view window
 	_height = 0; // height of view window
 	_zoom = 1;
-	_pan = { x: 0, y: 0 };
+	_pan: ICoordinates = { x: 0, y: 0 };
 
 	canvas = document.createElement('canvas');
 	ctx = this.canvas.getContext('2d');

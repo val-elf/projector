@@ -1,9 +1,9 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="Button" from="@material-ui/core" />
-<rt-import name="Modal" from="common/materials" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Modal" from="controls/materials" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Scrollable" from="controls/scrollable" />
 <rt-import name="LocationCard" from="components/locations" />
 
 <Fragment rt-scope="this.context.t as t; this.state as state">

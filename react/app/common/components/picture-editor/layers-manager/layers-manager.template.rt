@@ -1,10 +1,10 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="ToolPanel" from="../tool-panel" />
-<rt-import name="Scrollable" from="common/scrollable" />
-<rt-import name="Select" from="common/materials" />
+<rt-import name="Scrollable" from="controls/scrollable" />
+<rt-import name="Select" from="controls/materials" />
 <rt-import name="MenuItem" from="@material-ui/core" />
-<rt-import name="Slider" from="common/materials" />
-<rt-import name="DragNDrop" from="common/drag-n-drop" />
+<rt-import name="Slider" from="controls/materials" />
+<rt-import name="DragNDrop" from="controls/drag-n-drop" />
 <rt-import name="Layer" from="./layer.component" />
 
 <Fragment rt-scope="this.state as state; this.context.t as t; this.document.activeLayer as layer">

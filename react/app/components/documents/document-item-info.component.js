@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { DocumentDetails } from './document-details.component';
 import template from './document-item-info.template';
 import './document-item-info.component.less';

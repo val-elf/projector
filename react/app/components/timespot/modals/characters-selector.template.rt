@@ -1,5 +1,5 @@
-<rt-import name="Scrollable" from="common/scrollable" />
-<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="Scrollable" from="controls/scrollable" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
 
 <Scrollable rt-scope="this.state as state; this.context.t as t">
     <div class="list hovered">

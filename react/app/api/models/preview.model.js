@@ -1,4 +1,4 @@
-import { Model, Types, Type, Service } from "projector/api/engine";
+import { Model, Types, Type, Service } from "~/api/engine";
 
 export class Preview extends Model {
 	height = Type.Number;

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { UIRouter, UIView } from "@uirouter/react";
 import template from "./dashboard.template";
-import { ProjectsService } from "projector/api/models/project.model";
+import { ProjectsService } from "~/api/models/project.model";
 
 export class Dashboard extends React.Component {
 	state = {

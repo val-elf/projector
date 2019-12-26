@@ -1,13 +1,14 @@
 // import React from 'react';
-import { hex2RGB } from '~/common/colors';
-import { clearSelection } from '~/common/utils';
-import { CommonTool } from '../common-tool.component';
+// import { hex2RGB } from 'common/colors';
+import { clearSelection } from 'common/utils';
+import { CommonTool, CommonToolState } from '../common-tool.component';
 import { Cursor } from '../../document/cursor';
 import { BrushOptions } from '../options/brush-options.component';
 import { BrushManager } from '../brush-utils';
 import { testPoints } from './points.test';
 import template from './brush.template.rt';
 import './brush.component.less';
+import { IPointPosition } from '../../models/editor.model';
 
 const EPenButton = {
 	tip: 0x1, // left mouse, touch contact, pen contact
@@ -77,7 +78,14 @@ var getOpacity = (steps, alpha) => {
 	return Math.round(1000 * (1 - Math.pow(1 - alpha, 1 / steps))) / 1000;
 }
 
-export class Brush extends CommonTool {
+interface BrushState extends CommonToolState {
+	hardness: number;
+	opacity: number;
+	flow: number;
+	useTilt: boolean;
+}
+
+export class Brush extends CommonTool<{}, BrushState> {
 
 	test1() {
 		let x = 10;
@@ -110,7 +118,6 @@ export class Brush extends CommonTool {
 		let c = 0;
 		for (var i = frame * 30 + shift; i < frame * 30 + 1 + shift; i ++) {
 			const r = i * 0.01;
-			const width = r * 2;
 			const res = brush.fillSpot(r, hardness, 1, 0, red);
 			brush.drawTo(rdata, res, { x: 70 + c * 120, y: 40 });
 			/* dpoints(
@@ -124,8 +131,15 @@ export class Brush extends CommonTool {
 		return rdata;
 	}
 
+	get layer() {
+		return this.activeLayer.workingLayer;
+	}
+
+	get ctx() {
+		return this.layer.context;
+	}
+
 	testBrush() { // only for tests
-		this.layer = this.activeLayer.workingLayer;
 		const ctx = this.layer.context;
 		ctx.putImageData(this.test2(), 0, 0);
 		this.page.redraw();
@@ -156,6 +170,14 @@ export class Brush extends CommonTool {
 	minWidth = 0.05;
 	composite = 'source-over';
 
+	pts: IPointPosition[];
+	lpoint: IPointPosition;
+	points: IPointPosition[];
+	pixelData: ImageData;
+	distance: number;
+	iterations: number;
+	_cursor: Cursor;
+
 	get color() { return this.editor.color; }
 
 	getRealOpacity(stepRatio, flow) {
@@ -169,14 +191,14 @@ export class Brush extends CommonTool {
 		if (this.paused) return;
 
 		const { buttons } = evt;
-		if (!this.paused && !this.isEraser && [EPenButton.eraser, EPenButton.barrel].includes(buttons)) {
+
+		/* if (!this.paused && !this.isEraser && [EPenButton.eraser, EPenButton.barrel].includes(buttons)) {
 			this.editor.temporaryActivate('eraser', evt);
 			return;
-		}
-		this.layer = this.activeLayer.workingLayer;
+		}*/
+
 		this.layer.composite = this.composite;
 		this.layer.opacity = this.opacity;
-		this.ctx = this.layer.context;
 		this.pixelData = new ImageData(this.layer.width, this.layer.height);
 
 		document.addEventListener('pointermove', this.draw);
@@ -185,20 +207,21 @@ export class Brush extends CommonTool {
 		this.lpoint = null;
 
 		const { color } = this;
-		const { stepRatio, flow, size, hardness, roundness, rotate } = this;
+		const { stepRatio, flow, size: originSize, hardness, roundness, rotate } = this;
 		const rgba = Object.assign({}, color, { a: this.getRealOpacity(stepRatio, flow) });
-		const width = pressure * size;
-		const pos = this.viewport.getLayerLocation({ x: evt.pageX, y: evt.pageY });
-		Object.assign(pos, {
+		const size = pressure * originSize;
+		const pos = {
 			color: rgba,
-			width,
+			size,
 			hardness,
 			roundness,
-			rotate
-		});
+			rotate,
+			...this.viewport.getLayerLocation({ x: evt.pageX, y: evt.pageY })
+		};
+
 		this.lpoint = pos;
 		this.pts.push(pos);
-		brush.drawPoint(pos, pos.width, this.pixelData);
+		brush.drawPoint(pos, pos.size, this.pixelData);
 		this.ctx.putImageData(this.pixelData, 0, 0);
 		this.viewport.redraw();
 		this.distance = 0;
@@ -218,7 +241,7 @@ export class Brush extends CommonTool {
 		}*/
 		this.iterations++;
 		clearSelection();
-		const { size, flow, color, hardness, roundness, rotate } = this;
+		const { size: originSize, flow, color, hardness, roundness, rotate } = this;
 		let { stepRatio } = this;
 		const pressure = evt.pointerType === 'mouse' ? 1 : evt.pressure;
 
@@ -227,16 +250,17 @@ export class Brush extends CommonTool {
 		// const rotate = evt.twist;
 
 		const rgba = Object.assign({}, color, { a: this.getRealOpacity(stepRatio, flow) });
-		let width = Math.round(pressure * size * 100) / 100;
-		if (width < 0.1) width = 0.1;
-		const pos = this.viewport.getLayerLocation({ x: evt.pageX, y: evt.pageY });
-		Object.assign(pos, {
+		let size = Math.round(pressure * originSize * 100) / 100;
+		if (size < 0.1) size = 0.1;
+		const pos = {
 			color: rgba,
-			width,
+			size,
 			hardness,
 			roundness,
-			rotate
-		});
+			rotate,
+			...this.viewport.getLayerLocation({ x: evt.pageX, y: evt.pageY })
+		};
+
 		if (this.lpoint) {
 			const npoint = brush.drawLine(this.lpoint, pos, this.pixelData, stepRatio);
 			this.ctx.putImageData(this.pixelData, 0, 0);
@@ -244,7 +268,7 @@ export class Brush extends CommonTool {
 				this.lpoint = npoint;
 				// this.points.push(npoint);
 				this.viewport.redraw();
-			} else this.lpoint.width = width;
+			} else this.lpoint.size = size;
 		} else this.lpoint = pos;
 	}
 

@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import template from "./character-page.template";
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { CharacterCard } from 'components/characters';
 
 export class CharacterPage extends React.Component {

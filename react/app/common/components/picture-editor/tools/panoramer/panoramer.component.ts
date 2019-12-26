@@ -1,7 +1,9 @@
 import { CommonTool } from '../common-tool.component';
-import template from './panoramer.template';
+import template from './panoramer.template.rt';
+import { ICoordinates } from '../../models/editor.model';
 
-export class Panoramer extends CommonTool {
+export class Panoramer extends CommonTool<{}, {}> {
+	ancor: ICoordinates;
 
 	activate() {
 		this.viewport.window.addEventListener('mousedown', this.startMove);

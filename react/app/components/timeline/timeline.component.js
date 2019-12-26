@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import template from "./timeline.template";
 import { TimespotCard } from "components/timespot";
 import { TimespotsService } from "api";
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import './timeline.component.less';
 
 export class Timeline extends React.Component {

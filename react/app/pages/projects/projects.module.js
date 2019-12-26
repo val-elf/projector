@@ -1,6 +1,6 @@
 import Projects from './projects.component';
 import { Transition } from '@uirouter/react';
-import { ProjectsService } from "projector/api/models/project.model";
+import { ProjectsService } from "~/api/models/project.model";
 import { ProjectModule } from "./project/project.module";
 
 const routes = [

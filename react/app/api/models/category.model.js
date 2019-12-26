@@ -1,4 +1,4 @@
-import { Model, Type, Types, Service, ModelList } from "projector/api/engine";
+import { Model, Type, Types, Service, ModelList } from '~/api/engine';
 import { DefaultModel, OwnerModel, DbObjectsService } from "./default.model";
 
 export class Category extends DefaultModel{

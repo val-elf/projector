@@ -1,5 +1,5 @@
 <rt-import name="Button" from='@material-ui/core' />
-<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Scrollable" from="controls/scrollable" />
 <rt-import name="StoryPage" from="./story-page.component" />
 
 <div class="row growth" rt-scope="this.context.t as t; this.state as state">

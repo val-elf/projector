@@ -1,7 +1,16 @@
-import React from 'react';
-import template from './brush-options.template';
+import { Component } from 'react';
+import template from './brush-options.template.rt';
+import { Brush } from '../../tools';
 
-export class BrushOptions extends React.Component {
+interface BrushOptionsState {
+	tool?: Brush;
+	size: number;
+	hardness: number;
+	flow: number;
+	opacity: number;
+}
+
+export class BrushOptions<P, S extends BrushOptionsState> extends Component<P, S> {
 
     static getDerivedStateFromProps(props, state) {
         const newState = Object.assign({}, state);
@@ -12,7 +21,7 @@ export class BrushOptions extends React.Component {
         return newState;
     }
 
-    state = {};
+    state = { } as S;
 
 	get tool() { return this.state.tool; }
 

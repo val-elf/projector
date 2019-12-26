@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { TimelineCard } from 'components/timeline';
 import template from "./project-timelines.template";
 

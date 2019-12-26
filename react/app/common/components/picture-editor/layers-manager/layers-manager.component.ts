@@ -1,11 +1,11 @@
-import * as React from 'react';
+import { Component, createRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { Layer } from '../document/layer';
 import template from './layers-manager.template.rt';
 import './layers-manager.component.less';
 import { PictureDocument } from '../document/document';
 
-export class LayersManager extends React.Component {
+export class LayersManager extends Component {
 	static contextTypes = {
 		editor: PropTypes.object.isRequired,
 		t: PropTypes.func.isRequired
@@ -45,7 +45,7 @@ export class LayersManager extends React.Component {
 		'luminosity'
 	];
 
-	removeLayerRef = React.createRef();
+	removeLayerRef = createRef();
 	get removeLayerAction() { return this.removeLayerRef.current; }
 
 	get document() {

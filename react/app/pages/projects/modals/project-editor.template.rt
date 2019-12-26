@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Modal" from="projector/common/components/materials" />
+<rt-import name="Modal" from="controls/materials" />
 <rt-import name="ProjectCard" from="./project-card.component" />
 
 <Fragment rt-scope="this.context.t as t;">

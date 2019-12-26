@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ModalService } from 'common/materials';
+import { Component } from 'react';
+import { func, object } from 'prop-types';
+import { ModalService } from 'controls/materials';
 import { SettingsPage } from './modal/settings-page.component';
-import template from './settings.template';
+import template from './settings.template.rt';
 
-export class Settings extends React.Component {
+export class Settings extends Component {
 
 	static contextTypes = {
-		t: PropTypes.func.isRequired,
-		editor: PropTypes.object.isRequired
+		t: func.isRequired,
+		editor: object.isRequired
 	};
 
 	state = {

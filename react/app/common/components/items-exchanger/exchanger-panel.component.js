@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import template from './exchanger-panel.template';
-import { decompositeChildren, findChildrenBy, findChildrenByClass } from '~/common/utils';
+import { decompositeChildren, findChildrenBy, findChildrenByClass } from 'common/utils';
 
 export class ExchangerPanel extends React.Component {
     static getDerivedStateFromProps(props, state)   {

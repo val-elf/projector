@@ -1,9 +1,9 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Loader" from="common/loader" />
-<rt-import name="FullScreen" from="common/full-screen" />
-<rt-import name="TextEditor" from="common/texteditor" />
-<rt-import name="TextEditorPanel" from="common/texteditor" />
-<rt-import name="Checkbox" from="common/materials" />
+<rt-import name="Loader" from="controls/loader" />
+<rt-import name="FullScreen" from="controls/full-screen" />
+<rt-import name="TextEditor" from="controls/texteditor" />
+<rt-import name="TextEditorPanel" from="controls/texteditor" />
+<rt-import name="Checkbox" from="controls/materials" />
 <rt-import name="Button" from="@material-ui/core" />
 
 <Fragment rt-scope="this.state as state; this.context.t as t">

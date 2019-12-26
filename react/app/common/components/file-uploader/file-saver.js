@@ -1,4 +1,4 @@
-import { promisesProcess } from "projector/common/utils";
+import { promisesProcess } from "common/utils";
 
 export class FileSaver {
 	constructor(options) {

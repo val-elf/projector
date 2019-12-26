@@ -12,7 +12,7 @@ import { ProjectArtifacts } from "./pages/project-artifacts.component";
 import { ProjectLocations } from "./pages/project-locations.component";
 import { ProjectTasks } from "./pages/project-tasks.component";
 
-import { TimelinesService, LocationsService } from "projector/api/models";
+import { TimelinesService, LocationsService } from "~/api/models";
 
 const routes = [
 	{

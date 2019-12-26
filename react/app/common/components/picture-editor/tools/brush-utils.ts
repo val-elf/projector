@@ -212,7 +212,7 @@ export class BrushManager {
 		return this.fillSpot(rad, hardness, roundness, rotate, color);
 	}
 
-	drawTo (dest, source, pos, smooth) {
+	drawTo (dest, source, pos, smooth = false) {
 		const ddata = new Uint32Array(dest.data.buffer);
 		const sdata = new Uint32Array(source.data.buffer);
 		const fillLoc = (dl, scolor, a0, ak) => {

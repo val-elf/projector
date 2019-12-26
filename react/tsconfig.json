@@ -12,23 +12,24 @@
 		"es2018",
 		"dom"
 	  ],
-	  "noUnusedLocals": true,
+	  "noUnusedLocals": false,
 	  "typeRoots": [
 		"./node_modules/@types",
 		"./typings"
 	  ],
 	  "importHelpers": true,
 	  "skipLibCheck": true,
-	  "baseUrl": ".",
+	  "baseUrl": "./app",
 	  "rootDir": ".",
 	  "paths": {
-		"~/*": [
-		  "./*",
-		  "src/app/*"
-		]
-	  }
+		"controls/*": ["common/components/*"],
+		"components/*": ["components/*"],
+		"common/*": ["common/*"],
+		"~/*": ["*"]
+	  },
 	},
 	"awesomeTypescriptLoaderOptions": {
 	  "useCache": true
 	}
-  }
+
+}

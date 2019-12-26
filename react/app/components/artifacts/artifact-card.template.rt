@@ -1,9 +1,9 @@
 <rt-import name="TextField" from="@material-ui/core" />
 <rt-import name="MenuItem" from="@material-ui/core" />
-<rt-import name="Checkbox" from="common/materials" />
-<rt-import name="Select" from="common/materials" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="FileUploader" from="common/file-uploader" />
+<rt-import name="Checkbox" from="controls/materials" />
+<rt-import name="Select" from="controls/materials" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="FileUploader" from="controls/file-uploader" />
 
 <div class="minw600" rt-scope="this.context.t as t; this.state as state; this.state.artifact as item">
 	<div class="row">
@@ -30,7 +30,7 @@
 				class="brick"
 				item="{item}"
 				width="75"
-				
+
 			/> <FileUploader class="brick" onLoad="{({ preview }) => {this.setPreview(preview)}}" />
 		</div>
 	</div>

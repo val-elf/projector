@@ -1,4 +1,4 @@
-export * from '~/common/colors';
+export * from 'common/colors';
 
 export const HSV2RGB = (hue, saturation, value) => {
     const C = value * saturation;

@@ -2,10 +2,10 @@
 <rt-import name="Button" from="@material-ui/core" />
 <rt-import name="MenuItem" from="@material-ui/core" />
 
-<rt-import name="TextEdited" from="projector/common/components/materials" />
-<rt-import name="Popup" from="projector/common/components/popup" />
-<rt-import name="date" from="projector/services/filters/date" />
-<rt-import name="Select" from="projector/common/components/materials" />
+<rt-import name="TextEdited" from="controls/materials" />
+<rt-import name="Popup" from="controls/popup" />
+<rt-import name="date" from="~/services/filters/date" />
+<rt-import name="Select" from="controls/materials" />
 
 <div class="brick wide col growth" rt-scope="this.context.t as t; this.state as state">
 	<div class="row wide vmiddle mbm">

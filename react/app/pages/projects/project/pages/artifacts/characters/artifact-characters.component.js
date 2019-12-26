@@ -1,6 +1,6 @@
 import React from 'react';
-import { IconPreview } from 'common/icon-preview';
-import template from './artifact-characters.template';
+import { IconPreview } from 'controls/icon-preview';
+import template from './artifact-characters.template.rt';
 import { Involvement } from '~/api/models';
 import './artifact-characters.component.less';
 

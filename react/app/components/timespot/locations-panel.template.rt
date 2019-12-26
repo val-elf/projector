@@ -1,6 +1,6 @@
-<rt-import name="Expandable" from="projector/common/components/expandable" />
-<rt-import name="ExpandableHead" from="projector/common/components/expandable" />
-<rt-import name="ExpandableBody" from="projector/common/components/expandable" />
+<rt-import name="Expandable" from="controls/expandable" />
+<rt-import name="ExpandableHead" from="controls/expandable" />
+<rt-import name="ExpandableBody" from="controls/expandable" />
 
 <Expandable rt-scope="this.context.t as t">
 	<ExpandableHead>

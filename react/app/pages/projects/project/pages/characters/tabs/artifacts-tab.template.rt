@@ -1,6 +1,6 @@
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="Unfolding" from="common/unfolding" />
-<rt-import name="ILink" from="common/item-link" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Unfolding" from="controls/unfolding" />
+<rt-import name="ILink" from="controls/item-link" />
 
 <div class="grid list hovered min300">
     <div class="item row" rt-repeat="involvement in this.state.artifacts" key="{involvement.artifact}">

@@ -1,10 +1,10 @@
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="Button" from="@material-ui/core" />
 
-<rt-import name="IconPreview" from="projector/common/components/icon-preview" />
-<rt-import name="Expandable" from="projector/common/components/expandable" />
-<rt-import name="ExpandableHead" from="projector/common/components/expandable" />
-<rt-import name="ExpandableBody" from="projector/common/components/expandable" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Expandable" from="controls/expandable" />
+<rt-import name="ExpandableHead" from="controls/expandable" />
+<rt-import name="ExpandableBody" from="controls/expandable" />
 
 <Expandable rt-scope="this.state as state; this.state.characters as characters; this.context.t as t">
 	<ExpandableHead disabled="{!characters.length}">

@@ -1,8 +1,8 @@
-import React from 'react';
+import { Component } from 'react';
 import { CommonTool } from '../common-tool.component';
-import template from './picker.template';
+import template from './picker.template.rt';
 
-export class Picker extends CommonTool {
+export class Picker extends CommonTool<any, any> {
 
 	static getDerivedStateFromProps(props, state) {
 		const newState = Object.assign({}, state);
@@ -12,13 +12,10 @@ export class Picker extends CommonTool {
     }
 
 	state = {};
+	boundary: DOMRect;
 
 	get canvas() { return this.viewport.canvas; }
-
-    get ctx() {
-        if (!this._ctx) this._ctx = this.canvas.getContext('2d');
-        return this._ctx;
-    }
+    get ctx() { return this.viewport.ctx; }
 
     movePointer = evt => {
 		this.pickColor(evt);
@@ -36,7 +33,7 @@ export class Picker extends CommonTool {
 
     pickColor = evt => {
 		if (this.paused) return;
-        this.boundary = this.canvas.getBoundingClientRect();
+        this.boundary = this.canvas.getBoundingClientRect() as DOMRect;
         const { x: ax, y: ay } = this.boundary;
         const { x, y } = { x: evt.pageX - ax, y: evt.pageY - ay };
         let cd = this.ctx.getImageData(x, y, 1, 1);

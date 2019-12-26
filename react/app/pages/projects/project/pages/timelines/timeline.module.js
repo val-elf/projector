@@ -1,6 +1,6 @@
 import { TimelinePage } from "./timeline-page.component";
-import { store } from "projector/index";
-import { TimelinesService } from "projector/api/models/timeline.model";
+import { store } from "~/index";
+import { TimelinesService } from "~/api/models/timeline.model";
 
 const routes = [
 	{

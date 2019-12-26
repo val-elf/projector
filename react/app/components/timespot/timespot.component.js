@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import template from "./timespot.template";
-import { getPointHolder, clearSelection } from "projector/common/utils.js";
+import { getPointHolder, clearSelection } from "common/utils";
 import './timespot.component.less';
 
 export class TimeSpot extends React.Component {

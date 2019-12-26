@@ -1,9 +1,9 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="TextEdited" from="common/materials" />
-<rt-import name="Tabset" from="common/tabpanel" />
-<rt-import name="Tab" from="common/tabpanel" />
-<rt-import name="Popup" from="common/popup" />
-<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="TextEdited" from="controls/materials" />
+<rt-import name="Tabset" from="controls/tabpanel" />
+<rt-import name="Tab" from="controls/tabpanel" />
+<rt-import name="Popup" from="controls/popup" />
+<rt-import name="date" from="~/services/filters/date" />
 
 <rt-import name="CharactersPanel" from="components/timespot" />
 <rt-import name="LocationsPanel" from="components/timespot" />

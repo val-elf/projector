@@ -1,5 +1,5 @@
 import moment from "moment";
-import { store } from "projector/index";
+import { store } from "~/index";
 
 
 export function date(value, format){

@@ -4,11 +4,11 @@
 
 <rt-import name="TextField" from="@material-ui/core" />
 
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="TextEdited" from="common/materials" />
-<rt-import name="Tabset" from="common/tabpanel" />
-<rt-import name="Tabview" from="common/tabpanel" />
-<rt-import name="Tab" from="common/tabpanel" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="TextEdited" from="controls/materials" />
+<rt-import name="Tabset" from="controls/tabpanel" />
+<rt-import name="Tabview" from="controls/tabpanel" />
+<rt-import name="Tab" from="controls/tabpanel" />
 
 <rt-import name="ProjectCard" from="../modals/project-card.component" />
 

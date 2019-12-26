@@ -1,4 +1,4 @@
-<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="date" from="~/services/filters/date" />
 <rt-import name="TimeSpot" from="../timespot/timespot.component" />
 
 <div class="timeline-body" rt-scope="this.state as state" ref="{this._root}" onMouseDown="{(event) => this.startTimespot(event)}">

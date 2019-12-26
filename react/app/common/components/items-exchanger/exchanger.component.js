@@ -1,6 +1,6 @@
 import React from 'react';
 import { ExchangerPanel } from './exchanger-panel.component';
-import { decompositeChildren } from '~/common/utils';
+import { decompositeChildren } from 'common/utils';
 import template from './exchanger.template';
 
 export class Exchanger extends React.Component {

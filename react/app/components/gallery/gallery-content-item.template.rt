@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="DocumentItemInfo" from="components/documents" />
 
 <Fragment rt-scope="this.state as state; this.state.file as file; this.state.document as document; this.context.t as t">

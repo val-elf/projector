@@ -1,6 +1,6 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="TextEditor" from="common/texteditor" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="TextEditor" from="controls/texteditor" />
 <rt-import name="Button" from="@material-ui/core" />
 
 <Fragment rt-scope="this.state as state; state.character as character; state.document as document; this.context.t as t">

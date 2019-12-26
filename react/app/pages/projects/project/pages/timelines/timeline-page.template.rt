@@ -1,6 +1,6 @@
 <rt-import name="Timeline" from="components/timeline" />
 <rt-import name="TimespotPageCard" from="components/timespot" />
-<rt-import name="ColorPicker" from="common/color-picker" />
+<rt-import name="ColorPicker" from="controls/color-picker" />
 
 <div class="brick col growth" rt-scope="this.context.t as t; this.state as state">
 	<Timeline timeline="{this.timeline}" timespot="{state.currentSpot}" onSelectSpot="{(spot) => this.selectSpot(spot)}" onChangeSpot="{(spot) => this.timespotChange(spot)}" />

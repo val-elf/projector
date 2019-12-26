@@ -3,7 +3,7 @@ import SVG from 'svg.js';
 import PropTypes from "prop-types";
 import { MapHost, LocationMap, ParentMap, MerchatorGrid, Boundary, Viewport } from "./map";
 import template from './map-editor.template';
-import { getPointHolder } from '~/common/utils';
+import { getPointHolder } from 'common/utils';
 import { store } from '~/index';
 import './map-editor.component.less';
 

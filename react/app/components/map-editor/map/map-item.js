@@ -1,4 +1,4 @@
-import { Eventful } from '~/common/eventful';
+import { Eventful } from 'common/eventful';
 
 export class MapItem extends Eventful{
 	dragHandler = event => {

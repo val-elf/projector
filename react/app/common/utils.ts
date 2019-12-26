@@ -1,4 +1,5 @@
-import React from 'react';
+import * as React from 'react';
+import { colorPart2Hex } from './colors';
 
 export function getPointHolder(event) {
 	event = event.originalEvent || event.nativeEvent || event;
@@ -26,7 +27,7 @@ export function promisesProcess(stack, callback) {
 }
 
 function copyProps(props) {
-	const res = {};
+	const res: any = {};
 	const flds = Object.keys(props);
 	flds.forEach(fld => {
 		if (fld === 'children') {
@@ -44,7 +45,7 @@ export function decompositeChildren(children) {
 		if (cld instanceof Array) return decompositeChildren(cld);
 		const fields = Object.keys(cld);
 		if (fields.length) {
-			const res = {};
+			const res: any = {};
 			for(const prop of Object.keys(cld)) {
 				if (prop === 'props') {
 					res.props = copyProps(cld[prop]);
@@ -100,7 +101,7 @@ export function findChildrenByClass(sourceName, children, findAll) {
 }
 
 export const rgb2hex = rgb => {
-	return `${colorToHex(rgb.r)}${colorToHex(rgb.g)}${colorToHex(rgb.b)}`;
+	return `${colorPart2Hex(rgb.r)}${colorPart2Hex(rgb.g)}${colorPart2Hex(rgb.b)}`;
 }
 
 export const hex2rgb = hex => {

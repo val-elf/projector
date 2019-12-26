@@ -1,8 +1,8 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Search" from="common/materials" />
-<rt-import name="TreeList" from="common/tree-list" />
-<rt-import name="Modal" from="common/materials" />
-<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="Search" from="controls/materials" />
+<rt-import name="TreeList" from="controls/tree-list" />
+<rt-import name="Modal" from="controls/materials" />
+<rt-import name="Scrollable" from="controls/scrollable" />
 <rt-import name="CategoryCard" from="./category-card.component" />
 
 <Fragment rt-scope="this.context.t as t; this.state as state; this.state.selected as selected">

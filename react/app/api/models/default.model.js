@@ -1,4 +1,4 @@
-import { Model, Type, Types, Service } from "projector/api/engine";
+import { Model, Type, Types, Service } from "~/api/engine";
 
 class SystemDate extends Model {
 	dt = new Type(Types.date, { key: '_dt' });

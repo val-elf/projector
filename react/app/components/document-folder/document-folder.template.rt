@@ -1,6 +1,6 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="DragNDrop" from="common/drag-n-drop" />
-<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="DragNDrop" from="controls/drag-n-drop" />
+<rt-import name="Scrollable" from="controls/scrollable" />
 
 <Fragment rt-scope="this.state as state">
 	<rt-virtual rt-if="state.type === 'horizontal'">

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { decompositeChildren, findChildrenByProp } from '~/common/utils';
+import { decompositeChildren, findChildrenByProp } from 'common/utils';
 import './drag-n-drop.component.less';
 
 function getEventPoint(event) {

@@ -1,11 +1,11 @@
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="UIView" from="@uirouter/react" />
 <rt-import name="Button" from="@material-ui/core" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="ILink" from="common/item-link" />
-<rt-import name="DragNDrop" from="common/drag-n-drop" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="ILink" from="controls/item-link" />
+<rt-import name="DragNDrop" from="controls/drag-n-drop" />
 
-<rt-import name="date" from="projector/services/filters/date" />
+<rt-import name="date" from="~/services/filters/date" />
 
 <div rt-scope="this.context.t as t">
 	<div class="row wide vmiddle">

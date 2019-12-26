@@ -1,4 +1,4 @@
-import { Type, Service } from "projector/api/engine";
+import { Type, Service } from "~/api/engine";
 import { CommonModel, DefaultModel } from "./default.model";
 import { Preview } from "./preview.model";
 import { Project } from "./project.model";

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DocumentsService, TimespotCharacter } from "api";
-import { ModalService } from 'common/materials';
+import { ModalService } from 'controls/materials';
 import { TimespotCard } from './timespot-card.component';
 import template from './timespot-page-card.template';
 

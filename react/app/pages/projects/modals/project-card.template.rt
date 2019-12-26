@@ -1,7 +1,7 @@
 <rt-import name="TextField" from="@material-ui/core" />
 <rt-import name="Button" from="@material-ui/core" />
-<rt-import name="FileUploader" from="common/file-uploader" />
-<rt-import name="IconPreview" from="common/icon-preview" />
+<rt-import name="FileUploader" from="controls/file-uploader" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
 
 <div rt-scope="this.context.t as t">
 	<div rt-if="this.mode === 'edit'">

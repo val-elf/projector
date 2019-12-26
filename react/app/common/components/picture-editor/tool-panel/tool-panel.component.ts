@@ -1,6 +1,6 @@
 import * as React from 'react';
 import template from './tool-panel.template.rt';
-import { clearSelection } from '~/common/utils';
+import { clearSelection } from 'common/utils';
 import './tool-panel.component.less';
 
 interface ToolPanelProps {

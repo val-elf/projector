@@ -1,4 +1,4 @@
-<rt-import name="PictureEditor" from="common/picture-editor" />
+<rt-import name="PictureEditor" from="controls/picture-editor" />
 <div class="storyboard-frame_editor"
     rt-class="{active: this.state.active, expanded: this.state.expanded }"
     onTransitionEnd="{evt => this.finishTransform(evt)}"

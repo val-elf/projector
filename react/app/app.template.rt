@@ -2,8 +2,8 @@
 <rt-import name="UIRouter" from="@uirouter/react" />
 <rt-import name="UIView" from="@uirouter/react" />
 <rt-import name="pushStateLocationPlugin" from="@uirouter/react" />
-<rt-import name="Modal" from='common/materials' />
-<rt-import name="Login" from="projector/components/authorization" />
+<rt-import name="Modal" from='controls/materials' />
+<rt-import name="Login" from="components/authorization" />
 <rt-import name="AppContext" from="./app.context" />
 
 <Fragment>

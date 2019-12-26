@@ -1,15 +1,15 @@
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="Modal" from="common/materials" />
-<rt-import name="TextEdited" from="common/materials" />
-<rt-import name="Popup" from="common/popup" />
-<rt-import name="Tabset" from="common/tabpanel" />
-<rt-import name="Tab" from="common/tabpanel" />
-<rt-import name="TextEditor" from="common/texteditor" />
-<rt-import name="date" from="projector/services/filters" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Modal" from="controls/materials" />
+<rt-import name="TextEdited" from="controls/materials" />
+<rt-import name="Popup" from="controls/popup" />
+<rt-import name="Tabset" from="controls/tabpanel" />
+<rt-import name="Tab" from="controls/tabpanel" />
+<rt-import name="TextEditor" from="controls/texteditor" />
+<rt-import name="date" from="~/services/filters" />
 <rt-import name="CharacterCard" from="components/characters" />
 <rt-import name="ArtifactsTab" from="./tabs/artifacts-tab.component" />
 
-<rt-import name="Gallery" from="projector/components/gallery" />
+<rt-import name="Gallery" from="~/components/gallery" />
 
 <div class="col brick" rt-scope="this.context.t as t; this.state as state; this.state.character as character">
 	<div class="row">

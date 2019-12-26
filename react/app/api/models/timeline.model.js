@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Type, Types, Service } from "projector/api/engine" ;
+import { Type, Types, Service } from "~/api/engine" ;
 import { DefaultModel } from "./default.model";
 import { Project } from "./project.model";
 

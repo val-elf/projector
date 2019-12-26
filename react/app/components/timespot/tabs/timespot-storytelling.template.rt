@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Storyboard" from="common/storyboard" />
+<rt-import name="Storyboard" from="controls/storyboard" />
 
 <Fragment rt-scope="this.state as state; this.context.t as t">
     <Storyboard owner="{state.spot}" />

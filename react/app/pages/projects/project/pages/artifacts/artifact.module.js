@@ -1,5 +1,5 @@
 import { Artifact } from "./artifact.component.js";
-import { ArtifactsService } from "projector/api/models";
+import { ArtifactsService } from "~/api/models";
 
 const routes = [
 	{

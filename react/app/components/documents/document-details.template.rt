@@ -1,7 +1,7 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="TextField" from="@material-ui/core" />
-<rt-import name="TextEditor" from="common/texteditor" />
-<rt-import name="ImagePreview" from="common/image-preview" />
+<rt-import name="TextEditor" from="controls/texteditor" />
+<rt-import name="ImagePreview" from="controls/image-preview" />
 
 <Fragment rt-scope="this.context.t as t; this.state as state;">
 	<div rt-if="state.mediatype === 'image'" class="row document-details">

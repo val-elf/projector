@@ -1,4 +1,4 @@
-<rt-import name="LanguageSwitcher" from="projector/components/language" />
+<rt-import name="LanguageSwitcher" from="~/components/language" />
 
 <div class="header">
 	<div class="menu">

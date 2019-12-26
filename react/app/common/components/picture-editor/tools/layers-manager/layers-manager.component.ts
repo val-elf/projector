@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import template from './layers-manager.template';
+import { Component } from 'react';
+import { object } from 'prop-types';
+import template from './layers-manager.template.rt';
 
-export class LayersManager extends React.Component {
+export class LayersManager extends Component {
 	static contextTypes = {
-		editor: PropTypes.object.isRequired
+		editor: object.isRequired
 	}
 
 	state = {

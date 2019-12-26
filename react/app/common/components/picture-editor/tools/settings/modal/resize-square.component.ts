@@ -1,8 +1,21 @@
-import React from 'react';
-import template from './resize-square.template';
+import { Component, createRef } from 'react';
+import template from './resize-square.template.rt';
 import './resize-square.component.less';
 
-export class ResizeSquare extends React.Component {
+interface ResizeSquareProps {
+	expandWidth: number;
+	expandHeight: number;
+	onChange: Function;
+}
+
+interface ResizeSquareState {
+	square: number;
+	marked: any;
+	expandWidth: number | undefined;
+	expandHeight: number | undefined;
+}
+
+export class ResizeSquare extends Component<ResizeSquareProps, ResizeSquareState> {
 
 	static getDerivedStateFromProps(props, state) {
 		const newState = Object.assign({}, state);
@@ -14,10 +27,12 @@ export class ResizeSquare extends React.Component {
 
 	state = {
 		square: 4,
-		marked: {}
+		marked: {},
+		expandHeight: undefined,
+		expandWidth: undefined
 	}
 
-	squareRef = React.createRef();
+	squareRef = createRef();
 	get square() { return this.squareRef.current; }
 	squares = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -49,8 +64,8 @@ export class ResizeSquare extends React.Component {
 			x += 1 - xs;
 			if (x < 0 || y < 0 || x > 2 || y > 2) continue;
 			const indexies = [
-				y !== 1 ? expandHeight ^ y > 1 ? 'up' : 'down' : null,
-				x !== 1 ? expandWidth ^ x > 1 ? 'left' : 'right' : null
+				y !== 1 ? (expandHeight ^ y) > 1 ? 'up' : 'down' : null,
+				x !== 1 ? (expandWidth ^ x) > 1 ? 'left' : 'right' : null
 			].filter(i => i);
 			marked[index] = indexies.join('-');
 		}

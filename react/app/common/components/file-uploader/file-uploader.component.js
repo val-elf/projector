@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ModalService } from 'common/materials/modal.service';
+import { ModalService } from 'controls/materials/modal.service';
 import { FileLoader } from './file-loader';
 import { FileSaver } from './file-saver';
 import { FileUploaderWindow } from './file-uploader-window.component';

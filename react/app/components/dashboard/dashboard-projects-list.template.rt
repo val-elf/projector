@@ -1,7 +1,7 @@
 <rt-import name="UISref" from="@uirouter/react" />
 
-<rt-import name="Loader" from="projector/common/components/loader" />
-<rt-import name="IconPreview" from="projector/common/components/icon-preview" />
+<rt-import name="Loader" from="controls/loader" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
 
 <div rt-scope="this.state as state">
 	<div class="brick"><Loader load={state.loading} /></div>

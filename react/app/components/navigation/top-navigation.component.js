@@ -1,6 +1,6 @@
 import React from "react";
 import { UISref } from "@uirouter/react";
-import { loginService } from "projector/components/authorization";
+import { loginService } from "~/components/authorization";
 import PropTypes from "prop-types";
 import template from "./top-navigation.template";
 

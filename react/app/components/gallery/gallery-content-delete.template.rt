@@ -1,6 +1,6 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="Scrollable" from="common/scrollable" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Scrollable" from="controls/scrollable" />
 
 <Fragment>
     <Scrollable>

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import template from "./authorization.template";
 import axios from "axios";
-import { apiUrl } from "projector/index";
+import { apiUrl } from "~/index";
 import './authorization.less';
 
 export const loginService = {

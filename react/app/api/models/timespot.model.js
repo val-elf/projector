@@ -1,5 +1,5 @@
 import { DefaultModel } from "./default.model";
-import { Model, Type, Types, Service } from "projector/api/engine";
+import { Model, Type, Types, Service } from "~/api/engine";
 import { Character } from './character.model';
 import { Location } from './location.model';
 import { Timeline } from './timeline.model';

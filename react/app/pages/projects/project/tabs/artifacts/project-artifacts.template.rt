@@ -1,10 +1,10 @@
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="Button" from="@material-ui/core" />
-<rt-import name="Modal" from="common/materials" />
-<rt-import name="Scrollable" from="common/scrollable" />
-<rt-import name="IconPreview" from="common/icon-preview" />
-<rt-import name="Unfolding" from="common/unfolding" />
-<rt-import name="Loader" from="common/loader" />
+<rt-import name="Modal" from="controls/materials" />
+<rt-import name="Scrollable" from="controls/scrollable" />
+<rt-import name="IconPreview" from="controls/icon-preview" />
+<rt-import name="Unfolding" from="controls/unfolding" />
+<rt-import name="Loader" from="controls/loader" />
 <rt-import name="ArtifactCard" from="components/artifacts/artifact-card.component" />
 
 <div class="col wide" rt-scope="this.state as state; this.context.t as t">

@@ -1,6 +1,6 @@
 import { CharacterPage } from "./character-page.component";
-// import { store } from "projector/index";
-import { CharactersService } from "projector/api/models/character.model";
+// import { store } from "~/index";
+import { CharactersService } from "~/api/models/character.model";
 
 const routes = [
 	{
