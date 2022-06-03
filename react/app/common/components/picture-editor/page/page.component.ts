@@ -28,6 +28,8 @@ export class Page extends Component {
 		cursor: undefined
     }
 
+	context: any;
+
 	zoomMul = 1.25;
 	viewport: Viewport;
 	resizeObserver: ResizeObserver;

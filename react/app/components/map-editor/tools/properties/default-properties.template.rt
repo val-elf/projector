@@ -1,8 +1,8 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="Select" from="controls/materials" />
 <rt-import name="Checkbox" from="controls/materials" />
-<rt-import name="MenuItem" from="@material-ui/core" />
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@mui/material" />
+<rt-import name="TextField" from="@mui/material" />
 <rt-import name="FileUploader" from="controls/file-uploader" />
 
 <Fragment rt-scope="this.context.t as t">

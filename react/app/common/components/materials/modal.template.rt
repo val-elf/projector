@@ -1,4 +1,4 @@
-<rt-import name="Modal" from="@material-ui/core" />
+<rt-import name="Modal" from="@mui/material" />
 
 <Modal rt-scope="this.state as state" open="{this.state.isShow}" onClose="{() => this.close()}" className="modal {state.className || ''}">
 	<div className="modal-dialog" style="{{minWidth: this.state.minWidth + 'px'}}">

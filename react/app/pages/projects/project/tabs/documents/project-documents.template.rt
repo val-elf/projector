@@ -1,4 +1,4 @@
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
 <rt-import name="Modal" from="controls/materials" />
 <rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="Scrollable" from="controls/scrollable" />

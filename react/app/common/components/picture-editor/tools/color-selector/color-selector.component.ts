@@ -10,6 +10,8 @@ export class ColorSelector extends React.Component {
 		editor: PropTypes.object.isRequired
 	}
 
+	context: any;
+
 	state = {
 		active: 'fore',
 		foreColor: { r: 255, g: 0, b: 0 },

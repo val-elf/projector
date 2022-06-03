@@ -1,35 +1,28 @@
 {
-	"compilerOptions": {
-	  "allowJs": true,
-	  "target": "es2017",
-	  "module": "esnext",
-	  "moduleResolution": "node",
-	  "sourceMap": true,
-	  "emitDecoratorMetadata": true,
-	  "experimentalDecorators": true,
-	  "downlevelIteration": true,
-	  "lib": [
-		"es2018",
-		"dom"
-	  ],
-	  "noUnusedLocals": false,
-	  "typeRoots": [
-		"./node_modules/@types",
-		"./typings"
-	  ],
-	  "importHelpers": true,
-	  "skipLibCheck": true,
-	  "baseUrl": "./app",
-	  "rootDir": ".",
-	  "paths": {
-		"controls/*": ["common/components/*"],
-		"components/*": ["components/*"],
-		"common/*": ["common/*"],
-		"~/*": ["*"]
-	  },
-	},
-	"awesomeTypescriptLoaderOptions": {
-	  "useCache": true
-	}
-
+    "compilerOptions": {
+        "allowJs": true,
+        "target": "es2017",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "downlevelIteration": true,
+        "lib": ["es2018", "dom"],
+        "noUnusedLocals": false,
+        "typeRoots": ["./node_modules/@types", "./typings"],
+        "importHelpers": true,
+        "skipLibCheck": true,
+        "baseUrl": "./app",
+        "rootDir": ".",
+        "paths": {
+            "controls/*": ["common/components/*"],
+            "components/*": ["components/*"],
+            "common/*": ["common/*"],
+            "~/*": ["*"]
+        }
+    },
+    "awesomeTypescriptLoaderOptions": {
+        "useCache": true
+    }
 }

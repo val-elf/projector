@@ -1,5 +1,5 @@
 <rt-import name="UISref" from="@uirouter/react" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 
 <rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="Expandable" from="controls/expandable" />

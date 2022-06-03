@@ -7,6 +7,8 @@ export class LayersManager extends Component {
 		editor: object.isRequired
 	}
 
+	context: any;
+
 	state = {
 		active: false
 	};

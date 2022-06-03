@@ -1,4 +1,4 @@
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 
 <rt-import name="DashboardProjectsList" from="components/dashboard/dashboard-projects-list.component" />
 <rt-import name="ProjectEditor" from="../projects/modals/project-editor.component" />

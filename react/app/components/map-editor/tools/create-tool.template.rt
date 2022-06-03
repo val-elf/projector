@@ -1,4 +1,4 @@
-<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="MenuItem" from="@mui/material" />
 <rt-import name="Select" from="controls/materials" />
 <rt-import name="Fragment" from="react" />
 

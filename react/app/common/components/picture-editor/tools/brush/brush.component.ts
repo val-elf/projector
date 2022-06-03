@@ -168,7 +168,7 @@ export class Brush extends CommonTool<{}, BrushState> {
 	opacity = 1;
 	stepRatio = 0.1;
 	minWidth = 0.05;
-	composite = 'source-over';
+	composite: GlobalCompositeOperation = 'source-over';
 
 	pts: IPointPosition[];
 	lpoint: IPointPosition;

@@ -1,5 +1,5 @@
-<rt-import name="TextField" from="@material-ui/core" />
-<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
+<rt-import name="MenuItem" from="@mui/material" />
 <rt-import name="Checkbox" from="controls/materials" />
 <rt-import name="Select" from="controls/materials" />
 <rt-import name="IconPreview" from="controls/icon-preview" />

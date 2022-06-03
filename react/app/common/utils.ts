@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { colorPart2Hex } from './colors';
 
 export function getPointHolder(event) {
@@ -11,7 +10,7 @@ export function clearSelection() {
 }
 
 export function promisesProcess(stack, callback) {
-	return new Promise((resolve, reject) => {
+	return new Promise<void>((resolve, reject) => {
 		if (stack.length) {
 			callback(stack.shift()).then(() => {
 				return promisesProcess(stack, callback).then(() => {

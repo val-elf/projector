@@ -47,6 +47,7 @@ export class CommonTool<P, S extends CommonToolState>
 
 	paused = false;
 	locked: boolean;
+	context: any;
 
 	get editor(): IEditor { return this.context.editor; }
 	get page() { return this.editor.page; }

@@ -1,6 +1,6 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="TextField" from="@material-ui/core" />;
-<rt-import name="DateTimePicker" from="material-ui-pickers" />
+<rt-import name="TextField" from="@mui/material" />;
+<rt-import name="DateTimePicker" from="@mui/material" />
 
 <div rt-scope="this.context.t as t; this.state as state; this.state.timespot as timespot; this.state.wspot as origin">
     <div class="row">

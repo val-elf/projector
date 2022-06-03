@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { loginService } from 'components/authorization/authorization.component';
 import navigation from 'components/navigation/navigation.module';
-import 'tinymce/themes/modern';
+// import 'tinymce/themes/modern';
 import { apiUrl } from "~/index";
 import template from './app.template';
 import { AppContext } from './app.context';

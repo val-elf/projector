@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import template from "./modal.template.rt";
 import alertTemplate from "./modal-alert.template.rt";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import './modal.component.less';
 
 export class Modal extends React.Component{

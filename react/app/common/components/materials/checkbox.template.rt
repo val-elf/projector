@@ -1,4 +1,4 @@
-<rt-import name="FormControlLabel" from="@material-ui/core" />
+<rt-import name="FormControlLabel" from="@mui/material" />
 
 <FormControlLabel
   control="{this.checkboxControl}"

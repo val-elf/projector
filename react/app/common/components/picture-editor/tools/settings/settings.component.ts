@@ -4,12 +4,14 @@ import { ModalService } from 'controls/materials';
 import { SettingsPage } from './modal/settings-page.component';
 import template from './settings.template.rt';
 
-export class Settings extends Component {
+export class Settings extends Component<any, any, any>{
 
 	static contextTypes = {
 		t: func.isRequired,
 		editor: object.isRequired
 	};
+
+	context: any;
 
 	state = {
 		active: false

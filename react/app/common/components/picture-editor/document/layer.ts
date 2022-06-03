@@ -28,7 +28,7 @@ interface ILayerState {
 	working: boolean;
 	data: ILayerData;
 	active: boolean;
-	composite: string;
+	composite: GlobalCompositeOperation;
 	opacity: number;
 	offsetX: number;
 	offsetY: number;
@@ -91,7 +91,8 @@ export class Layer extends EventEmitter {
 		return overlayMapping[comp];
 	}
 	set overlay(value) {
-		const key = Object.keys(overlayMapping).find(key => overlayMapping[key] === value) || 'source-over';
+		const key = (Object.keys(overlayMapping)
+			.find(key => overlayMapping[key] === value) || 'source-over') as GlobalCompositeOperation;
 		this.composite = key;
 	}
 	get context() { return this.ctx; }
@@ -234,7 +235,7 @@ export class Layer extends EventEmitter {
 		if (this._working) {
 			this.mergedCtx.save();
 			this.mergedCtx.globalAlpha = this._working.opacity;
-			this.mergedCtx.globalCompositeOperation = this._working.composite;
+			this.mergedCtx.globalCompositeOperation = this._working.composite as GlobalCompositeOperation;
 			this.mergedCtx.drawImage(this._working.canvas, 0, 0);
 			this.mergedCtx.restore();
 		}
@@ -280,7 +281,7 @@ export class Layer extends EventEmitter {
 			}
 			*/
 			this.ctx.globalAlpha = this._working.opacity;
-			this.ctx.globalCompositeOperation = this._working.composite;
+			this.ctx.globalCompositeOperation = this._working.composite as GlobalCompositeOperation;
 			this.ctx.drawImage(this._working.canvas, -this.offsetX + this._working.offsetX, -this.offsetY + this._working.offsetY);
 			this._working.clean();
 			this.ctx.restore();

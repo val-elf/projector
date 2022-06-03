@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
 <rt-import name="TextEditor" from="controls/texteditor" />
 <rt-import name="ImagePreview" from="controls/image-preview" />
 

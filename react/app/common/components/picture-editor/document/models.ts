@@ -1,5 +1,5 @@
 export interface ILayerData {
-	composite?: string;
+	composite?: GlobalCompositeOperation;
 	opacity?: number;
 	offsetX?: number;
 	offsetY?: number;

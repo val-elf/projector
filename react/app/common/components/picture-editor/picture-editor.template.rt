@@ -1,5 +1,5 @@
 <rt-import name="ColorPicker" from="controls/color-picker" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 <rt-import name="ColorSelector" from="./tools" />
 <rt-import name="Move" from="./tools" />
 <rt-import name="Brush" from="./tools" />

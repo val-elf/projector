@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material/Button" />
 <rt-import name="FileUploaderWindow" from="./file-uploader-window.component" />
 
 <Fragment rt-scope="this.context.t as t; this.state as state">

@@ -3,7 +3,7 @@ import { EraserOptions } from '../options/eraser-options.component';
 import template from './eraser.template.rt';
 
 export class Eraser extends Brush {
-	composite = 'destination-out';
+	composite: GlobalCompositeOperation = 'destination-out';
 	isEraser = true;
 
 	get color() { return "#FFFFFF"; }

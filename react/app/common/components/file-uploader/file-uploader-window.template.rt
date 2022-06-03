@@ -1,6 +1,6 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="Scrollable" from="controls/scrollable" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material/Button" />
 <rt-import name="IconPreview" from="controls/icon-preview" />
 
 <Fragment rt-scope="this.context.t as t">

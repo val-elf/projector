@@ -1,6 +1,6 @@
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="UIView" from="@uirouter/react" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material/Button" />
 <rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="ILink" from="controls/item-link" />
 <rt-import name="DragNDrop" from="controls/drag-n-drop" />
