@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Layer as ILayer } from '../document/layer';
 import template from './layer.template.rt';
+import { storage } from 'controls/picture-editor/store/store';
 
 const pwidth = 75;
 
@@ -34,14 +35,15 @@ export class Layer extends React.Component {
 
 	componentDidMount() {
 		this.ctx = this.canvas.getContext('2d');
-		this.layer.on('update', this.updateLayer);
-		this.layer.on('apply', this.updateLayer);
+		storage.subscribe('updateLayer', layer => {
+			if (layer === this.layer) this.updateLayer();
+		});
 		this.updateLayer();
 	}
 
 	componentWillUnmount() {
-		this.layer.off('update', this.updateLayer);
-		this.layer.off('apply', this.updateLayer);
+		// this.layer.off('update', this.updateLayer);
+		// this.layer.off('apply', this.updateLayer);
 	}
 
 	updateLayer = () => {
@@ -49,7 +51,6 @@ export class Layer extends React.Component {
 		let height = pwidth / swidth * sheight;
 		this.canvas.width = pwidth;
 		this.canvas.height = height;
-		debugger;
 		this.ctx.drawImage(this.layer.canvas, 0, 0, swidth, sheight, 0, 0, pwidth, height);
 	}
 

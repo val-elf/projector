@@ -1,8 +1,8 @@
 <rt-import name="Fragment" from="react" />
-<Fragment rt-scope="this.state as state">
-    <div class="tool button" rt-class="{ active: state.active }" onClick="{() => this.setActive()}">
+<Fragment rt-scope="this.isActive as active">
+    <div class="tool button" rt-class="{ active }" onClick="{() => this.setActive()}">
 		<span class="icon-brush">
-			<span rt-if="state.active" class="icon-brush-half"></span>
+			<span rt-if="active" class="icon-brush-half"></span>
 		</span>
 	</div>
 </Fragment>

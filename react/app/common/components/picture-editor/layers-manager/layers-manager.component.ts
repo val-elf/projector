@@ -1,9 +1,11 @@
 import { Component, createRef } from 'react';
 import * as PropTypes from 'prop-types';
-import { Layer } from '../document/layer';
 import template from './layers-manager.template.rt';
 import './layers-manager.component.less';
 import { PictureDocument } from '../document/document';
+import { storage } from 'controls/picture-editor/store/store';
+import { LayerStorage } from 'controls/picture-editor/store/layer.store';
+import { OverlayMappingEnum, Layer } from 'controls/picture-editor/document';
 
 export class LayersManager extends Component {
 	static contextTypes = {
@@ -22,7 +24,7 @@ export class LayersManager extends Component {
 	state: {
 		document?: PictureDocument,
 		showed?: boolean,
-		active?: Layer
+		active?: LayerStorage
 	} = {};
 
 	overlays = [
@@ -55,6 +57,8 @@ export class LayersManager extends Component {
 		return this.document.layers;
 	}
 
+	get currentLayer() { return storage.state.activeLayer; }
+
 	get editor() { return this.context.editor; }
 
 	get page() { return this.editor.page; }
@@ -64,7 +68,7 @@ export class LayersManager extends Component {
 	}
 
 	componentDidMount() {
-		this.document.on('changeActiveLayer', this.changeActiveLayer);
+		storage.subscribe('setActiveLayer', this.changeActiveLayer);
 	}
 
 	componentDidUpdate(pprops, pstate) {
@@ -90,42 +94,42 @@ export class LayersManager extends Component {
 	}
 
 	addNewLayer() {
-		const { layers } = this;
+		const { layers } = storage.state;
 		const { active } = this.state;
 		let index = layers.length;
 		if (active) index = layers.indexOf(active) + 1;
 		const newLayer = new Layer({ name: `Layer ${layers.length}`, id: `${layers.length}` }, this.document);
-		layers.splice(index, 0, newLayer);
-		this.page.redraw();
+		// layers.splice(index, 0, newLayer);
+		// this.page.redraw();
 		this.document.setActiveLayer(newLayer);
 	}
 
-	setLayerOpacity(value) {
-		const { activeLayer } = this.document;
+	setLayerOpacity(value: number) {
+		const { activeLayer } = storage.state;
 		if (activeLayer) {
-			activeLayer.opacity = value;
-			this.page.redraw();
-			this.setState({});
+			activeLayer.setOpacity(value);
+			// this.page.redraw();
+			// this.setState({});
 		}
 	}
 
-	setLayerOverlay(value) {
-		const { activeLayer } = this.document;
+	setLayerOverlay(value: OverlayMappingEnum) {
+		const { activeLayer } = storage.state;
 		if (activeLayer) {
-			activeLayer.overlay = value;
-			this.page.redraw();
-			this.setState({});
+			activeLayer.setComposite(value);
+			// this.page.redraw();
+			// this.setState({});
 		}
 	}
 
 	removeLayer() {
-		const { layers } = this;
+		const { layers } = storage.state;
 		let { active } = this.state;
 		let rindex = layers.indexOf(active);
 		layers.splice(rindex, 1);
 		if (rindex > 0) rindex --;
 		this.page.redraw();
-		this.document.setActiveLayer(layers[rindex]);
+		storage.setActiveLayer(layers[rindex]);
 	}
 
 	render() {

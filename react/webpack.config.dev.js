@@ -34,7 +34,7 @@ module.exports = Object.assign({}, defaultConfig, {
 	module: {
 		rules: [
 			{ test: /\.rt$/, loaders: ['react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app') },
-			{ test: /\.ts$/, loaders: ['ts-loader'], include: path.join(__dirname, 'app') },
+			{ test: /\.tsx?$/, loaders: ['ts-loader'], include: path.join(__dirname, 'app') },
 			{
 				test: /\.js?$/,
 				use: {
@@ -71,6 +71,7 @@ module.exports = Object.assign({}, defaultConfig, {
 					{loader: 'less-loader'},
 			]},
 			{ test: /\.css$/, loader: 'style-loader!css-loader' },
+			{ test: /\.scss$/, loader: 'style!css!sass' },
 			{ test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192' } // inline base64 URLs for <=8k images, direct URLs for the rest
 		]
 	}

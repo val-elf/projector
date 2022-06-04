@@ -1,6 +1,6 @@
-import { ILayerData } from './models';
+import { ILayerStore } from '../store/layer.store';
 
-export const mockLayers: ILayerData[] = [
+export const mockLayers: ILayerStore[] = [
 	/*{
 		//active: true,
 		img: '/srv/file/5c3716387ea9e45ea4d9c8f7',

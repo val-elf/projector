@@ -1,10 +1,11 @@
 import { mockLayers } from './layers-mock';
 import { Layer } from './layer';
-import { EventEmitter } from './event-emitter';
 import { Viewport } from './viewport';
-import { ILayerData } from './models';
+import { IDocumentView } from './models';
+import { storage } from '../store/store';
+import { ILayerStore } from '../store/layer.store';
 
-export class PictureDocument extends EventEmitter {
+export class PictureDocument {
 	_layers: Layer[] = [];
 	_width: number;
 	_height: number;
@@ -19,8 +20,7 @@ export class PictureDocument extends EventEmitter {
 	get height() { return this._height; }
 	get activeLayer() { return this._active; }
 
-	constructor(width: number, height: number, layers: ILayerData[] = mockLayers) {
-		super();
+	constructor(width: number, height: number, layers: ILayerStore[] = mockLayers) {
 		this._width = width;
 		this._height = height;
 		this._layers = layers.map(layer => {
@@ -31,7 +31,6 @@ export class PictureDocument extends EventEmitter {
 				}
 				this._active = nlay;
 			}
-			nlay.on('update', () => this.update());
 			return nlay;
 		});
 		if (!this._layers.length) {
@@ -54,17 +53,14 @@ export class PictureDocument extends EventEmitter {
 		return this._image;
 	}
 
-	getView() {
-		const { width, height, pan } = this.viewport.absBounding;
-		this._ctx.clearRect(0, 0, this.width, this.height);
+	getView(option?: { x: number, y: number, width: number, height: number }): IDocumentView {
+		const { x, y, width, height } = option || { x: 0, y: 0, width: this.width, height: this.height };
+
+		this._ctx.clearRect(0, 0, width, height);
 
 		this._layers
 			.filter(layer => layer.isVisible)
-			.forEach(layer => layer.placeView(this._ctx, {
-				width,
-				height,
-				pan
-			}));
+			.forEach(layer => layer.placeView(this._ctx, { width, height, x, y }));
 		return { view: this._view, width, height };
 	}
 
@@ -79,17 +75,11 @@ export class PictureDocument extends EventEmitter {
 	}
 
 	setActiveLayer(layer: Layer) {
-		this._active = layer;
-		this.layers.forEach(lr => lr.switchActiveTo(layer === lr));
-		this.trigger('changeActiveLayer', layer);
-	}
-
-	update() {
-		this.trigger('update');
+		layer.layerStorage.setActive(true);
 	}
 
 	addLayer(layer: Layer) {
-		this._layers.push(layer);
+		this.layers.push(layer);
 	}
 
 	resize({ width, height, square }: { width: number, height: number, square?: number}) {
@@ -112,6 +102,5 @@ export class PictureDocument extends EventEmitter {
 			lr.resize(lw, lh, stretch);
 		});
 		Object.assign(this._view, { width, height });
-		this.update();
 	}
 }

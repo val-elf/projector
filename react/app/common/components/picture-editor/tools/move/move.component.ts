@@ -5,16 +5,16 @@ import { ICoordinates } from 'controls/picture-editor/models/editor.model';
 export class Move extends CommonTool<{}, {}> {
 	ancor: ICoordinates;
 
+	get name() { return Move; }
+
 	activate() {
 		this.viewport.window.addEventListener('mousedown', this.startMove);
-		this.page.addEventListener('keydown', this.keyCheck);
-		super.activate();
+		document.addEventListener('keydown', this.keyCheck);
 	}
 
 	deactivate() {
 		this.viewport.window.removeEventListener('mousedown', this.startMove);
-		this.page.removeEventListener('keydown', this.keyCheck);
-		super.deactivate();
+		document.removeEventListener('keydown', this.keyCheck);
 	}
 
 	startMove = evt => {
@@ -47,8 +47,8 @@ export class Move extends CommonTool<{}, {}> {
 
 	addOffset(dx, dy) {
 		if (this.activeLayer && (dx !== 0 || dy !== 0)) {
-			this.activeLayer.addOffset({ dx, dy });
-			this.page.redraw();
+			this.activeLayer.addOffset({ x: dx, y: dy });
+			// this.page.redraw(); todo: page should be subscribed on change layer offset
 		}
 	}
 

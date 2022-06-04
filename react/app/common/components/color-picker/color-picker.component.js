@@ -56,6 +56,7 @@ export class ColorPicker extends React.Component {
 			changed = true;
 		}
 		if (value && newState.svalue !== value) {
+			console.log('CVALUE', value);
 			newState.svalue = value;
 			newState.value = value;
 			newState.hsv = RGB2HSV(newState.value);

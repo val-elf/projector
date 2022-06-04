@@ -38,12 +38,12 @@ export class BrushOptions<P, S extends BrushOptionsState> extends Component<P, S
 
 	componentWillUnmount() {
 		const { tool } = this.state;
-		if (tool) tool.off('change', this.freshToolState);
+		// if (tool) tool.off('change', this.freshToolState);
 	}
 
 	initTool() {
 		const { tool } = this.state;
-		tool.on('change', this.freshToolState);
+		// tool.on('change', this.freshToolState);
 		this.freshToolState();
 	}
 

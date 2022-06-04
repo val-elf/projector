@@ -1,102 +1,47 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
-import { EventEmitter } from '../document/event-emitter';
+import { Component } from 'react';
+import { object } from 'prop-types';
 import './common-tool.component.less';
+import { PictureDocument } from '../document/document';
 import { IEditor } from '../models/editor.model';
-
-class EventComponent<P = {}, S = {}> extends React.Component<P, S> {
-	_callbacks = {};
-	on(event, cb) {
-		let procs = this._callbacks[event];
-		if (!procs) {
-			procs = [];
-			this._callbacks[event] = procs;
-		}
-		if (!procs.includes(cb)) procs.push(cb);
-	}
-
-	off(event, cb) {
-		let procs = this._callbacks[event];
-		if (procs && procs.includes(cb)) {
-			const ind = procs.indexOf(cb);
-			procs.splice(ind, 1);
-		}
-	}
-
-	trigger(event, ...args) {
-		let procs = this._callbacks[event] || [];
-		procs.forEach(cb => cb(...args));
-	}
-}
+import { storage } from '../store/store';
+import { observer } from '~/services/state-management';
 
 export interface CommonToolState {
-	active?: boolean | undefined;
-	temporary?: boolean | undefined;
+	active?: boolean | undefined
 }
 
-export class CommonTool<P, S extends CommonToolState>
-			extends EventComponent<P, S> {
+export abstract class CommonTool<P, S extends CommonToolState> extends Component<P, S> {
+
     static contextTypes = {
-        editor: PropTypes.object.isRequired
+        editor: object.isRequired
     }
 
-    state: S = {
-		active: false,
-		temporary: false
-	} as S;
-
-	paused = false;
-	locked: boolean;
-
-	get editor(): IEditor { return this.context.editor; }
-	get page() { return this.editor.page; }
-	get viewport() { return this.document.viewport; }
-	get isActive() { return this.state.active; }
-	get document() { return this.editor.document; }
-	get activeLayer() { return this.document.activeLayer; }
+	get isActive() { return storage.state.toolClass === this.constructor; }
+	get activeLayer() { return storage.state.activeLayer; }
+	get layerState() { return storage.state.activeLayer; }
+	get viewport() { return storage.state.viewport; }
 
     getOptionsControl() { return null; }
-    activate() {
-		this.paused = false;
+
+	abstract activate();
+	abstract deactivate();
+
+	stash() {
+
 	}
-	deactivate() {
-		this.setState({ active: false, temporary: false });
-	}
+
 
 	getCursor() {}
 	refreshCursor() {}
 
-	temporaryActivate(evt: any) {
-		this.activate();
-		this.setState({ active: true, temporary: true });
-	}
-
-	freeze() {}
-	unfreeze() {}
-	lock() { this.locked = true; }
-	unlock() { this.locked = false; }
-
-	pause() {
-		this.paused = true;
-		this.freeze();
-	}
-
-	restore() {
-		this.paused = false;
-		this.unfreeze();
-	}
-
     setActive() {
-		this.page.focus();
-        this.context.editor.selectTool(this);
-        this.activate();
-        this.setState({ active: true });
+		storage.selectTool(this.constructor);
+		// this.page.focus(); - todo: subscribe by page on tool selection
+		this.activate();
+		this.setState({});
     }
 
     release() {
         this.deactivate();
-        this.setState({ active: false });
     }
 }
-
-Object.assign(CommonTool, EventEmitter);

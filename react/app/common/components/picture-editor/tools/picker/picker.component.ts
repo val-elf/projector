@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import { CommonTool } from '../common-tool.component';
+import { CommonTool, CommonToolState } from '../common-tool.component';
 import template from './picker.template.rt';
 
-export class Picker extends CommonTool<any, any> {
+export class Picker<T extends { onChange?: Function }> extends CommonTool<T, CommonToolState> {
 
 	static getDerivedStateFromProps(props, state) {
 		const newState = Object.assign({}, state);
@@ -15,7 +15,8 @@ export class Picker extends CommonTool<any, any> {
 	boundary: DOMRect;
 
 	get canvas() { return this.viewport.canvas; }
-    get ctx() { return this.viewport.ctx; }
+	get ctx() { return this.viewport.ctx; }
+	get name() { return 'Picker'; }
 
     movePointer = evt => {
 		this.pickColor(evt);
@@ -32,7 +33,7 @@ export class Picker extends CommonTool<any, any> {
 	}
 
     pickColor = evt => {
-		if (this.paused) return;
+		// if (this.paused) return;
         this.boundary = this.canvas.getBoundingClientRect() as DOMRect;
         const { x: ax, y: ay } = this.boundary;
         const { x, y } = { x: evt.pageX - ax, y: evt.pageY - ay };
@@ -45,14 +46,12 @@ export class Picker extends CommonTool<any, any> {
     activate() {
 		this.canvas.addEventListener('pointerdown', this.fixPointer);
 		this.canvas.addEventListener('click', this.pickColor);
-		super.activate();
     }
 
     deactivate() {
 		this.canvas.removeEventListener('pointermove', this.movePointer);
 		this.canvas.removeEventListener('pointerdown', this.fixPointer);
 		this.canvas.removeEventListener('click', this.pickColor);
-		super.deactivate();
     }
 
     render() {

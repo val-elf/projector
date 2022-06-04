@@ -39,8 +39,29 @@ module.exports = Object.assign({}, defaultConfig, {
 	],
 	module: {
 		rules: [
-			{test: /\.rt$/, loaders: ['babel-loader','react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app')},
-			{test: /\.js?$/, loader: 'babel-loader', include: path.join(__dirname, 'app')},
+			{ test: /\.rt$/, loaders: ['babel-loader','react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app') },
+			{ test: /\.tsx?$/, loaders: ['ts-loader'], include: path.join(__dirname, 'app') },
+			{
+				test: /\.js?$/,
+				include: path.join(__dirname, 'app'),
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [ "@babel/react"],
+						plugins: [
+							"@babel/plugin-proposal-class-properties",
+							[
+								require("babel-plugin-transform-builtin-extend"),
+								{
+									"globals": [
+										"Array"
+									]
+								}
+							]
+						]
+					}
+				}
+			},
 			{
 				test: /\.less$/,
 				use: extractLess.extract({

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Component, createRef } from 'react';
 import ResizeObserver from "resize-observer-polyfill";
 import { Layer } from '../document/layer';
@@ -6,6 +7,8 @@ import template from './page.template.rt';
 import './page.component.less';
 import * as PropTypes from 'prop-types';
 import { PictureDocument } from '../document/document';
+import { ICoordinates } from 'controls/picture-editor/models/editor.model';
+import { storage } from '../store/store';
 
 export class Page extends Component {
 
@@ -26,7 +29,9 @@ export class Page extends Component {
 		height: 600,
 		document: undefined,
 		cursor: undefined
-    }
+	}
+
+	storage = storage;
 
 	zoomMul = 1.25;
 	viewport: Viewport;
@@ -71,11 +76,9 @@ export class Page extends Component {
 
     componentDidMount() {
 		const { document: doc} = this;
-
 		this.viewport = new Viewport(doc, this.viewportNode);
-
-		doc.on('update', () => this.redraw());
 		this.viewportNode.appendChild(this.viewport.canvas);
+		storage.setViewport(this.viewport);
 
 		this.resizeObserver = new ResizeObserver(evt => {
             this.checkDimenstions(evt);
@@ -146,7 +149,7 @@ export class Page extends Component {
 			case 'Digit0':
 				if (evt.ctrlKey) {
 					evt.preventDefault();
-					this.actualZoom();
+					this.resetZoom();
 				}
 			break;
 			case 'Space':
@@ -192,9 +195,8 @@ export class Page extends Component {
 		this.root.focus();
 	}
 
-	actualZoom() {
-		Object.assign(this.viewport.pan, { x: 0, y: 0 });
-		this.viewport.zoom = 1;
+	resetZoom() {
+		this.storage.setViewpoint({ x: 0, y: 0 }, 1);
 	}
 
 	setZoom = evt => {
@@ -212,16 +214,14 @@ export class Page extends Component {
 	}
 
 	zoomBy(pos, zm) {
-		const { x, y } = pos;
-		this.pan.x = x  * (1 - zm) + this.pan.x * zm;
-		this.pan.y = y * (1 - zm) + this.pan.y * zm;
-		this.editor.selected && this.editor.selected.refreshCursor();
-		this.viewport.zoom *= zm;
+		this.storage.setViewpoint(pos, zm);
+		//this.viewport.setZoom(zm, pos);
 	}
 
-	getAbsLocation(ax, ay) {
-		const { x, y } = this.viewport.bounding as DOMRect;
-		return { x: ax - x, y: ay - y };
+	getAbsLocation(ax, ay): ICoordinates {
+		const bound = this.viewport.window.getBoundingClientRect() as DOMRect;
+		const { x, y } = bound;
+		return { x: ax - Math.round(x), y: ay - Math.round(y) };
 	}
 
 	getLocation(ax, ay) {
@@ -274,7 +274,7 @@ export class Page extends Component {
 
     generateWorkingLayer() {
 		const { width, height } = this.viewport;
-		const layer = new Layer({ width, height, working: true, name: '', id: Layer.generateId() }, this.document);
+		const layer = new Layer({ width, height, name: '', id: Layer.generateId() }, this.document);
 		this.virtuals.push(layer);
         return layer;
     }
@@ -285,11 +285,10 @@ export class Page extends Component {
 	}
 
 	redraw() {
-		//this.ctx.clearRect(0, 0, this.viewport.width, this.viewport.height);
 		this.mergeLayers();
 	}
 
     render() {
-        return template.call(this);
+		return template.call(this);
     }
 }

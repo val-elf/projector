@@ -8,6 +8,7 @@ import 'tinymce/themes/modern';
 import { apiUrl } from "~/index";
 import template from './app.template';
 import { AppContext } from './app.context';
+import { mutator } from './services/state-management/state.manager';
 
 export class App extends React.Component {
 	static contextTypes = {

@@ -1,7 +1,7 @@
 var path = require('path');
 module.exports = {
     resolve: {
-		extensions: ['.js', '.ts', '.json', '.rt', '.less'],
+		extensions: ['.js', '.ts', '.tsx', '.json', '.rt', '.less'],
 		alias: {
 			'~': path.resolve(__dirname, './app'),
 			'api': path.resolve(__dirname, './app/api/models'),

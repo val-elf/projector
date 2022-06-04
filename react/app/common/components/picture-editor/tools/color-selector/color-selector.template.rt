@@ -1,13 +1,21 @@
-<div class="tool color-manager" rt-scope="this.state as state">
-	<div
-		class="color-selector"
-		rt-class="{ active: state.active === 'fore' }"
-		onClick="{() => this.toggleColorPicker('fore') }"
-		style="background-color: #{this.color};"></div>
-	<div
-		class="color-selector back"
-		rt-class="{active: state.active === 'back' }"
-		onClick="{() => this.toggleColorPicker('back') }"
-		style="background-color: #{this.bgcolor};"
-	></div>
-</div>
+<rt-import name="Fragment" from="react" />
+<rt-import name="ColorPicker" from="controls/color-picker" />
+<rt-import name="ActiveColorTypeEnum" from="../../models/editor.model" />
+
+<Fragment rt-scope="this.state as state">
+	<div class="tool color-manager">
+		<div
+			class="color-selector"
+			rt-class="{ active: this.active === 'fore' }"
+			onClick="{() => this.toggleColorPicker(ActiveColorTypeEnum.fore) }"
+			style="background-color: #{this.color};"></div>
+		<div
+			class="color-selector back"
+			rt-class="{active: this.active === 'back' }"
+			onClick="{() => this.toggleColorPicker(ActiveColorTypeEnum.back) }"
+			style="background-color: #{this.bgcolor};"
+		></div>
+	</div>
+	{ console.log('Active color', this.activeColor )}
+	<ColorPicker value="{ this.activeColor }" show="{ state.showed }" onChange="{ rgb => this.activeColor = rgb }" />
+</Fragment>

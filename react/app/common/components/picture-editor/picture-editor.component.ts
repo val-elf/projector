@@ -1,12 +1,17 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import { Component, createRef } from 'react';
+import { func, object } from 'prop-types';
+
 import template from './picture-editor.template.rt';
 import './picture-editor.component.less';
 import { PictureDocument } from './document/document';
 import { IEditor } from './models/editor.model';
 import { ColorSelector, LayersManager, Panoramer, Picker, Eraser, Brush, Move } from './tools';
-import { Page } from './page';
+import { Page } from './page/page.component';
 import { CommonTool, CommonToolState } from './tools/common-tool.component';
+import { PictureEditorStorage } from './store/store';
+// import { observer } from '~/services/state-management';
+
+const storage = new PictureEditorStorage();
 
 /*
 	Almost done:
@@ -32,43 +37,41 @@ import { CommonTool, CommonToolState } from './tools/common-tool.component';
 			text: font, size
 			actions: save, resize canvas, rotate canvas
 */
-
-export class PictureEditor extends React.Component<any> implements IEditor {
+export class PictureEditor extends Component<any> implements IEditor {
 	static contextTypes = {
-		t: PropTypes.func.isRequired
+		t: func.isRequired
 	};
 
 	static childContextTypes = {
-		editor: PropTypes.object.isRequired
+		editor: object.isRequired
 	};
 
-	static getDerivedStateFromProps(props, state) {
-		const newState = Object.assign({}, state);
-		return newState;
-	}
-
-	state = {
-		colorPickerShowed: false
-	};
-
-	pageRef = React.createRef();
+	pageRef = createRef();
 	get page() { return this.pageRef.current as Page; }
-	moveRef = React.createRef();
+	moveRef = createRef();
 	get moveTool() { return this.moveRef.current as Move; }
-	brushRef = React.createRef();
+	brushRef = createRef();
 	get brushTool() { return this.brushRef.current as Brush; }
-	eraserRef = React.createRef();
+	eraserRef = createRef();
 	get eraserTool() { return this.eraserRef.current as Eraser; }
-	pickerRef = React.createRef();
-	get pickerTool() { return this.pickerRef.current as Picker; }
-	panoramerRef = React.createRef();
+	pickerRef = createRef();
+	get pickerTool() { return this.pickerRef.current as Picker<{ onChange: Function}>; }
+	panoramerRef = createRef();
 	get panoramerTool() { return this.panoramerRef.current as Panoramer; }
-	layersManagerRef = React.createRef();
+	layersManagerRef = createRef();
 	get layersManager() { return this.layersManagerRef.current as LayersManager; }
-	colorSelectorRef = React.createRef();
+	colorSelectorRef = createRef();
 	get colorSelector() { return this.colorSelectorRef.current as ColorSelector; }
-
 	get activeLayer() { return this.document.activeLayer; }
+
+	get activeTool() { return storage.state.toolClass; }
+
+
+	componentDidMount() {
+		storage.subscribe('@zoom', () => {
+			if (this.selected) this.selected.refreshCursor();
+		});
+	}
 
 	document = new PictureDocument(3900, 2400);
 
@@ -83,36 +86,18 @@ export class PictureEditor extends React.Component<any> implements IEditor {
 	selected: CommonTool<any, any>;
 	currentTool: CommonTool<any, any>;
 
-	get color() {
-		return this.colorSelector ? this.colorSelector.activeColor : null;
-	}
-
-	set color(value: string) {
-		this.colorSelector.activeColor = value;
-	}
-
 	getChildContext() {
 		return { editor: this };
 	}
 
-	changeActiveColor() {
-		this.setState({});
-	}
-
-	toggleColorPicker() {
-		let { colorPickerShowed } = this.state;
-		colorPickerShowed = !colorPickerShowed;
-		this.page.focus();
-		this.setState({ colorPickerShowed });
-	}
-
 	temporaryActivate(toolName, ...args) {
-		if (this.selected && this.selected.locked) return;
+		// if (this.selected && this.selected.locked) return;
+
 		if (this.currentTool) {
 			this.selected && this.selected.deactivate();
 		} else {
 			this.currentTool = this.selected;
-			this.selected && this.selected.pause();
+			// this.selected && this.selected.pause();
 		}
 		const tool = this[this.toolMap[toolName]];
 		if (tool) {
@@ -136,7 +121,7 @@ export class PictureEditor extends React.Component<any> implements IEditor {
 		if (!this.currentTool) return;
 		this.selected.deactivate();
 		this.selected = this.currentTool;
-		this.selected && this.selected.restore();
+		// this.selected && this.selected.restore();
 		if (this.props.onSelectTool) this.props.onSelectTool(this.selected);
 		this.currentTool = null;
 	}

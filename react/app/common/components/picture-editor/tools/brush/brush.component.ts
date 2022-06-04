@@ -4,134 +4,25 @@ import { clearSelection } from 'common/utils';
 import { CommonTool, CommonToolState } from '../common-tool.component';
 import { Cursor } from '../../document/cursor';
 import { BrushOptions } from '../options/brush-options.component';
-import { BrushManager } from '../brush-utils';
-import { testPoints } from './points.test';
+import { BrushManager, BrushState, getOpacity } from '../brush-utils';
 import template from './brush.template.rt';
 import './brush.component.less';
 import { IPointPosition } from '../../models/editor.model';
+import { storage } from '../../store/store';
+import { OverlayMappingEnum } from 'controls/picture-editor/document/models';
 
-const EPenButton = {
-	tip: 0x1, // left mouse, touch contact, pen contact
-	barrel: 0x2, // right mouse, pen barrel button
-	middle: 0x4, // middle mouse
-	eraser: 0x20 // pen eraser button
+enum EPenButton {
+	tip = 0x1, // left mouse, touch contact, pen contact
+	barrel = 0x2, // right mouse, pen barrel button
+	middle = 0x4, // middle mouse
+	eraser = 0x20 // pen eraser button
 }
 
 const brush = new BrushManager();
 
-const getPoints = (p1, p2, color, count) => {
-	const hardness = 1;
-	let width = p1.width;
-
-	const dx = (p2.x - p1.x) / count;
-	const dy = (p2.y - p1.y) / count;
-	const dw = Math.round((p2.width - p1.width) / count * 100) / 100;
-	const res = [];
-	const pt = Object.assign({}, p1);
-	for (var i = 0; i <= count; i++) {
-		res.push(
-			Object.assign({
-				hardness,
-				color,
-			}, pt, {
-				width: Math.round(width * 100) / 100,
-			})
-		);
-		pt.x += dx;
-		pt.y += dy;
-		width += dw;
-	}
-	return res;
-}
-
-const dpoints = (p1, p2, opacity, count, data) => {
-	let lpoint;
-	let stepRatio = 0.1;
-	opacity = opacity || 1;
-
-	const pts = getPoints(p1, p2, { r: 128, g: 128, b: 128, a: opacity }, count);
-	pts.forEach(pt => {
-		if (lpoint) brush.drawLine(lpoint, pt, data, stepRatio);
-		lpoint = pt;
-	});
-
-}
-
-function outPtss(data) {
-	let lp = null;
-	testPoints.forEach(pt => {
-		if (lp) brush.drawLine(lp, pt, data, 0.1);
-		lp = pt;
-	});
-}
-
-var getFullCount = a => {
-	var res = 0;
-	var al = 0;
-	var k = 1 - a;
-	var x = 0;
-	while(res < 1) { al += a * Math.pow(k, x); res = Math.round(al * 1000) /1000; x ++;}
-	return x - 1;
-}
-
-var getOpacity = (steps, alpha) => {
-	return Math.round(1000 * (1 - Math.pow(1 - alpha, 1 / steps))) / 1000;
-}
-
-interface BrushState extends CommonToolState {
-	hardness: number;
-	opacity: number;
-	flow: number;
-	useTilt: boolean;
-}
-
 export class Brush extends CommonTool<{}, BrushState> {
 
-	test1() {
-		let x = 10;
-		let y = 70;
-		let w = 2.05;
-		const res = new ImageData(800, 800);
-		for (let i = 0; i < 6; i ++) {
-			dpoints(
-				{ x: x, y, width: w, hardness: 1 },
-				{ x: x + 300, y: y + 300 , width: w + 0.25, hardness: 1 },
-				0.5,
-				10,
-				res
-			);
-			w += 0.025;
-			y += 10;
-		}
-
-		//outPtss(res);
-		return res;
-	}
-
-	test2() {
-		const red = { r: 255, g: 0, b: 0, a: 1 };
-		const rdata = new ImageData(800, 500);
-		const hardness = 0.01;
-		const frame = 180;
-		const shift = 0;
-
-		let c = 0;
-		for (var i = frame * 30 + shift; i < frame * 30 + 1 + shift; i ++) {
-			const r = i * 0.01;
-			const res = brush.fillSpot(r, hardness, 1, 0, red);
-			brush.drawTo(rdata, res, { x: 70 + c * 120, y: 40 });
-			/* dpoints(
-				{ x: 70 + c * 70, y: 60, width, hardness },
-				{ x: 70 + c * 70 + 200, y: 350, width: width + 1, hardness },
-				1,
-				100, rdata
-			);*/
-			c ++;
-		}
-		return rdata;
-	}
-
-	get layer() {
+	/*get layer() {
 		return this.activeLayer.workingLayer;
 	}
 
@@ -143,6 +34,9 @@ export class Brush extends CommonTool<{}, BrushState> {
 		const ctx = this.layer.context;
 		ctx.putImageData(this.test2(), 0, 0);
 		this.page.redraw();
+	}*/
+	static getOptionsControl() {
+		return BrushOptions;
 	}
 
 	static getDerivedStateFromProps(props, state) {
@@ -168,7 +62,7 @@ export class Brush extends CommonTool<{}, BrushState> {
 	opacity = 1;
 	stepRatio = 0.1;
 	minWidth = 0.05;
-	composite = 'source-over';
+	composite = OverlayMappingEnum.sourceOver;
 
 	pts: IPointPosition[];
 	lpoint: IPointPosition;
@@ -178,17 +72,19 @@ export class Brush extends CommonTool<{}, BrushState> {
 	iterations: number;
 	_cursor: Cursor;
 
-	get color() { return this.editor.color; }
+	get color() { return storage.state.color; }
+	get name() { return Brush; }
 
 	getRealOpacity(stepRatio, flow) {
 		return getOpacity(Math.round(1 / stepRatio), flow);
 	}
 
 	startDraw = evt => {
+		if (!this.layerState) return;
 		this.pts = [];
 		const pressure = evt.pointerType === 'mouse' ? 1 : evt.pressure;
 		clearSelection();
-		if (this.paused) return;
+		// if (this.paused) return;
 
 		const { buttons } = evt;
 
@@ -197,9 +93,10 @@ export class Brush extends CommonTool<{}, BrushState> {
 			return;
 		}*/
 
-		this.layer.composite = this.composite;
-		this.layer.opacity = this.opacity;
-		this.pixelData = new ImageData(this.layer.width, this.layer.height);
+		this.layerState.setComposite(this.composite);
+		this.layerState.setOpacity(this.opacity);
+		const { width, height } = this.layerState.state;
+		this.pixelData = new ImageData(width, height);
 
 		document.addEventListener('pointermove', this.draw);
 		document.addEventListener('pointerup', this.endDraw);
@@ -222,11 +119,11 @@ export class Brush extends CommonTool<{}, BrushState> {
 		this.lpoint = pos;
 		this.pts.push(pos);
 		brush.drawPoint(pos, pos.size, this.pixelData);
-		this.ctx.putImageData(this.pixelData, 0, 0);
-		this.viewport.redraw();
+		this.layerState.putImageData(this.pixelData);
+		// this.viewport.redraw(); todo: subscribe for update data
 		this.distance = 0;
 		this.iterations = 0;
-		this.lock();
+		// this.lock();
 	}
 
 	draw = evt => {
@@ -263,11 +160,11 @@ export class Brush extends CommonTool<{}, BrushState> {
 
 		if (this.lpoint) {
 			const npoint = brush.drawLine(this.lpoint, pos, this.pixelData, stepRatio);
-			this.ctx.putImageData(this.pixelData, 0, 0);
+			this.layerState.putImageData(this.pixelData);
 			if (npoint) {
 				this.lpoint = npoint;
 				// this.points.push(npoint);
-				this.viewport.redraw();
+				// this.viewport.redraw(); - todo: subscribe viewport to redraw
 			} else this.lpoint.size = size;
 		} else this.lpoint = pos;
 	}
@@ -275,9 +172,9 @@ export class Brush extends CommonTool<{}, BrushState> {
 	endDraw = evt => {
 		document.removeEventListener('pointermove', this.draw);
 		document.removeEventListener('pointerup', this.endDraw);
-		this.activeLayer.applyWorking();
+		this.activeLayer.apply();
 		this.finishDraw();
-		this.unlock();
+		// this.unlock();
 	}
 
 	finishDraw() { }
@@ -285,24 +182,24 @@ export class Brush extends CommonTool<{}, BrushState> {
 	activate() {
 		if (this.isActive) return;
 		this.viewport.window.addEventListener('pointerdown', this.startDraw);
-		this.page.addEventListener('keydown', this.keyCheck);
-		super.activate();
-		//this.testBrush();
+		document.addEventListener('keydown', this.keyCheck);
+		// super.activate();
+		//testBrush();
 	}
 
 	deactivate() {
-		super.deactivate();
+		// super.deactivate();
 		this.viewport.window.removeEventListener('pointerdown', this.startDraw);
-		this.page.removeEventListener('keydown', this.keyCheck);
+		document.removeEventListener('keydown', this.keyCheck);
 	}
 
-	freeze() {
+	/*freeze() {
 		this.page.removeEventListener('keydown', this.keyCheck);
 	}
 
 	unfreeze() {
 		this.page.addEventListener('keydown', this.keyCheck);
-	}
+	}*/
 
 	keyCheck = evt => {
 		// console.log('KCheck', evt);
@@ -362,10 +259,6 @@ export class Brush extends CommonTool<{}, BrushState> {
 	}
 
 
-	getOptionsControl() {
-		return BrushOptions;
-	}
-
 	getCursor() {
 		if (!this._cursor) {
 			this._cursor = new Cursor();
@@ -375,7 +268,7 @@ export class Brush extends CommonTool<{}, BrushState> {
 	}
 
 	refreshCursor() {
-		const sz = this.size * this.page.zoom;
+		const sz = this.size * storage.state.zoom;
 		this._cursor.setSize(sz, sz);
 		this._cursor.setLocation(sz / 2, sz / 2);
 		const cctx = this._cursor.context;
@@ -400,28 +293,24 @@ export class Brush extends CommonTool<{}, BrushState> {
 		if (size > 120) return;
 		this.size = size;
 		this.refreshCursor();
-		this.trigger('change');
 	}
 
 	setBrushHardness(hardness) {
 		if (hardness < 0) hardness = 0;
 		if (hardness > 1) hardness = 1;
 		this.hardness = hardness;
-		this.trigger('change');
 	}
 
 	setBrushFlow(flow) {
 		if (flow < 0) flow = 0;
 		if (flow > 1) flow = 1;
 		this.flow = flow;
-		this.trigger('change');
 	}
 
 	setBrushOpacity(opacity) {
 		if (opacity < 0) opacity = 0;
 		if (opacity > 1) opacity = 1;
 		this.opacity = opacity;
-		this.trigger('change');
 	}
 
 	render() {

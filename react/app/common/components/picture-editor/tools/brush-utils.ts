@@ -1,3 +1,16 @@
+import { CommonToolState } from './common-tool.component';
+
+export interface BrushState extends CommonToolState {
+	hardness: number;
+	opacity: number;
+	flow: number;
+	useTilt: boolean;
+}
+
+export const getOpacity = (steps, alpha) => {
+	return Math.round(1000 * (1 - Math.pow(1 - alpha, 1 / steps))) / 1000;
+}
+
 const bilinearInterpolation = (src, dst) => {
 	function interpolate(k, kMin, kMax, vMin, vMax) {
 		return Math.round((k - kMin) * vMax + (kMax - k) * vMin)

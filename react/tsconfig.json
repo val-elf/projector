@@ -8,6 +8,7 @@
 	  "emitDecoratorMetadata": true,
 	  "experimentalDecorators": true,
 	  "downlevelIteration": true,
+	  "jsx": "react",
 	  "lib": [
 		"es2018",
 		"dom"
