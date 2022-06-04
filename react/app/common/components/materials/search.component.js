@@ -1,6 +1,6 @@
 import React from "react";
-import { InputAdornment } from "@material-ui/core";
-import { Search as SearchIcon } from "@material-ui/icons";
+import { InputAdornment } from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
 import template from "./search.template";
 
 export class Search extends React.Component {

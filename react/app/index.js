@@ -1,13 +1,14 @@
 import 'babel-polyfill';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import I18n, { i18nState } from 'redux-i18n';
-import { translations } from '_localizations';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
-import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import translations from '_localizations';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
 import moment from 'moment';
 
 import "./index.less";
@@ -30,37 +31,36 @@ export const store = createStore(combineReducers({
 
 (function setupApplication() {
 	window.$moment = moment;
-	theme = createMuiTheme(MUITheme);
+	theme = createTheme(MUITheme);
 	theme.palette.primary.A700 = '#371C63';
 	theme.palette.primary.main = '#371C63';
 	theme.palette.primary.dark = '#371C63';
 	console.log("PLT", theme.palette);
 })();
 
-class MyMomentUtils extends MomentUtils {
+/*class MyMomentUtils extends MomentUtils {
 	constructor() {
 		super(...arguments);
 		this.dateFormat = 'DD MMM YYYY';
 		this.dateTime12hFormat = 'DD MMM YYYY HH:mm';
 		this.dateTime24hFormat = 'DD MMM YYYY HH:mm';
 	}
-}
+}*/
 
 const initLang = 'ru';
 moment.locale(initLang);
-
-export const Application = render(
+const root = createRoot(document.getElementById('root'));
+console.log("ROOT", translations);
+export const Application = root.render(
 	<Provider store={store}>
 		<I18n translations={translations} initialLang={initLang}>
-			<MuiThemeProvider theme={theme}>
-				<MuiPickersUtilsProvider utils={MyMomentUtils} moment={moment} locale={initLang}>
+			<ThemeProvider theme={theme}>
+				<LocalizationProvider dateAdapter={AdapterDateFns}>
 					<App/>
-				</MuiPickersUtilsProvider>
-			</MuiThemeProvider>
+				</LocalizationProvider>
+			</ThemeProvider>
 		</I18n>
 	</Provider>
-	,
-	document.getElementById('root')
 );
 
 

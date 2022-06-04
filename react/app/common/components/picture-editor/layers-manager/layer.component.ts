@@ -19,6 +19,8 @@ export class Layer extends React.Component {
 		return newState;
 	}
 
+	context: any;
+
 	get editor() { return this.context.editor; }
 	get page() { return this.editor.page; }
 

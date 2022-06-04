@@ -1,6 +1,6 @@
-<rt-import name="Button" from="@material-ui/core" />
-<rt-import name="MenuItem" from="@material-ui/core" />
-<rt-import name="FormControl" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
+<rt-import name="MenuItem" from="@mui/material" />
+<rt-import name="FormControl" from="@mui/material" />
 <rt-import name="Select" from="controls/materials" />
 
 <div class="text-editor-container col" style="{{height: this.height + 'px'}}" ref="{ this.rootRef }">

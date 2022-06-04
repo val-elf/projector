@@ -4,7 +4,7 @@
 <rt-import name="TextEditor" from="controls/texteditor" />
 <rt-import name="TextEditorPanel" from="controls/texteditor" />
 <rt-import name="Checkbox" from="controls/materials" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 
 <Fragment rt-scope="this.state as state; this.context.t as t">
     <Loader load="{ state.loading }" />

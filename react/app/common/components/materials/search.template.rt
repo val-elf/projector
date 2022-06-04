@@ -1,4 +1,4 @@
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
 
 <TextField
 	label="{this.props.label}"

@@ -1,8 +1,8 @@
 <rt-import name="Fragment" from="react" />
 <rt-import name="Select" from="controls/materials" />
 <rt-import name="IconPreview" from="controls/icon-preview" />
-<rt-import name="TextField" from="@material-ui/core" />
-<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
+<rt-import name="MenuItem" from="@mui/material" />
 
 <div rt-scope="this.state as state; this.context.t as t">
     <Select class="wide" value="{ state.linkType}" onChange=" { evt => this.selectLinkType(evt.target.value) }">

@@ -22,6 +22,7 @@ export abstract class CommonTool<P, S extends CommonToolState> extends Component
 	get viewport() { return storage.state.viewport; }
 
     getOptionsControl() { return null; }
+	context: any;
 
 	abstract activate();
 	abstract deactivate();

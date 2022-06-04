@@ -1,7 +1,7 @@
 <rt-import name="IconPreview" from="controls/icon-preview" />
 <rt-import name="UISref" from="@uirouter/react" />
 <rt-import name="date" from="~/services/filters/date" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 
 <div class="item size1of3" rt-scope="this.state.project as project; this.context.t as t">
 	<div class="project-icon-place">

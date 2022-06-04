@@ -4,7 +4,7 @@
 <rt-import name="Tab" from="controls/tabpanel" />
 <rt-import name="TextEditor" from="controls/texteditor" />
 <rt-import name="TextEditorPanel" from="controls/texteditor" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 <rt-import name="LocationMap" from="components/locations" />
 
 <div class="col brick" rt-scope="this.context.t as t; this.state as state; this.state.location as location; this.state.parent as parent">

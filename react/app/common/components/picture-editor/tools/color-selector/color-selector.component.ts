@@ -16,6 +16,8 @@ export class ColorSelector extends React.Component {
 		editor: PropTypes.object.isRequired
 	}
 
+	context: any;
+
 	state = {
 		showed: false
 	};
