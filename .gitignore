@@ -13,3 +13,7 @@ package-lock.json
 /web/core/bower_components
 .hgignore
 /*.code-workspace
+node_modules
+/backend/dist
+/backend/db/dump
+/react/dist

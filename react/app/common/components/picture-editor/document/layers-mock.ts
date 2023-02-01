@@ -8,14 +8,14 @@ export const mockLayers: ILayerData[] = [
 	},*/
 	{
 		opacity: 1,
-		img: '/assets/img/layer-sample.png',
+		img: '/assets/img/mocks/layer-sample.png',
 		name: 'layer 2'
 	},
 	/*{
 		//active: true,
 		composite: 'hard-light',
 		opacity: 0.2,
-		img: '/assets/img/layer-sample-0.png',
+		img: '/assets/img/mocks/layer-sample-0.png',
 		name: 'layer 3'
 	},
 	{

@@ -1,4 +1,4 @@
-<rt-import name="PictureEditor" from="controls/picture-editor" />
+<!-- <rt-import name="PictureEditor" from="controls/picture-editor" /> -->
 <div class="storyboard-frame_editor"
     rt-class="{active: this.state.active, expanded: this.state.expanded }"
     onTransitionEnd="{evt => this.finishTransform(evt)}"
@@ -11,6 +11,6 @@
 		</div>
     </div>
     <div class="storyboard-frame_editor-content" rt-if="state.opened">
-        <PictureEditor ref="{this.pictureEditorRef}" onSelectTool="{ tool => this.selectTool(tool) }" />
+        <!-- <PictureEditor ref="{this.pictureEditorRef}" onSelectTool="{ tool => this.selectTool(tool) }" /> -->
     </div>
 </div>

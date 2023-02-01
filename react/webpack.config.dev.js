@@ -10,7 +10,7 @@ module.exports = Object.assign({}, defaultConfig, {
 	entry: [
 		'eventsource-polyfill', // necessary for hot reloading with IE
 		'webpack-hot-middleware/client',
-		'./app/index.js'
+		'./app/index.ts'
 	],
 	mode: 'development',
 	output: {

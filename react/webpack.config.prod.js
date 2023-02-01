@@ -39,7 +39,14 @@ module.exports = Object.assign({}, defaultConfig, {
 	],
 	module: {
 		rules: [
-			{test: /\.rt$/, loaders: ['babel-loader','react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'app')},
+			{test: /\.rt$/, loaders: ['babel-loader','react-templates-loader?modules=amd&targetVersion=0.14.0'], include: path.join(__dirname, 'src')},
+			{
+				test: /\.ts$/,
+				use: [{
+					loader: 'ts-loader',
+				}],
+				include: path.join(__dirname, 'app'),
+			},
 			{test: /\.js?$/, loader: 'babel-loader', include: path.join(__dirname, 'app')},
 			{
 				test: /\.less$/,
