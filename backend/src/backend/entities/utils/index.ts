@@ -1,5 +1,6 @@
-import md5 from "md5";
+import * as md5 from "md5";
 import { mongo } from 'mongoose';
+import { Request } from '~/network';
 
 export const objId = mongo.ObjectID;
 
@@ -8,9 +9,13 @@ export const isArray = (obj: any) => Array.isArray(obj);
 export const isObject = (obj: any) => typeof(obj) === "object";
 
 export const prepareHash = doc => {
-	const clean = Object.assign({}, doc);
-	delete clean._update;
-	delete clean._create;
-	delete clean.__v;
+	const { _update, _create, __v, ...clean} = doc;
 	return md5(JSON.stringify(clean));
 };
+
+const AUTH_HEADER = 'authorization';
+
+export function getToken(request: Request) {
+	const isAuth = request.headers[AUTH_HEADER] || null;
+	return isAuth;
+}

@@ -1,30 +1,92 @@
-import { EntityControllerBase } from '../core/entity-processor';
+import { EntityControllerBase, IEntityController } from '../core/entity-processor';
 import { DbBridge, DbModel } from '../core/db-bridge';
 import { ICommonEntity, TFindList, TFindListResult, TObjectId } from '../core/models';
 import { IDbObject, IEntityList, IFilterOptions, IUser } from './models/db.models';
-import { isArray, isObject, isString, objId, prepareHash } from './utils';
+import { getToken, isArray, isObject, isString, objId, prepareHash } from './utils';
 import { Service } from '~/network/service';
 
-export class DbObjectBase extends EntityControllerBase {
-	get user(): IUser {
-		const user = this.user;
-		return {
-			_id: '',
-			_coretype: 'users',
-			_hash: '',
-			_create: { _dt: '', _user: '' },
-			login: '',
-			password: '',
-			email: '',
-			status: 'normal',
-			roles: [],
-		};
+const USER_LOGOUT_MESSAGE = "User must be authorized";
+
+export interface IUserManagement extends IEntityController<any>{
+	getUserBySession(sessionId): Promise<IUser>;
+}
+
+export abstract class DbObjectBase extends EntityControllerBase {
+	private static onceSession: string;
+
+	public static getSession() {
+		const token = getToken(Service.instance.request);
+		return token;
+	}
+
+	private static getCurrentSession(token: string) {
+		const session = this.onceSession || token;
+		if (this.onceSession) delete this.onceSession;
+		return session;
+	}
+
+	private static _user: IUser;
+
+	private static async _getCurrentUser(throwIfNotFound: boolean): Promise<IUser> {
+		if (this._user) {
+			return this._user;
+		}
+		const app = Service.instance;
+		const token = this.getSession();
+		const sessionId = this.getCurrentSession(token);
+		const userController: IUserManagement = DbBridge.getInstance('users');
+		const { request } = app;
+		const throwError = () => {
+			throw {
+				message: new Error(USER_LOGOUT_MESSAGE),
+				code: 403
+			};
+		}
+		if(sessionId) {
+			const rsession = request.session as any;
+			if(rsession && rsession.id === sessionId && rsession.user){
+				return (request.session as any).user;
+			}
+			try{
+				const user = await userController.getUserBySession(sessionId);
+				if(user) {
+					if(rsession) {
+						rsession.user = user;
+						// rsession.id = sessionId;
+					}
+					return user;
+				}
+			}
+			catch(error){
+				console.error(error);
+				throwError();
+			};
+		}
+		if(throwIfNotFound) {
+			throwError();
+		}
+	}
+
+	public static async getCurrentUser(throwIfNotFound: boolean): Promise<IUser>{
+		throwIfNotFound = throwIfNotFound === undefined || throwIfNotFound;
+		this._user = await this._getCurrentUser(throwIfNotFound);
+		return this._user;
+	}
+
+	public static setOnceSession = function(session: string) {
+		this.onceSession = session;
+	}
+
+
+	public async getCurrentUser(): Promise<IUser> {
+		return await DbObjectBase.getCurrentUser(true);
 	}
 
 	public async deleteItem<TEntity extends ICommonEntity>(
-        itemId: string,
+        itemId: TObjectId,
+		user: IUser
     ): Promise<TEntity> {
-		const { _id } = this.user;
+		const { _id } = user;
 		const userId = typeof(_id) === "string" ? new objId(_id) : _id;
 		const filterQuery = { _id: itemId };
 		const res = await this.model.update(
@@ -37,17 +99,32 @@ export class DbObjectBase extends EntityControllerBase {
 			} as unknown as Partial<TEntity>);
 		return res;
 	}
+
+	private prepare = <T extends ICommonEntity>(item: T) => ({
+		...item,
+		_hash: prepareHash(item),
+		_coretype: this.model.modelName
+	});
+
+	public registryModel() {
+		this.model.itemLoad$.subscribe(this.prepare);
+
+		this.model.itemUpdate$.subscribe(item => {
+			const { _coretype, _hash, ...rest } = item;
+			return rest;
+		});
+	}
 }
 
 @DbModel({ model: 'dbobjects' })
 export class DbObjectController extends DbObjectBase {
-	model: DbBridge<IDbObject>
+	readonly model: DbBridge<IDbObject>
 
 	create() {
 		// const user = this.app.getContext('user') as IUser;
 	}
 
-	constructor(public app: Service) { super(app);	}
+	constructor(app: Service) { super(app);	}
 
 	public async getDbObject(itemId: TObjectId) {
 		return await this.model.getItem(itemId);
@@ -61,9 +138,9 @@ export class DbObjectController extends DbObjectBase {
 		return await this.model.updateItem(item);
 	}
 
-	public normalize<T extends ICommonEntity>(item: T): T {
+	public static normalize<T extends ICommonEntity>(item: T, user: IUser): T {
 		let newItem: any = {};
-		const { _id } = this.user ?? { _id: undefined };
+		const { _id } = user ?? { _id: undefined };
         const userId = typeof(_id) === "string" ? new objId(_id): _id;
 
 		if(!item._id){
@@ -91,7 +168,7 @@ export class DbObjectController extends DbObjectBase {
 		}
 
 		//normalize all Ids
-		DbObjectController.fixIds(newItem);
+		this.fixIds(newItem);
 		return newItem as unknown as T;
 	}
 
@@ -114,27 +191,22 @@ export class DbObjectController extends DbObjectBase {
 }
 
 export class DbObjectAncestor<T extends ICommonEntity> extends DbObjectBase {
-	model: DbBridge<T>;
-
-	constructor(public app: Service) {
-		super(app);
+	get model(): DbBridge<T> {
+		return null;
 	}
 
-	protected get dbObject(): DbObjectController {
-		return this.owner as unknown as DbObjectController;
-	};
+	constructor(app: Service) {
+		super(app);
+	}
 
 	protected preapareItemsList<T extends ICommonEntity>(source: TFindListResult<T>): IEntityList<T> | { count: number }{
 		const counter:{ count: number } = (source as unknown as { count: number });
 		if (counter) return counter;
+
 		const list = source as TFindList<T>;
 		const options = list.options as unknown as IFilterOptions;
 		/* this is should be moved to DbObject */
-		const items = list.result.map(item => ({
-			...item,
-			_hash: prepareHash(item),
-			_coretype: this.model.modelName
-		}));
+		const items = list.result;
 		return {
 			data: items,
 			_: {

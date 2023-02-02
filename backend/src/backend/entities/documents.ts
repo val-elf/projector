@@ -1,13 +1,17 @@
 import { DbBridge, DbModel } from '../core/db-bridge';
-import { DbObjectAncestor } from './dbobjects';
+import { TFindList, TObjectId } from '../core/models';
+import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { PermissionsCheck } from './decorators/permissions-check';
 import { Files } from './files';
-import { IDocument } from './models/db.models';
+import { IDocument, IFile, IUser } from './models/db.models';
 
 
 @DbModel({ model: 'documents' })
 export class Documents extends DbObjectAncestor<IDocument> {
-	async createDocument(doc) {
-		doc = this.dbObject.normalize(doc);
+
+	@PermissionsCheck({ permissions: [] })
+	async createDocument(doc: IDocument, user?: IUser) {
+		doc = DbObjectController.normalize(doc, user);
 		return this.model.create(doc);
 	}
 
@@ -15,15 +19,16 @@ export class Documents extends DbObjectAncestor<IDocument> {
 		return DbBridge.getInstance<Files>('files');
 	}
 
-	prepareDocumentFile(doc, file) {
+	private prepareDocumentFile(doc: IDocument, file: IFile) {
 		if(!doc.metadata.type && file.exif) {
-			doc.metadata.type = file.exif.mimeType;
-			file.type = file.exif.mimeType;
+			doc.metadata.type = file.exif.mimeType as string;
+			file.type = file.exif.mimeType as string;
 		}
 	}
 
-	async getDocuments(owner, metadata) {
-		const list = await this.model.findList({ _owner: owner }, metadata);
+	@PermissionsCheck({ permissions: [] })
+	public async getDocuments(owner, metadata) {
+		const list = (await this.model.findList({ _owner: owner }, metadata)) as TFindList<IDocument>;
 
 		//get files if its consist
 		const ids = list.result.map(item =>item._id);
@@ -42,7 +47,8 @@ export class Documents extends DbObjectAncestor<IDocument> {
 		return list;
 	}
 
-	async getDocument(documentId) {
+	@PermissionsCheck({ permissions: [] })
+	public async getDocument(documentId: TObjectId) {
 		const document = await this.model.getItem(documentId);
 		const files = await this.fileManager.findFiles({ _owner: document._id });
 		if (files.length) {
@@ -52,12 +58,14 @@ export class Documents extends DbObjectAncestor<IDocument> {
 		return document;
 	}
 
-	async updateDocument(document: IDocument) {
-		const _document = this.dbObject.normalize(document);
+	@PermissionsCheck({ permissions: [] })
+	async updateDocument(document: IDocument, user?: IUser) {
+		const _document = DbObjectController.normalize(document, user);
 		return this.model.updateItem(_document);
 	}
 
-	async removeDocument(docId) {
-		return this.deleteItem(docId);
+	@PermissionsCheck({ permissions: [] })
+	public async removeDocument(docId: TObjectId, user?: IUser) {
+		return this.deleteItem(docId, user);
 	}
 }

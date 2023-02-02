@@ -4,16 +4,17 @@ import { ICommonEntity } from './models';
 
 export interface IEntityController<T extends ICommonEntity> {
 	model: DbBridge<T>;
-	owner?: IEntityController<ICommonEntity>;
+	registryModel(): void;
 }
 
 export abstract class EntityControllerBase implements IEntityController<any> {
-    model: DbBridge<any>;
-	owner?: IEntityController<ICommonEntity>;
+    public abstract get model(): DbBridge<any>;
+	public abstract registryModel();
 
 	public static modelName: string;
 
 	constructor(public app: Service) { }
+
 
 	setSession(session) {
 		// this.app.setOnceSession(session);

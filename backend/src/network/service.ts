@@ -4,6 +4,7 @@ import { Router, Request as ERequest, Response as EResponse } from "express";
 import * as entities from "../server";
 import { IEntityController } from '../backend/core/entity-processor';
 import { IRouter } from '~/backend/core/models';
+import { reconnect } from '~/backend/core/db-bridge';
 // const trans = require('./workers/transcoders-check.js');
 
 class ServiceProxy {
@@ -49,12 +50,17 @@ export class Service {
 	private _request: Request;
 	private _response: Response;
 
+	private static _instance: Service;
+	public static get instance() {
+		return this._instance;
+	}
+
 	public get request(): Request {
-		return this.request;
+		return this._request;
 	}
 
 	public get response(): Response {
-		return this.response;
+		return this._response;
 	}
 
 	setCORSHeaders(res: EResponse) {
@@ -68,6 +74,7 @@ export class Service {
 	}
 
 	constructor() {
+		Service._instance = this;
 		this.router = Router();
 		// init workers
 		// setInterval(() => trans.run(this), trans.interval);
@@ -108,15 +115,6 @@ export class Service {
 	}
 
 	init(app, config) {
-		/*fs.readdirSync(config.apiFolder).forEach(item => {
-			try{
-				var modulePath = `${process.env.INIT_CWD}/${config.apiFolder}`;
-				var module = require(`${modulePath}/${item}`);
-				module && module.configure && module.configure(this);
-			} catch( exception ){
-				console.error("Exception in module " + item + "\n", exception.stack);
-			}
-		});*/
 		Object.keys(entities).forEach(entityName => {
 			const entity = new entities[entityName]() as IRouter;
 			entity.configure(this);
@@ -126,11 +124,14 @@ export class Service {
 			this.setCORSHeaders(res);
 			res.send();
 		});
+
 		app.use(config.apiPath, this.router);
+
+		reconnect();
 	}
 
 	_when(mayBePromise, cb) {
-		if (mayBePromise instanceof Promise) return mayBePromise.then((...args) => cb(...args));
+		if (mayBePromise instanceof Promise) return mayBePromise.then(cb);
 		return cb(mayBePromise);
 	}
 
@@ -142,7 +143,6 @@ export class Service {
 		this._request = request;
 		this._response = response;
 
-		// this.setCORSHeaders(res);
 		this._when(request.receive(req), async () => {
 			const body = request.body ?
 				typeof(request.body) != "object" && req.headers['content-type'] === 'application/json' ? JSON.parse(request.body) : request.body
@@ -160,6 +160,7 @@ export class Service {
 				if (callbackResult) response.set(callbackResult);
 				response.send(res);
 			} catch (error) {
+				console.error(error);
 				if (error?.message) {
 					response.setError(error.message, error.code);
 				} else {
@@ -167,6 +168,7 @@ export class Service {
 				}
 				response.send(res);
 			}
+			next();
 		});
 	}
 

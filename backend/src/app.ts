@@ -22,7 +22,6 @@ function prepareInfrastructure() {
 
 function start(){
 	//read the local config
-	console.log("starting the development mode")
 	prepareInfrastructure();
 
 	console.log('Development mode:', isDev);
@@ -40,7 +39,7 @@ function runExpress() {
 		secret: 'projector periskopen',
 		resave: false,
 		saveUninitialized: false,
-		cookie: {secure: !isDev}
+		cookie: { secure: !isDev }
 	}));
 	beService.init(app, config);
 	app.listen(config.port);

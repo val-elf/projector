@@ -1,50 +1,53 @@
 import { DbBridge, DbModel } from "../core/db-bridge";
-import { Timespots } from './timespots';
-import { DbObjectAncestor } from './dbobjects';
-import { ITimeline, ITimespot } from './models/db.models';
+import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { ITimeline, ITimespot, IUser } from './models/db.models';
 import { TObjectId } from '../core/models';
+import { PermissionsCheck } from './decorators/permissions-check';
 
 @DbModel({ model: 'timelines' })
 export class Timelines extends DbObjectAncestor<ITimeline> {
 	private timespots = DbBridge.getBridge<ITimespot>('timespots');
 
-	async getProjectTimelines(projectId: TObjectId) {
+	@PermissionsCheck({ permissions: [] })
+	public async getProjectTimelines(projectId: TObjectId) {
 		return await this.model.find({_project: projectId});
 	}
 
-	async getTimeline(timelineId: TObjectId) {
+	@PermissionsCheck({ permissions: [] })
+	public async getTimeline(timelineId: TObjectId) {
 		const timeline = await this.model.getItem(timelineId);
 		const timespots = await this.timespots.find({ _timeline: timelineId });
 		timeline.timespots = timespots;
 		return timeline;
 	}
 
-	async create(timeline: ITimeline) {
+	@PermissionsCheck({ permissions: [] })
+	public async create(timeline: ITimeline, user?: IUser) {
 		const timespots = timeline.timespots || [];
 		delete timeline.timespots;
 
 		// const user = await this.app.getCurrentUser();
-		timeline = this.dbObject.normalize(timeline);
+		timeline = DbObjectController.normalize(timeline, user);
 		const created = await this.model.create(timeline);
 		created.timespots = await Promise.all(timespots.map(timespot => {
 			timespot._timeline = created._id;
-			return this.timespots.create(this.dbObject.normalize(timespot));
+			return this.timespots.create(DbObjectController.normalize(timespot, user));
 		}));
 		return created;
 	}
 
-	async update(timelines: ITimeline[]) {
-		//const user = await this.app.getCurrentUser();
+	@PermissionsCheck({ permissions: [] })
+	public async update(timelines: ITimeline[], user?: IUser) {
 		return await Promise.all(timelines
-			.map<ITimeline>(this.dbObject.normalize)
+			.map<ITimeline>(item => DbObjectController.normalize(item, user))
 			.map(tl => {
 				delete tl.timespots;
 				return this.model.updateItem(tl);
 			}));
 	}
 
-	async deleteTimeline(timelineId) {
-		// const user = await this.app.getCurrentUser(true);
-		return await this.deleteItem(timelineId);
+	@PermissionsCheck({ permissions: [] })
+	public async deleteTimeline(timelineId, user?: IUser) {
+		return await this.deleteItem(timelineId, user);
 	}
 };

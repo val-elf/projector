@@ -1,19 +1,24 @@
 import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor } from './dbobjects';
-import { ICategory } from './models/db.models';
+import { TObjectId } from '../core/models';
+import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { PermissionsCheck } from './decorators/permissions-check';
+import { ICategory, IDbObject, IUser } from './models/db.models';
 
 @DbModel({ model: "categories" })
 export class Categories extends DbObjectAncestor<ICategory> {
-	async createCategory(category, ownerId){
+
+	@PermissionsCheck({ permissions: [] })
+	async createCategory(category: ICategory, ownerId: TObjectId, user?: IUser){
 		category._owner = ownerId;
-		category = this.dbObject.normalize(category);
+		category = DbObjectController.normalize(category, user);
 		return await this.model.create(category);
 	}
 
-	async getOwnerCategories(owner) {
+	async getOwnerCategories(owner: IDbObject) {
 		return this.model.find({_owner: owner});
 	}
 
+	@PermissionsCheck({ permissions: [] })
 	updateCategory(category: ICategory) {
 
 	}

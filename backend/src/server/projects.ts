@@ -24,7 +24,8 @@ export class ProjectsRouter implements IRouter {
 
 	getProjects = async (key) => {
 		console.warn("[API] Get projects list", key);
-		return await this.model.getProjects(key._metadata);
+		const projects = await this.model.getProjects(key._metadata);
+		return projects;
 	}
 
 	getProject = async (key) => {

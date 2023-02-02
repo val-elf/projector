@@ -2,7 +2,7 @@ import { http } from '~/utils/simpleHttp';
 import { IRouter, TObjectId } from '../backend/core/models';
 import { DbObjectController } from '../backend/entities/dbobjects';
 import { Service } from '../network/service';
-import md5 from "md5";
+import * as md5 from "md5";
 import { config } from '~/config';
 import { DbBridge } from '~/backend/core/db-bridge';
 import { IFile, IPreviewed } from '~/backend/entities/models/db.models';

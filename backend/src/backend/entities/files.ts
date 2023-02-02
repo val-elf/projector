@@ -1,38 +1,44 @@
 import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor } from './dbobjects';
-import { IFile } from './models/db.models';
+import { TObjectId } from '../core/models';
+import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { PermissionsCheck } from './decorators/permissions-check';
+import { IFile, IMetadata, IUser } from './models/db.models';
 import { config } from "~/config";
 import { http } from "~/utils/simpleHttp";
 
 @DbModel({ model: 'files' })
 export class Files extends DbObjectAncestor<IFile> {
-	async createFile(fileInfo) {
-		fileInfo = this.dbObject.normalize(fileInfo);
+
+	@PermissionsCheck({ permissions: [] })
+	async createFile(fileInfo: IFile, user?: IUser) {
+		fileInfo = DbObjectController.normalize(fileInfo, user);
 		return this.model.create(fileInfo);
 	}
 
-	async updateFile(fileInfo, internal = false) {
-		const user = !internal ? await this.user : { internal };
-		fileInfo = this.dbObject.normalize(fileInfo);
+	@PermissionsCheck({ permissions: [] })
+	async updateFile(fileInfo: IFile, internal = false, user?: IUser) {
+		const _user = !internal ? user : { internal };
+		fileInfo = DbObjectController.normalize(fileInfo, user);
 		return this.model.updateItem(fileInfo);
 	}
 
-	async updateFileByTranscode(transcodeId, file, internal = false) {
+	public async updateFileByTranscode(transcodeId: string, file: Partial<IFile>, internal = false) {
+		if (!internal) await this.getCurrentUser();
 		return this.model.update({_transcode: transcodeId}, file);
 	}
 
-	async getFileByTranscode(transcodeId, internal = false) {
-		// if (!internal) await this.app.getCurrentUser();
+	public async getFileByTranscode(transcodeId: string, internal = false) {
+		if (!internal) await this.getCurrentUser();
 		return this.model.find({ _transcode:transcodeId });
 	}
 
-	async getFileInfo(id, trusted: boolean = false) {
-		// if (!trusted) await this.app.getCurrentUser();
+	public async getFileInfo(id, internal: boolean = false) {
+		if (!internal) await this.getCurrentUser();
 		const res = await this.findFiles({ _id: id });
 		return res[0];
 	}
 
-	async findFiles(condition, meta?: any) {
+	public async findFiles(condition, meta?: any) {
 		meta = meta || {};
 		const files = await this.model.find(condition, { 'preview.preview': 0 }, meta);
 		await (Promise.all(files.map(async file => {
@@ -43,17 +49,18 @@ export class Files extends DbObjectAncestor<IFile> {
 		return files;
 	}
 
-	async getOwnerFiles(owner, metadata) {
-		// await this.app.getCurrentUser();
+	@PermissionsCheck({ permissions: [] })
+	public async getOwnerFiles(owner: TObjectId, metadata: IMetadata) {
 		return this.model.findList({_owner: owner}, { 'preview.preview': 0 }, metadata);
 	}
 
-	async removeFile(fileId) {
-		// const user = await this.app.getCurrentUser();
-		return this.deleteItem(fileId);
+	@PermissionsCheck({ permissions: [] })
+	public async removeFile(fileId: TObjectId, user?: IUser) {
+		return this.deleteItem(fileId, user);
 	}
 
-	hasStatusPassed(status, current) {
+	/*
+	public hasStatusPassed(status, current) {
 		// status changed line: new -> exif -> transcode -> finished
 		const statuses = ['new', 'exif', 'transcode', 'finished'];
 		if (current === 'finished') return true;
@@ -62,9 +69,10 @@ export class Files extends DbObjectAncestor<IFile> {
 		const sindex = statuses.indexOf(status);
 		return cindex >= sindex;
 	}
+	*/
 
-	async detectFileState(file) {
-		const { _transcode: tid, preview, exif } = file;
+	private async detectFileState(file: IFile) {
+		const { _transcode: tid, preview } = file;
 		if (!tid) return;
 		const transcoder = file.transcoder || config.transcoder;
 		let needUpdate = false;
@@ -89,7 +97,7 @@ export class Files extends DbObjectAncestor<IFile> {
 		return needUpdate;
 	}
 
-	async getFileStatus(file) {
+	private async getFileStatus(file) {
 		let needUpdate = false;
 		const { _status: status, _transcode: tid } = file;
 		const transcoder = file.transcoder || config.transcoder;

@@ -2,6 +2,7 @@ import * as stream from "stream";
 import { Buffer } from "buffer";
 import { Request as ERequest } from "express";
 import * as packet from "./packet";
+import { Session } from 'express-session';
 
 const { Transform } = stream;
 
@@ -27,7 +28,7 @@ class DuplexDataReader extends Transform {
 export class Request {
 	options: any;
 	cookies: any;
-	session: any;
+	session: Session;
 	headers: any;
 	hostname: string;
 	boundary: any;
@@ -43,7 +44,7 @@ export class Request {
 		this.cookies = {};
 	}
 
-	receive(req) {
+	receive(req: ERequest) {
 		this.cookies = req.cookies;
 		this.session = req.session;
 		this.headers = req.headers;

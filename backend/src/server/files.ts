@@ -61,7 +61,7 @@ export class FilesRouter implements IRouter {
 				transcoder,
 				type: header.parsed['content-type'],
 			};
-			const file = await this.model.createFile(fileInfo);
+			const file = await this.model.createFile(fileInfo as IFile);
 			completeOperation(file, content);
 			return file;
 		} catch (error) {

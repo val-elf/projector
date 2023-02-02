@@ -1,18 +1,29 @@
 import * as db from "mongoose";
 import { config } from "../../config";
-import { ICommonEntity, IDbEntity, TFindArray, TFindList, TFindListResult } from './models';
+import { ICommonEntity, IDbEntity, TFindListResult } from './models';
 import { IEntityController } from './entity-processor';
 
-const objId = db.mongo.ObjectID;
-type TEntity = ICommonEntity;
+class Subject<T> {
+	private subscribers: ((item: T) => T)[] = [];
+
+	next(item: T) {
+		return this.subscribers.reduce((res, cb) => cb(res), item);
+	}
+
+	subscribe(cb: (item: T) => T) {
+		this.subscribers.push(cb);
+	}
+}
 
 export class DbBridge<TEntity extends ICommonEntity> {
 	private dbModel: db.Model<TEntity, {}, {}>;
 	private name: string;
 
 	public get modelName(): string { return this.name; }
-
     private static _models: { [key: string]: DbBridge<any> } = {};
+
+	public itemUpdate$: Subject<TEntity> = new Subject();
+	public itemLoad$: Subject<TEntity> = new Subject();
 
 	public static get models() {
 		if (!this._models) this._models = {};
@@ -38,6 +49,11 @@ export class DbBridge<TEntity extends ICommonEntity> {
 		const model = new DbBridge<TEntity>(modelName, schema);
 		this.models[modelName] = model;
 		return model;
+	}
+
+	public static getNameByInstance(m: IEntityController<any>) {
+		const names = Object.keys(controllers)
+		return names.find(name => controllers[name] === m);
 	}
 
 	public static getInstance<TController extends IEntityController<any>>(model: string) {
@@ -71,14 +87,14 @@ export class DbBridge<TEntity extends ICommonEntity> {
 					reject(err);
 					return;
 				}
-				res.forEach(item => item._coretype = this.name);
-				resolve(res);
+				const result = res.map(item => this.itemLoad$.next(item));
+				resolve(result);
 			});
 		});
 	}
 
-	async getItem(itemId, ...options: any[]): Promise<TEntity | undefined> {
-		const results = await this.find({_id: itemId}, options, {});
+	async getItem(itemId, options?: { [key: string]: string | number | boolean | null | undefined }): Promise<TEntity | undefined> {
+		const results = await this.find({ _id: itemId }, options, {});
 		return results.length && results[0] || undefined;
 	}
 
@@ -87,35 +103,22 @@ export class DbBridge<TEntity extends ICommonEntity> {
 			const delCond = {_deleted: {$exists: false}}, outargs = [];
 
             [...args].forEach((argument, index) => {
-				if (outargs.length == 1 || index < outargs.length - 1)
+				if (args.length === 1 || index < args.length - 1)
 				outargs.push(argument);
 			});
 
-            const options = outargs.length > 1 ? outargs[outargs.length -1] : null;
+            // const options = outargs.length > 1 ? outargs[outargs.length -1] : null;
 
-			outargs.push((error, res: IDbEntity<TEntity>[]) => {
+			outargs.push(async (error, res: IDbEntity<TEntity>[]) => {
 				if(error){
 					reject(error);
 					return;
 				}
-				/* this is should be moved to DbObject
-				res.forEach(item => {
-					Object.assign(item._doc, {
-						_hash: prepareHash(item._doc),
-						_coretype: this.name
-					});
-				});
-				*/
-				resolve(res.map(i => i._doc as TEntity));
+				const entities = res.map(item => this.itemLoad$.next(item._doc));
+				resolve(entities);
 			});
 			if(outargs.length) Object.assign(outargs[0], delCond);
-
-			const ops = this.dbModel.find(...outargs);
-			if(options){
-				options.sort && ops.sort(options.sort);
-				options.skip && ops.skip(options.skip);
-				options.limit && ops.limit(options.limit);
-			}
+			this.dbModel.find(...outargs);
 		});
 	}
 
@@ -128,15 +131,10 @@ export class DbBridge<TEntity extends ICommonEntity> {
 		})
 	}
 
-	async findList(condition?: any, projection?: any, meta?: any): Promise<TFindList<TEntity>>;
-	async findList<T extends ICommonEntity>(
-		condition: any,
-		projection: any,
-		meta: any,
-	): Promise<TFindListResult<T>>
+	async findList(condition?: any, projection?: any, meta?: any): Promise<TFindListResult<TEntity>>
 	{ // pagination finding
 		const resd = [];
-		const delCond = { _deleted: { $exists: false } }
+		const delCond = { _deleted: { $exists: false } };
 
 		const cb = (resolve, reject) => {
 			return (error, res) => {
@@ -163,25 +161,21 @@ export class DbBridge<TEntity extends ICommonEntity> {
 		}));
 
 		//get count of records
-		this.dbModel.count(condition, cbs.counter);
+		this.dbModel.countDocuments(condition, cbs.counter);
+
 		if (!onlyCount) {
-			// const ops =
 			this.dbModel.find(condition, projection, options, cbs.data);
-			/*if(options){
-				options.sort && ops.sort(options.sort);
-				options.skip && ops.skip(options.skip);
-				options.limit && ops.limit(options.limit);
-			}*/
 		}
-		const res = await Promise.all(resd) as TFindArray<T> | number[] | Error[];
+		const res = await Promise.all(resd) as (IDbEntity<TEntity>[] | number | Error)[];
 
 		if(res[0] instanceof Error){
 			throw res[0];
 		}
 
 		if (!onlyCount) {
-			const result = res.map(i => i._doc as T);
-			return { result, options: { ...options, total: res[1] } };
+			const result = (res[0] as IDbEntity<TEntity>[]);
+			const entities = result.map(i => this.itemLoad$.next(i._doc));
+			return { result: entities, options: { ...options, total: res[1] as number } };
 		} else {
 			return {
 				count: res[0] as number,
@@ -189,21 +183,17 @@ export class DbBridge<TEntity extends ICommonEntity> {
 		}
 	}
 
-	create(data): Promise<TEntity> {
-		return new Promise((resolve, reject) => {
-			delete data._coretype;
-			this.dbModel.create(data, (error, resObj) => {
-				if(error) reject(error);
-				else {
-					resolve((resObj as any)._doc);
-				}
-			});
-		});
+	async create(data): Promise<TEntity> {
+		delete data._coretype;
+		const created = await this.dbModel.create(data);
+		const item =this.itemLoad$.next(created.toObject() as TEntity);
+		return item;
 	}
 
 	update(condition: db.FilterQuery<TEntity>, obj: Partial<TEntity>): Promise<TEntity> {
 		return new Promise((resolve, reject) => {
 			const cp = { ...obj };
+			this.itemUpdate$.next(cp as TEntity);
 			this.dbModel.updateMany(condition, cp as db.UpdateQuery<TEntity>, {}, (error, res) => {
 				if(error) reject(error);
 				else {
@@ -216,17 +206,12 @@ export class DbBridge<TEntity extends ICommonEntity> {
 	updateItem(obj: TEntity): Promise<TEntity> {
 		if(!obj._id) throw new Error("Object should be created!");
 		return new Promise((resolve, reject) => {
-			const cp = Object.assign({}, obj);
-
-			/* Prepare this inside DbObject
-			delete cp._id;
-			delete cp._coretype;
-			delete cp._hash;
-			*/
+			const cp = { ...obj };
+			this.itemUpdate$.next(cp);
 
 			this.dbModel.updateOne(
 				{ _id: obj._id } as any,
-				cp,
+				cp as any,
 				{},
 				error => {
 					if(error) reject(error);
@@ -236,13 +221,8 @@ export class DbBridge<TEntity extends ICommonEntity> {
                             (error, res: any[]) => {
                                 if(error) reject(error);
                                 else {
-									/* This is should be move to DbObject
-                                    Object.assign(res[0]._doc, {
-                                        _hash: prepareHash(res[0]._doc),
-                                        _coretype: this.name
-                                    });
-									*/
-                                    resolve(res[0]._doc);
+									this.itemLoad$.next(res[0])
+                                    resolve(res[0]);
                                 }
 						    }
                         );
@@ -264,31 +244,28 @@ export const reconnect = async () => {
 			useUnifiedTopology: true,
 		});
 	} catch (error) {
-		console.log('Connection failed', config.dbUser, config.dbPassword);
 		console.error(error);
 	}
 };
 
-export function DbModel({ model, owner }: {
+export function DbModel({ model }: {
     model: string,
-	owner?: IEntityController<ICommonEntity>
 }) {
     return <TEntityCreator extends new(...args: any[]) => IEntityController<any>>(base: TEntityCreator) => {
         return class extends base {
 
 			static modelName: string = model;
-
-			get owner() {
-				return owner;
-			}
+			_model: DbBridge<any>;
 
             get model() {
-                return DbBridge.getBridge(model);
+                return this._model;
             };
 
             constructor(...args: any[]) {
                 super(args);
 				controllers[model] = this;
+				this._model = DbBridge.getBridge(model);
+				this.registryModel();
             }
 
             showhide() {}

@@ -34,6 +34,9 @@ export interface IDbObjectBase extends ICommonEntity {
 export interface IPreview extends ICommonEntity {
     preview: string;
     type: string;
+    hash?: string;
+    width?: number;
+    height?: number;
 }
 
 export interface IPreviewed {
@@ -61,14 +64,14 @@ export interface IFilterOptions {
 }
 
 export interface ICategory extends IDbObjectBase {
-
+    _owner: TObjectId;
+    name: string;
 }
 
-export interface ICharacter extends IDbObjectBase {
+export interface ICharacter extends IDbObjectBase, IPreviewed {
     name: string;
     role: string;
     description: string;
-    preview: IPreview;
 }
 
 export interface IDocument extends IDbObjectBase {
@@ -91,7 +94,7 @@ export interface IFile extends IDbObjectBase, IPreviewed {
     _transcode?: TObjectId;
     size: number;
     exif?: { [key: string]: string | number | boolean };
-    _status?: { status: string };
+    _status?: { status: string, exif?: string, preview?: string };
     transcoder: string;
 }
 
@@ -133,4 +136,9 @@ export interface IUser extends IDbObjectBase {
 export interface ISession extends ICommonEntity {
     user: TObjectId;
     expired?: boolean;
+}
+
+type TMetadataAtom = string | number | boolean;
+export interface IMetadata {
+    [key: string]: TMetadataAtom | TMetadataAtom[] | IMetadata;
 }

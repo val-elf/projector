@@ -1,9 +1,7 @@
 import { IRouter } from '../backend/core/models';
 import { Users } from '../backend';
 import { Service } from '../network/service';
-
-const USER_LOGOUT_MESSAGE = "User must be authorized";
-const AUTH_HEADER = 'authorization';
+import { getToken } from '~/backend/entities/utils';
 
 export class UsersRouter implements IRouter {
 	model: Users;
@@ -21,62 +19,11 @@ export class UsersRouter implements IRouter {
 			.post('/login', this.loginUser)
 			.post('/logout', this.logoutUser)
 		;
-
-		/*
-		app.getCurrentUser = function(throwIfNotFound){
-			throwIfNotFound = throwIfNotFound === undefined || throwIfNotFound;
-			return this._getCurrentUser(this, throwIfNotFound);
-		}
-
-		app.setOnceSession = function(session) {
-			this.onceSession = session;
-		}
-		*/
-	}
-
-
-	private getCurrentSession() {
-		const session = this.onceSession || getToken(this.app.request);
-		if (this.onceSession) delete this.onceSession;
-		return session;
 	}
 
 	getUsers = async (key) => {
 		console.warn("[API] Get users", key);
 		return await this.model.getList();
-	}
-
-	private async _getCurrentUser(throwIfNotFound){
-		var sessionId = this.getCurrentSession();
-		const { request } = this.app;
-		const throwError = () => {
-			throw {
-				message: new Error(USER_LOGOUT_MESSAGE),
-				code: 403
-			};
-		}
-		if(sessionId) {
-			const rsession = request.session;
-			if(rsession && rsession.id === sessionId && rsession.user){
-				return request.session.user;
-			}
-			try{
-				const user = await this.model.getUserBySession(sessionId);
-				if(user) {
-					if(request.session) {
-						request.session.user = user;
-						request.session.id = sessionId;
-					}
-					return user;
-				}
-			}
-			catch(error){
-				throwError();
-			};
-		}
-		if(throwIfNotFound) {
-			throwError();
-		}
 	}
 
 	getUser = async (key) => {
@@ -89,13 +36,16 @@ export class UsersRouter implements IRouter {
 			}
 
 			var _sessionId = getToken(request);
+			const rsession = request.session as any;
 			if(_sessionId) {
-				if(request.session && request.session.user){
-					return request.session.user;
+				if(rsession && rsession.user){
+					return rsession.user;
 				}
 				try{
 					const user = await this.model.getUserBySession(_sessionId);
-					if(request.session) request.session.user = user;
+					if(rsession) {
+						rsession.user = user;
+					}
 					return user;
 				}
 				catch(error) {
@@ -121,7 +71,7 @@ export class UsersRouter implements IRouter {
 		const { request, response } = this.app;
 		console.warn("[API] Login User", key, items);
 		const session = await this.model.authorize(items.login, items.password);
-		request.session.user = null;
+		(request.session as any).user = null;
 		response.cookies['session_id'] = { value: session._id.toString() };
 		return session;
 	}
@@ -134,9 +84,4 @@ export class UsersRouter implements IRouter {
 		return { logout: true };
 	}
 
-}
-
-function getToken(request) {
-	const isAuth = request.headers[AUTH_HEADER] || null;
-	return isAuth;
 }

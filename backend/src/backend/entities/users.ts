@@ -1,15 +1,18 @@
 import { DbBridge, DbModel } from "../core/db-bridge";
-import md5 from "md5";
+import * as md5 from "md5";
 import { DbObjectAncestor } from './dbobjects';
 import { IUser, IRole, ISession } from './models/db.models';
+import { PermissionsCheck } from './decorators/permissions-check';
 
-@DbModel({model: 'users' })
+@DbModel({ model: 'users' })
 export class Users extends DbObjectAncestor<IUser> {
 	private roles = DbBridge.getBridge<IRole>('roles');
 	private sessions = DbBridge.getBridge<ISession>('sessions');
 
-	async getUser(userId) {
+	public async getUser(userId, internal = false) {
+		if (!internal) await this.getCurrentUser();
 		const user = await this.model.getItem(userId);
+		console.log('User is', user);
 		if(user.roles && user.roles.length) {
 			const roles = await this.roles.find({ _id: {$in: user.roles }});
 			user.roles = roles;
@@ -18,24 +21,25 @@ export class Users extends DbObjectAncestor<IUser> {
 		} else return user;
 	}
 
-	getList() {
+	@PermissionsCheck({ permissions: [] })
+	public getList() {
 		return this.model.find();
 	}
 
-	async isSessionExpired(sessionId) {
+	public async isSessionExpired(sessionId) {
 		const session = await this.sessions.getItem({ id: sessionId });
 		return session.expired;
 	}
 
-	async getUserBySession(sessionId) {
+	public async getUserBySession(sessionId) {
 		const sessionItems = await this.sessions.find({ _id: sessionId, expired: { $ne: true } });
 		if(sessionItems && sessionItems[0]) {
 			const itm = sessionItems[0];
-			return this.getUser(itm.user);
+			return this.getUser(itm.user, true);
 		} else throw new Error("Session not found");
 	}
 
-	async authorize(login, password) {
+	public async authorize(login, password) {
 		const user = await this.model.find({login: login || '', password: md5(password || '')});
 		if(user && user.length){
 			//user was found
@@ -48,7 +52,7 @@ export class Users extends DbObjectAncestor<IUser> {
 		throw new Error("User or password is incorrect");
 	}
 
-	async logout(sessionId) {
+	public async logout(sessionId) {
 		await this.sessions.update({ _id: sessionId }, { expired: true });
 		return true;
 	}

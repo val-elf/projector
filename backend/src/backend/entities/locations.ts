@@ -1,15 +1,19 @@
 import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor } from './dbobjects';
-import { ILocation } from './models/db.models';
+import { TObjectId } from '../core/models';
+import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { PermissionsCheck } from './decorators/permissions-check';
+import { ILocation, IMetadata, IUser } from './models/db.models';
+import { objId } from './utils';
 
 @DbModel({ model: 'locations' })
 export class Locations extends DbObjectAncestor<ILocation> {
-	async getLocationsList(projectId, metadata) {
-		// await this.app.getCurrentUser();
-		/*if(metadata.orderByType && metadata.orderByType.length){
-			return locModel.eval((projectId, orderByType) => {
+
+	@PermissionsCheck({ permissions: [] })
+	public async getLocationsList(projectId: TObjectId, metadata: IMetadata) {
+		/*if(metadata.orderByType && (metadata.orderByType as string[]).length){
+			return this.model.eval((projectId: string, orderByType: string[]) => {
 				return db.locations.find({
-					_project: ObjectId(projectId),
+					_project: new objId(projectId),
 					_deleted: {$exists: false}
 				}).map(function(item){
 					item._loctype = orderByType.indexOf(item.locationType);
@@ -23,25 +27,25 @@ export class Locations extends DbObjectAncestor<ILocation> {
 		return await this.model.findList({_project: projectId}, metadata);
 	}
 
-	async getLocationItem(locationId) {
-		// await this.app.getCurrentUser();
+	@PermissionsCheck({ permissions: [] })
+	public async getLocationItem(locationId) {
 		return await this.model.find({_id: locationId});
 	}
 
-	async createLocation(item) {
-		// const user = await this.app.getCurrentUser();
-		const nitem = this.dbObject.normalize(item);
+	@PermissionsCheck({ permissions: [] })
+	public async createLocation(item: ILocation, user?: IUser) {
+		const nitem = DbObjectController.normalize(item, user);
 		return this.model.create(nitem);
 	}
 
-	async updateLocation(item: ILocation) {
-		// const user = await this.app.getCurrentUser();
-		// item = DbModel.normalize(item, user);
+	@PermissionsCheck({ permissions: [] })
+	public async updateLocation(item: ILocation, user?: IUser) {
+		item = DbObjectController.normalize(item, user);
 		return this.model.updateItem(item);
 	}
 
-	async deleteLocation(itemId) {
-		// const user =  this.app.getCurrentUser();
-		return this.deleteItem(itemId);
+	@PermissionsCheck({ permissions: [] })
+	public async deleteLocation(itemId, user?: IUser) {
+		return this.deleteItem(itemId, user);
 	}
 }

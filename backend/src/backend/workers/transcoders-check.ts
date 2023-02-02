@@ -1,5 +1,5 @@
 import { config } from "../../config";
-import md5 from "md5";
+import * as md5 from "md5";
 import { http } from "~/utils/simpleHttp";
 import { Files } from "../entities";
 import { DbBridge } from '../core/db-bridge';

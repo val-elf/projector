@@ -31,18 +31,20 @@ export class Response {
 			);
 		}
 
-		if( this.error )
-			this.body._error = Object.assign(
-				this.body._error || {},
-				{ message: this.error.message },
-				this.error.content ? { content: this.error.content } : {},
-				this.error.stack ? { backtrace: this.error.stack.split( /\n\s*/ ).slice(1) } : {}
-			);
+		if(this.error) {
+			this.body._error = {
+				...(this.body._error || {}),
+				message: this.error.message ?? this.error,
+				...(this.error.content ? { content: this.error.content } : {}),
+				...(this.error.stack ? { backtrace: this.error.stack.split( /\n\s*/ ).slice(1) } : {})
+			};
+			console.log('Error', this.body._error);
+		}
 		Object.keys(this.cookies).forEach(function(key){
 			resp.cookie(key, this.cookies[key].value, this.cookies[key].params);
 		}, this);
 
-		if(this.body instanceof stream.Readable){
+		if(this.body instanceof stream.Readable) {
 			this.body.pipe(resp);
 			this.body.on('error', (error) => {
 				resp.writeHead(

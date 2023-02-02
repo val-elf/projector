@@ -1,6 +1,8 @@
 import { DbModel } from '../core/db-bridge';
+import { TObjectId } from '../core/models';
 import { DbObjectAncestor, DbObjectController } from './dbobjects';
-import { IArtifact, IEntityList } from './models/db.models';
+import { PermissionsCheck } from './decorators/permissions-check';
+import { IArtifact, IEntityList, IMetadata, IUser } from './models/db.models';
 import { Service } from '~/network/service';
 
 @DbModel({
@@ -9,7 +11,8 @@ import { Service } from '~/network/service';
 export class Artifacts extends DbObjectAncestor<IArtifact> {
 	constructor(app: Service) { super(app); }
 
-	async getArtifactsList(projectId, metadata): Promise<IEntityList<IArtifact>> {
+	@PermissionsCheck({ permissions: [] })
+	async getArtifactsList(projectId: TObjectId, metadata: IMetadata): Promise<IEntityList<IArtifact>> {
 		const arg: any = { _project: projectId };
 		if (metadata.hasContent) arg.hasContent = metadata.hasContent === 'true';
 		if (metadata.character) {
@@ -21,22 +24,26 @@ export class Artifacts extends DbObjectAncestor<IArtifact> {
 		return this.preapareItemsList<IArtifact>(items) as IEntityList<IArtifact>;
 	}
 
-	async createArtifact(item) {
-		item = this.dbObject.normalize(item);
+	@PermissionsCheck({ permissions: [] })
+	async createArtifact(item: IArtifact, user?: IUser) {
+		item = DbObjectController.normalize(item, user);
 		return this.model.create(item);
 	}
 
-	async getArtifact(artifactId) {
+	@PermissionsCheck({ permissions: [] })
+	async getArtifact(artifactId: TObjectId) {
 		return this.model.getItem(artifactId);
 	}
 
-	async updateArtifact(item: IArtifact) {
-		const nitem = this.dbObject.normalize(item);
+	@PermissionsCheck({ permissions: [] })
+	async updateArtifact(item: IArtifact, user?: IUser) {
+		const nitem = DbObjectController.normalize(item, user);
 		return this.model.updateItem(nitem);
 	}
 
-	async deleteArtifact(itemId: string) {
-		return this.deleteItem(itemId);
+	@PermissionsCheck({ permissions: [] })
+	async deleteArtifact(itemId: string, user?: IUser) {
+		return this.deleteItem(itemId, user);
 	}
 }
 

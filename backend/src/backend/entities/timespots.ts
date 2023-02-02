@@ -1,12 +1,15 @@
 import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor } from './dbobjects';
-import { ITimespot } from './models/db.models';
+import { DbObjectAncestor, DbObjectBase, DbObjectController } from './dbobjects';
+import { PermissionsCheck } from './decorators/permissions-check';
+import { ITimespot, IUser } from './models/db.models';
 
 @DbModel({ model: 'timespots' })
 export class Timespots extends DbObjectAncestor<ITimespot> {
-	async update(timespot) {
+
+	@PermissionsCheck({ permissions: [] })
+	public async update(timespot, user?: IUser) {
 		// const user = this.app.getCurrentUser();
-		timespot = this.dbObject.normalize(timespot);
+		timespot = DbObjectController.normalize(timespot, user);
 		timespot.$unset = {}
 		if(timespot.endOffsetX === null){
 			delete timespot.endOffsetX;
@@ -16,14 +19,15 @@ export class Timespots extends DbObjectAncestor<ITimespot> {
 		return this.model.updateItem(timespot);
 	}
 
-	async createTimespot(timespot) {
-		// const user = await this.app.getCurrentUser();
-		timespot = this.dbObject.normalize(timespot);
+	@PermissionsCheck({ permissions: [] })
+	public async createTimespot(timespot, user?: IUser) {
+		timespot = DbObjectController.normalize(timespot, user);
 		return this.model.create(timespot);
 	}
 
-	async deleteTimespot(timespotId) {
+	@PermissionsCheck({ permissions: [] })
+	public async deleteTimespot(timespotId, user?: IUser) {
 		// const user = await this.app.getCurrentUser()
-		return this.deleteItem(timespotId);
+		return this.deleteItem(timespotId, user);
 	}
 }
