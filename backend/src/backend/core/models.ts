@@ -2,9 +2,15 @@ import { Service } from '~/network/service';
 import { IEntityController } from './entity-processor';
 import { ObjectId } from 'mongodb';
 
+// @OA:schema
+// type: string
 export type TObjectId = string | ObjectId;
 
+// @OA:schema
+// description: Common entity interface
 export interface ICommonEntity {
+    // @OA:property
+    // description: Entity identity
 	_id?: TObjectId;
 }
 

@@ -1,48 +1,60 @@
+import { EMethod } from '~/network/route.decorator';
 import { Projects } from '../backend';
 import { IRouter } from '../backend/core/models';
-import { Service } from '../network/service';
+import { Service, Route, Router } from '../network';
 import { utils } from '../utils/utils';
+import { IInitProject, IProject } from '~/backend/entities/models';
 
+// @OA:tag
+// name: Projects
+// description: Projects management API
+@Router()
 export class ProjectsRouter implements IRouter {
-	model: Projects;
+    model: Projects;
 
-	configure(app: Service) {
-		this.model = new Projects(app);
+    configure(app: Service) {
+        this.model = new Projects(app);
+    }
 
-		app.for(this.model)
-			.get('/projects', this.getProjects)
-			.post('/projects', this.createProject)
-			.put('/projects/:project', this.updateProject)
-			.get('/projects/:project', this.getProject)
-		;
-	}
+    private async prepareProject(project: IInitProject) {
+        return await utils.preparePreview<IProject>(project);
+    }
 
-	private async prepareProject(project){
-		await utils.preparePreview(project.preview);
-		return project;
-	}
+    // @OA:route
+    // description: Get list of projects
+    @Route(EMethod.GET, '/projects')
+    async getProjects(key) {
+        console.warn('[API] Get projects list', key);
+        const projects = await this.model.getProjects(key._metadata);
+        return projects;
+    }
 
-	getProjects = async (key) => {
-		console.warn("[API] Get projects list", key);
-		const projects = await this.model.getProjects(key._metadata);
-		return projects;
-	}
+    // @OA:route
+    // description: Get project by ID
+    @Route(EMethod.GET, '/projects/:project')
+    async getProject(key) {
+        console.warn('[API] Get Project', key);
+        return await this.model.getProject(key.project);
+    }
 
-	getProject = async (key) => {
-		console.warn("[API] Get Project", key);
-		return await this.model.getProject(key.project);
-	}
+    // @OA:route
+    // description: Create new project
+    @Route(EMethod.POST, '/projects')
+    async createProject(
+        key,
+        projectModel: IInitProject
+    ): Promise<IProject> {
+        console.warn('[API] Create new project', key);
+        const project = await this.prepareProject(projectModel);
+        return await this.model.createProject(project);
+    }
 
-	createProject = async (key, project) => {
-		console.warn("[API] Create new project", key);
-		await this.prepareProject(project);
-		return await this.model.createProject(project);
-	}
-
-	updateProject = async (key, project) => {
-		console.warn("[API] Update project", key);
-		await this.prepareProject(project);
-		return await this.model.updateProject(project)
-	}
+    // @OA:route
+    // description: Update project
+    @Route(EMethod.PUT, '/projects/:project')
+    async updateProject(key, project) {
+        console.warn('[API] Update project', key);
+        await this.prepareProject(project);
+        return await this.model.updateProject(project);
+    }
 }
-

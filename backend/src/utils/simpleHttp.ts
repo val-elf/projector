@@ -1,11 +1,17 @@
-import * as _http from "http";
-import * as url from "url";
+import _http from "http";
+import Url from "url";
 import { Readable } from "stream";
 
-export const http = {
-	_processRequest: function(method, url, data, callback, options){
+class Http {
+	async _processRequest(
+		method: string,
+		url: string,
+		data: any,
+		callback: (...args: any[]) => any,
+		options?: any
+	): Promise<any> {
 		return new Promise((resolve, reject) => {
-			const parsedUrl = url.parse(url);
+			const parsedUrl = Url.parse(url);
 			const req = _http.request({
 					method: method,
 					host: parsedUrl.hostname,
@@ -50,17 +56,19 @@ export const http = {
 				req.end();
 			}
 		});
-	},
+	}
 
-	get: function(url, callback?: (...args: any[]) => void) {
+	get(url: string, callback?: (...args: any[]) => void) {
 		return this._processRequest('GET', url, undefined, callback);
-	},
+	}
 
-	post: function(url, data, options, callback?: (...args: any[]) => void) {
+	post(url: string, data: any, options?: any, callback?: (...args: any[]) => void) {
 		return this._processRequest('POST', url, data, callback, options);
-	},
+	}
 
-	put: function(url, data, options, callback?: (...args: any[]) => void) {
+	put(url: string, data: any, options?: any, callback?: (...args: any[]) => void) {
 		return this._processRequest('PUT', url, data, callback, options);
 	}
 }
+
+export const http = new Http();

@@ -29,6 +29,7 @@ export class Request {
 	options: any;
 	cookies: any;
 	session: Session;
+	context: { [key: string]: any } = {};
 	headers: any;
 	hostname: string;
 	boundary: any;

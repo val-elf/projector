@@ -2,11 +2,15 @@ import { utils } from '~/utils/utils';
 import { Files } from '../backend';
 import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
-import { IFile } from '~/backend/entities/models/db.models';
+import { IFile } from '~/backend/entities/models';
 import { config } from '~/config';
 import { http } from '~/utils/simpleHttp';
+import { EMethod, Route, Router } from '~/network';
 
-
+// @OA:tag
+// name: Files
+// description: Files management API
+@Router()
 export class FilesRouter implements IRouter {
 	model: Files;
 	private app: Service;
@@ -14,20 +18,13 @@ export class FilesRouter implements IRouter {
 	configure(app: Service) {
 		this.model = new Files(app);
 		this.app = app;
-
-		app.for(this.model)
-			.post('/upload', this.upload, { streamable: true })
-			.get('/file/:file', this.downloadFile)
-			.get('/file/:file/status', this.getTranscoderStatus)
-			.get('/owner/:owner/files', this.getOwnerFiles)
-			.get('/owner/:owner/files/:file', this.getFileInfo)
-			.get('/owner/:owner/files/:file/status', this.getTranscoderStatus)
-			.delete('/owner/:owner/files/:file', this.deleteFile)
-		;
 	}
 
-	upload = async (key, data) => {
-		console.warn("[API] Upload the file", key);
+	// @OA:route
+	// description: Upload a file
+	@Route(EMethod.POST, '/upload')
+	public async upload(key, data) {
+		console.warn('[API] Upload the file', key);
 		const { transcoder } = config;
 		const completeOperation = async (file, content) => {
 			try{
@@ -53,7 +50,6 @@ export class FilesRouter implements IRouter {
 		try {
 			const { content, header } = await data.getData();
 			const fileInfo: Partial<IFile> = {
-				_owner: key._metadata.owner,
 				name: header.parsed.filename,
 				file: header.parsed.filename,
 				size: content.length,
@@ -69,7 +65,10 @@ export class FilesRouter implements IRouter {
 		}
 	}
 
-	getTranscoderStatus = async (key) => {
+	// @OA:route
+	// description: Get file transcoding status
+	@Route(EMethod.GET, '/file/:fileId/status')
+	public async getTranscoderStatus(key) {
 		try {
 			const file = await this.model.getFileInfo(key.file);
 			this.app.response.set(file._status);
@@ -78,19 +77,28 @@ export class FilesRouter implements IRouter {
 		}
 	}
 
-	deleteFile = async (key) => {
-		console.warn("[API] Delete Owner Document", key);
+	// @OA:route
+	// description: Delete a file
+	@Route(EMethod.DELETE, '/files/:fileId')
+	public async deleteFile(key) {
+		console.warn('[API] Delete Owner File', key);
 		await this.model.removeFile(key.file);
 		return { deleted:true };
 	}
 
-	getFileInfo = async (key) => {
+	// @OA:route
+	// description: Get file info
+	@Route(EMethod.GET, '/file/:fileId')
+	public async getFileInfo(key) {
 		console.warn('[API] Get File Info', key);
 		return await this.model.getFileInfo(key.file);
 	}
 
-	downloadFile = async (key) => {
-		console.warn("[API] Download file", key);
+	// @OA:route
+	// description: Download file
+	@Route(EMethod.GET, '/download/:fileId')
+	public async downloadFile(key) {
+		console.warn('[API] Download file', key);
 		const fileInfo = await this.model.getFileInfo(key.file);
 		const transcodeId = fileInfo._transcode;
 		const isTranscoded = !!transcodeId;
@@ -111,9 +119,12 @@ export class FilesRouter implements IRouter {
 		} catch (err) { this.app.response.setError(err); }
 	}
 
-	getOwnerFiles = async (key) => {
-		console.warn("[API] Get owner files", key);
-		return await this.model.getOwnerFiles(key.owner, key._metadata);
+	// @OA:route
+	// description: Get files list for abstract object
+	@Route(EMethod.GET, '/dbobject/:objectId/files')
+	public async getOwnerFiles(key) {
+		console.warn('[API] Get owner files', key);
+		return await this.model.getOwnerFiles(key.objectId, key._metadata);
 	}
 }
 

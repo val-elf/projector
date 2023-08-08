@@ -1,70 +1,85 @@
+import { Route } from '~/network';
 import { Characters } from '../backend';
 import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
 import { utils } from '../utils/utils';
+import { EMethod, Router } from '~/network/route.decorator';
+import { ICharacter } from '~/backend/entities/models';
 
+// @OA:tag
+// name: Characters
+// description: Project's characters management API
+@Router()
 export class CharactersRouter implements IRouter {
 	model: Characters;
 
 	configure(app: Service) {
-
 		this.model = new Characters(app);
-
-		app.for(this.model)
-			.post('/projects/:project/characters', this.createCharacter)
-			.put('/projects/:project/characters/:character', this.updateCharacter)
-			.get('/projects/:project/characters', this.getCharacters)
-			.get('/projects/:project/characters/:character', this.getCharacter)
-			.get('/projects/:project/characters/:character/involvement', this.getCharacterArtifacts)
-			.delete('/projects/:project/characters/:character', this.deleteCharacter)
-		;
 	}
 
-	async _prepareCharacter(character){
+	private async _prepareCharacter(character){
 		await utils.preparePreview(character.preview);
 	}
 
-	createCharacter = async (key, item) => {
-		console.warn("[API] Create new character", key);
-		item._project = key.project;
-		await this._prepareCharacter(item);
-		return await this.model.createCharacter(item);
+	// @OA:route
+	// description: Get count of characters
+	@Route(EMethod.GET, '/projects/:projectId/characters/count')
+	public async getCharactersCount(key) {
+		console.warn('[API] Get Characters count of Project', key);
+		return { count: await this.model.getCharactersCountFor(key.projectId) };
 	}
 
+	// @OA:route
+	// description: Get character by its ID
+	@Route(EMethod.POST, '/projects/:projectId/characters')
+	public async createCharacter(key, item) {
+		console.warn('[API] Create new character', key);
+		await this._prepareCharacter(item);
+		return await this.model.createCharacter(item, key.projectId);
+	}
 
-	getCharacters = async (key) => {
-		console.warn("[API] Get characters list", key);
+	// @OA:route
+	// description: Get characters list
+	@Route(EMethod.GET, '/projects/:projectId/characters')
+	public async getCharacters(key) {
+		console.warn('[API] Get characters list', key);
 		if(key._metadata) {
 			if(key._metadata._id === 'undefined') key._metadata._id = [];
 		}
-		return await this.model.getCharacters({_project: key.project}, key._metadata);
+		return await this.model.getCharacters(key.projectId, key._metadata);
 	}
 
-	getCharacter = async (key) => {
-		console.warn("[API] Get Character", key);
-		if(key.character == 'count') return await this.getCharactersCount.call(this, key);
-		return await this.model.getCharacter(key.character);
+	// @OA:route
+	// description: Get character
+	@Route(EMethod.GET, '/characters/:characterId')
+	public async getCharacter(key) {
+		console.warn('[API] Get Character', key);
+		return await this.model.getCharacter(key.characterId);
 	}
 
-	getCharactersCount = async (key) => {
-		console.warn("[API] Get Characters count of Project", key);
-		return await this.model.getCharactersCountFor(key.project);
-	}
-
-	updateCharacter = async (key, character) => {
-		console.warn("[API] Update Character", key);
+	// @OA:route
+	// description: Update character
+	@Route(EMethod.PUT, '/characters/:characterId')
+	public async updateCharacter(key, character): Promise<ICharacter> {
+		console.warn('[API] Update Character', key);
 		await this._prepareCharacter(character);
-		return await this.model.updateCharacter(character);
+		return await this.model.updateCharacter(key.characterId, character);
 	}
 
-	getCharacterArtifacts = async (key, item) => {
+	// @OA:route
+	// description: Get character's artifacts
+	@Route(EMethod.GET, '/characters/:characterId/involvement')
+	public async getCharacterArtifacts(key) {
 		console.warn('[API] Get character\'s artifacts');
-		return await this.model.getCharactersArtifacts(key.character);
+		return await this.model.getCharacterArtifacts(key.characterId);
 	}
 
-	deleteCharacter = async (key, item) => {
-		console.warn("[API] Delete Character", key);
-		await this.model.deleteCharacter(key.character);
+	// @OA:route
+	// description: Delete character
+	@Route(EMethod.DELETE, '/characters/:characterId')
+	public async deleteCharacter(key) {
+		console.warn('[API] Delete Character', key);
+		await this.model.deleteCharacter(key.characterId);
 		return { deleted: true }
 	}
 }

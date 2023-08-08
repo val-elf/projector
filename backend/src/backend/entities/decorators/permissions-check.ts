@@ -1,4 +1,4 @@
-import { DbObjectBase } from '../dbobjects'
+import { DbObjectBase } from '../dbbase';
 
 export const PermissionsCheck = ({ permissions }: {
     permissions: string[]

@@ -1,8 +1,8 @@
-import { DbModel } from '../core/db-bridge';
+import { DbModel } from '../core';
 import { TObjectId } from '../core/models';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IFile, IMetadata, IUser } from './models/db.models';
+import { IFile, IMetadata, IUser } from './models';
 import { config } from "~/config";
 import { http } from "~/utils/simpleHttp";
 
@@ -11,14 +11,12 @@ export class Files extends DbObjectAncestor<IFile> {
 
 	@PermissionsCheck({ permissions: [] })
 	async createFile(fileInfo: IFile, user?: IUser) {
-		fileInfo = DbObjectController.normalize(fileInfo, user);
 		return this.model.create(fileInfo);
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	async updateFile(fileInfo: IFile, internal = false, user?: IUser) {
 		const _user = !internal ? user : { internal };
-		fileInfo = DbObjectController.normalize(fileInfo, user);
 		return this.model.updateItem(fileInfo);
 	}
 
@@ -38,9 +36,9 @@ export class Files extends DbObjectAncestor<IFile> {
 		return res[0];
 	}
 
-	public async findFiles(condition, meta?: any) {
-		meta = meta || {};
-		const files = await this.model.find(condition, { 'preview.preview': 0 }, meta);
+	public async findFiles(condition?: any, owners?: string[]) {
+		if (owners) this.setOwners(owners);
+		const files = await this.model.find(condition, { 'preview.preview': 0 });
 		await (Promise.all(files.map(async file => {
 			const iu1 = await this.getFileStatus(file);
 			const iu2 = await this.detectFileState(file);
@@ -55,8 +53,8 @@ export class Files extends DbObjectAncestor<IFile> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async removeFile(fileId: TObjectId, user?: IUser) {
-		return this.deleteItem(fileId, user);
+	public async removeFile(fileId: TObjectId) {
+		return this.deleteItem(fileId);
 	}
 
 	/*

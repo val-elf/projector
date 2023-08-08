@@ -1,6 +1,8 @@
+import { EMethod, Router, Route } from '~/network';
 import { Documents } from '../backend';
 import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
+import { IDocument } from '~/backend/entities/models';
 
 function detectMediaType(file: any){
 	const res: any = {};
@@ -14,56 +16,64 @@ function detectMediaType(file: any){
 	return res;
 }
 
+// @OA:tag
+// name: Documents
+@Router()
 export class DocumentsRouter implements IRouter {
 	model: Documents;
 
 	configure(app: Service) {
 		this.model = new Documents(app);
-		app.for(this.model)
-			.get('/owner/:owner/documents', this.getOwnerDocuments)
-			.get('/owner/:owner/documents/:document', this.getDocument)
-			.get('/documents/:document', this.getDocument)
-			.post('/owner/:owner/documents', this.createDocument)
-			.post('/documents', this.createDocument)
-			.put('/owner/:owner/documents/:document', this.updateDocument)
-			.put('/documents/:document', this.updateDocument)
-			.delete('/owner/:owner/documents/:document', this.deleteDocument)
-		;
 	}
 
-	createDocument = async (key, data) => {
-		console.warn("[API] create Document", key);
+	// @OA:route
+	// description: Create a document
+	@Route(EMethod.POST, '/owner/:owner/documents')
+	public async createDocument(key, data: IDocument & { _owner?: string }) {
+		console.warn('[API] create Document', key);
 		if (key.owner) data._owner = key.owner;
 		return await this.model.createDocument(data);
 	}
 
-	getOwnerDocuments = async (key) => {
-		console.warn("[API] Get Owner Documents", key);
-		const list = await this.model.getDocuments(key.owner, key._metadata);
-		list.result.forEach(item => {
+	// @OA:route
+	// description: Get owner documents
+	@Route(EMethod.GET, '/owner/:owner/documents')
+	public async getOwnerDocuments(key) {
+		console.warn('[API] Get Owner Documents', key);
+		const list = await this.model.getDocuments(key.owner);
+		/*list.result.forEach(item => {
 			const { _file } = item;
 			if(_file) item.metadata = {
 				...item.metadata,
 				...detectMediaType(_file)
 			};
-		});
+		});*/
 		return list;
 	}
 
-	deleteDocument = async (key) => {
-		console.warn("[API] Delete Owner Document", key);
+	// @OA:route
+	// description: Delete a document
+	@Route(EMethod.DELETE, '/documents/:document')
+	public async deleteDocument(key) {
+		console.warn('[API] Delete Owner Document', key);
 		await this.model.removeDocument(key.document);
 		return { deleted: true };
 	}
 
-	updateDocument = async (key, document) => {
-		console.warn("[API] Update Document", key);
+	// @OA:route
+	// description: Update a document
+	@Route(EMethod.PUT, '/documents/:documentId')
+	public async updateDocument(key, document) {
+		console.warn('[API] Update Document', key);
 		if (document) delete document._file;
 		return await this.model.updateDocument(document);
 	}
 
-	getDocument = async (key) => {
-		console.warn("[API] Get Document", key);
+	// @OA:route
+	// description: Get a document
+	@Route(EMethod.GET, '/documents/:document')
+	public async getDocument(key) {
+		console.warn('[API] Get Document', key);
 		return await this.model.getDocument(key.document);
 	}
 }

@@ -1,9 +1,9 @@
-import { DbModel } from '../core/db-bridge';
-import { TObjectId } from '../core/models';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { DbModel } from '../core';
+import { TFindList, TObjectId } from '../core/models';
+import { DbObjectAncestor } from './dbbase';
+import { DbObjectController } from './dbobjects';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { ILocation, IMetadata, IUser } from './models/db.models';
-import { objId } from './utils';
+import { ILocation, IMetadata, IUser } from './models';
 
 @DbModel({ model: 'locations' })
 export class Locations extends DbObjectAncestor<ILocation> {
@@ -24,28 +24,29 @@ export class Locations extends DbObjectAncestor<ILocation> {
 				});
 			}, [projectId, metadata.orderByType]);
 		}*/
-		return await this.model.findList({_project: projectId}, metadata);
+		this.setOwners([projectId]);
+		return ((await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)) as TFindList<ILocation>).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async getLocationItem(locationId) {
-		return await this.model.find({_id: locationId});
+		return (await this.model.find({_id: locationId}))[0];
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async createLocation(item: ILocation, user?: IUser) {
-		const nitem = DbObjectController.normalize(item, user);
-		return this.model.create(nitem);
+	public async createLocation(projectId: string, item: ILocation) {
+		this.setOwners([projectId]);
+		return this.model.create(item);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateLocation(item: ILocation, user?: IUser) {
-		item = DbObjectController.normalize(item, user);
+	public async updateLocation(_id: string, item: ILocation) {
+		if (item._id !== _id) throw new Error('Invalid location id');
 		return this.model.updateItem(item);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async deleteLocation(itemId, user?: IUser) {
-		return this.deleteItem(itemId, user);
+	public async deleteLocation(itemId) {
+		return this.deleteItem(itemId);
 	}
 }

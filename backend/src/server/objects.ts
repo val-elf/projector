@@ -2,12 +2,16 @@ import { http } from '~/utils/simpleHttp';
 import { IRouter, TObjectId } from '../backend/core/models';
 import { DbObjectController } from '../backend/entities/dbobjects';
 import { Service } from '../network/service';
-import * as md5 from "md5";
+import md5 from 'md5';
 import { config } from '~/config';
 import { DbBridge } from '~/backend/core/db-bridge';
-import { IFile, IPreviewed } from '~/backend/entities/models/db.models';
-import { Response } from '~/network';
+import { IFile, IPreviewed } from '~/backend/entities/models';
+import { EMethod, Response, Route, Router } from '~/network';
 
+// @OA:tag
+// name: DbObjects
+// description: Project's dbobjects management API
+@Router()
 export class ObjectsRouter implements IRouter {
 	model: DbObjectController;
 	private app: Service;
@@ -15,19 +19,14 @@ export class ObjectsRouter implements IRouter {
 	configure(app: Service) {
 		this.model = new DbObjectController(app);
 		this.app = app;
-
-		app.for(this.model)
-			.get('/dbobjects/:objectId', this.getObject)
-			.get('/dbobjects/:objectId/preview', this.getObjectPreview)
-			.get('/dbobjects/:objectId/preview/:type', this.getObjectPreviewByType)
-		;
 	}
 
-	getObject = async (key) => {
-		const { response } = this.app;
-		console.warn("[API] Get DbObject with KEY", key);
-		const dbobject = await this.model.getDbObject(key.objectId);
-		response.set(dbobject);
+	// @OA:route
+	// description: Get full information about database object
+	@Route(EMethod.GET, '/dbobjects/:objectId')
+	public async getObject (key) {
+		console.warn('[API] Get DbObject', key);
+		return await this.model.getDbObject(key.objectId);
 	}
 
 	private notFound(response) {
@@ -35,11 +34,11 @@ export class ObjectsRouter implements IRouter {
 		response.setError(new Error('Not found'), 404);
 	}
 
-	getPreviewHash = async (model, objectId) => {
-		let obj = await model.find({ _id: objectId }, { 'preview.hash': 1 }, {});
+	public async getPreviewHash (model, objectId) {
+		let obj = await model.find({ _id: objectId }, { }, {});
 		obj = obj.pop();
 		if (obj.preview && obj.preview.hash) return obj.preview.hash;
-		obj = await model.find({ _id: objectId }, { 'preview.preview': 1 }, {});
+		obj = await model.find({ _id: objectId }, { }, {});
 		obj = obj.pop();
 		if (!obj || !obj.preview) return;
 		const hash = md5(obj.preview.preview);
@@ -47,8 +46,11 @@ export class ObjectsRouter implements IRouter {
 		return hash;
 	}
 
-	getObjectPreviewByType = async (key, ...args: any[]) => {
-		console.warn("[API] Get DbObject preview by type", key, args);
+	// @OA:route
+	// description: Get preview image of database object by its type
+	@Route(EMethod.GET, '/dbobjects/:objectId/preview/:type')
+	public async getObjectPreviewByType (key, ...args: any[]) {
+		console.warn('[API] Get DbObject preview by type', key, args);
 
 		const { request, response } = this.app;
 		const oldEtag = request.headers['if-none-match'];
@@ -56,8 +58,11 @@ export class ObjectsRouter implements IRouter {
 		return await this.getObjectPreviewInfo(key.objectId, key.type, oldEtag, requestCache, response);
 	}
 
-	getObjectPreview = async (key) => {
-		console.warn("[API] Get DbObject preview", key);
+	// @OA:route
+	// description: Get preview image of database object
+	@Route(EMethod.GET, '/dbobjects/:objectId/preview')
+	public async getObjectPreview (key) {
+		console.warn('[API] Get DbObject preview', key);
 
 		const { request, response } = this.app;
 		const oldEtag = request.headers['if-none-match'];
@@ -67,19 +72,17 @@ export class ObjectsRouter implements IRouter {
 			const dbobject = await this.model.getDbObject(key.objectId);
 			type = dbobject && dbobject.type || undefined;
 		}
-		if (!type) throw new Error('type should be defined');
+		if (!type) throw new Error(`Type should be defined. ObjectId: ${key.objectId}}`);
 		return await this.getObjectPreviewInfo(key.objectId, type, oldEtag, requestCache, response);
 	}
 
-	getObjectPreviewInfo = async (objectId: TObjectId, type: string, oldEtag: string, requestCache: string, response: Response) => {
+	private async getObjectPreviewInfo (objectId: TObjectId, type: string, oldEtag: string, requestCache: string, response: Response) {
 		response.setHeader('Content-Type', 'image/jpeg');
 		response.setHeader('Cache-Control', 'max-age=86400');
 		const objectModel = DbBridge.getBridge(type);
 		try{
 			const previewHash = await this.getPreviewHash(objectModel, objectId);
 			if (!previewHash) return this.notFound(response);
-
-			response.setHeader('ETag', previewHash);
 
 			if (requestCache !== 'no-cache' && oldEtag === previewHash) {
 				response.setStatus(304);
@@ -101,7 +104,9 @@ export class ObjectsRouter implements IRouter {
 				const opreview = JSON.parse(tpreview.toString());
 				response.setStream(Buffer.from(opreview.preview, 'base64'));
 			}
-		} catch (error) { console.error('err', error); }
+		} catch (error) {
+			console.error('err', error);
+		}
 	}
 }
 

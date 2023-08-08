@@ -1,8 +1,8 @@
-import { DbBridge, DbModel } from "../core/db-bridge";
-import * as md5 from "md5";
-import { DbObjectAncestor } from './dbobjects';
-import { IUser, IRole, ISession } from './models/db.models';
+import { DbBridge, DbModel } from "../core";
+import md5 from "md5";
+import { IUser, IRole, ISession, IServerUser } from './models';
 import { PermissionsCheck } from './decorators/permissions-check';
+import { DbObjectAncestor } from './dbbase';
 
 @DbModel({ model: 'users' })
 export class Users extends DbObjectAncestor<IUser> {
@@ -10,11 +10,12 @@ export class Users extends DbObjectAncestor<IUser> {
 	private sessions = DbBridge.getBridge<ISession>('sessions');
 
 	public async getUser(userId, internal = false) {
-		if (!internal) await this.getCurrentUser();
-		const user = await this.model.getItem(userId);
-		console.log('User is', user);
-		if(user.roles && user.roles.length) {
-			const roles = await this.roles.find({ _id: {$in: user.roles }});
+		if (!internal) {
+			return await this.getCurrentUser();
+		}
+		const user = { ...await this.model.getItem(userId) } as IServerUser;
+		if(user._roles && user._roles.length) {
+			const roles = await this.roles.find({ _id: {$in: user._roles }});
 			user.roles = roles;
 			delete user.password;
 			return user;
@@ -27,12 +28,12 @@ export class Users extends DbObjectAncestor<IUser> {
 	}
 
 	public async isSessionExpired(sessionId) {
-		const session = await this.sessions.getItem({ id: sessionId });
+		const session = await this.sessions.getItem(sessionId);
 		return session.expired;
 	}
 
 	public async getUserBySession(sessionId) {
-		const sessionItems = await this.sessions.find({ _id: sessionId, expired: { $ne: true } });
+		const sessionItems = await this.sessions.find(this.fixIds({ _id: sessionId, expired: { $ne: true } }));
 		if(sessionItems && sessionItems[0]) {
 			const itm = sessionItems[0];
 			return this.getUser(itm.user, true);
@@ -40,7 +41,8 @@ export class Users extends DbObjectAncestor<IUser> {
 	}
 
 	public async authorize(login, password) {
-		const user = await this.model.find({login: login || '', password: md5(password || '')});
+		password = md5(`${login}:${password}`);
+		const user = await this.model.find({ login: login || '', password });
 		if(user && user.length){
 			//user was found
 			const auser = user.pop();
@@ -50,6 +52,11 @@ export class Users extends DbObjectAncestor<IUser> {
 			return session;
 		}
 		throw new Error("User or password is incorrect");
+	}
+
+	public async createUser(user: Pick<IUser, "login" | "password">) {
+		user.password = md5(`${user.login}:${user.password}`);
+		return await this.model.create(user);
 	}
 
 	public async logout(sessionId) {

@@ -1,52 +1,71 @@
-import { Artifacts } from "../backend/entities/artifacts";
-import { IRouter } from "../backend/core/models";
+import { Artifacts } from '../backend/entities/artifacts';
+import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
 import { utils } from '~/utils/utils';
+import { Route } from '~/network';
+import { EMethod, Router } from '~/network/route.decorator';
+import { IArtifact } from '~/backend/entities/models';
 
+// @OA:tag
+// name: Artifacts
+// description: Project's artifacts management API
+@Router()
 export class ArtifactRouter implements IRouter {
-	public model: Artifacts;
+    public model: Artifacts;
 
-	private async _prepareArtifact(item){
-		await utils.preparePreview(item.preview);
-	}
+    private async _prepareArtifact(item) {
+        await utils.preparePreview(item.preview);
+    }
 
-	configure(app: Service){
-		this.model = new Artifacts(app);
-		app.for(this.model)
-			.get('/projects/:project/artifacts', this.getArtifactsList)
-			.get('/projects/:project/artifacts/:artifact', this.getArtifact)
-			.post('/projects/:project/artifacts', this.createArtifact)
-			.put('/projects/:project/artifacts/:artifact', this.updateArtifact)
-			.delete('/projects/:project/artifacts/:artifact', this.deleteArtifact)
-		;
-	}
+    configure(app: Service) {
+        this.model = new Artifacts(app);
+    }
 
-	private getArtifactsList = async (key) => {
-		console.warn("[API] Get Artifacts", key);
-		return await this.model.getArtifactsList(key.project, key._metadata);
-	}
+    // @OA:route
+    // description: Get list of artifacts for particular project
+    // security: [APIKeyHeader: []]
+    // response: [200: List of artifacts of the project, 401: Bad request]
+    // parameter: []
+    @Route(EMethod.GET, '/projects/:project/artifacts')
+    public async getArtifactsList(key): Promise<IArtifact[]> {
+        console.warn('[API] Get Artifacts', key);
+        return await this.model.getArtifactsList(key.project, key._metadata);
+    }
 
-	private getArtifact = async (key) => {
-		console.warn("[API] Get Artifact", key);
-		return await this.model.getArtifact(key.artifact);
-	}
+    // @OA:route
+    // description: Get artifact by its ID
+    @Route(EMethod.GET, '/artifacts/:artifact')
+    public async getArtifact(key) {
+        console.warn('[API] Get Artifact', key);
+        return await this.model.getArtifact(key.artifact);
+    }
 
-	private createArtifact = async(key, item) => {
-		console.warn("[API] Create Artifact", key);
-		item._project = key.project;
-		await this._prepareArtifact(item);
-		return await this.model.createArtifact(item);
-	}
+    // @OA:route
+    // description: Create new artifact
+    // parameters: [projectId: Project ID]
+    @Route(EMethod.POST, '/projects/:projectId/artifacts')
+    public async createArtifact(key, item) {
+        console.warn('[API] Create Artifact', key);
+        await this._prepareArtifact(item);
+        return await this.model.createArtifact(item, key.projectId);
+    }
 
-	private updateArtifact = async (key, item) => {
-		console.warn("[API] Update Artifact", key);
-		await this._prepareArtifact(item);
-		return await this.model.updateArtifact(item);
-	}
+    // @OA:route
+    // description: Update existing artifact
+    @Route(EMethod.PUT, '/artifacts/:artifact')
+    public async updateArtifact(key, item) {
+        console.warn('[API] Update Artifact', key);
+        await this._prepareArtifact(item);
+        return await this.model.updateArtifact(item);
+    }
 
-	private  deleteArtifact = async (key) => {
-		console.warn("[API] Delete Artifact", key);
-		await this.model.deleteArtifact(key.artifact);
-		return { deleted: true };
-	}
+
+    // @OA:route
+    // description: Delete artifact by its ID
+    @Route(EMethod.DELETE, '/artifacts/:artifactId')
+    public async deleteArtifact(key) {
+        console.warn('[API] Delete Artifact', key);
+        await this.model.deleteArtifact(key.artifactId);
+        return { deleted: true };
+    }
 }
