@@ -8,10 +8,10 @@ import { IEditor } from './models/editor.model';
 import { ColorSelector, LayersManager, Panoramer, Picker, Eraser, Brush, Move } from './tools';
 import { Page } from './page/page.component';
 import { CommonTool, CommonToolState } from './tools/common-tool.component';
-import { PictureEditorStorage } from './store/store';
+import { storage } from './store/store';
 // import { observer } from '~/services/state-management';
 
-const storage = new PictureEditorStorage();
+// const storage = new PictureEditorStorage();
 
 /*
 	Almost done:
@@ -68,9 +68,9 @@ export class PictureEditor extends Component<any> implements IEditor {
 
 
 	componentDidMount() {
-		storage.subscribe('@zoom', () => {
+		/*storage.subscribe('@zoom', () => {
 			if (this.selected) this.selected.refreshCursor();
-		});
+		});*/
 	}
 
 	document = new PictureDocument(3900, 2400);

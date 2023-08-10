@@ -6,10 +6,12 @@ import template from './color-selector.template.rt';
 import './color-selector.component.less';
 import { ActiveColorTypeEnum } from 'controls/picture-editor/models/editor.model';
 
-@observer({
+import { storage } from "controls/picture-editor/store/store";
+
+/*@observer({
 	storage,
 	watch: ['@activeColorType', '@color', '@bgcolor']
-})
+})*/
 export class ColorSelector extends React.Component {
 
 	static contextTypes = {

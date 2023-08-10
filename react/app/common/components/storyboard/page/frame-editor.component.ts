@@ -37,7 +37,7 @@ export class FrameEditor extends Component {
         return new Promise(async resolve => {
             this.resolve = resolve;
             this.setState({ active: true, closing: false, frame });
-            setImmediate(() => this.setState({ expanded: true }));
+            setTimeout(() => this.setState({ expanded: true }));
         });
     }
 

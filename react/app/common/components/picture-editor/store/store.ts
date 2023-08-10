@@ -32,6 +32,8 @@ export class PictureEditorStorage implements IPictureEditorStore {
 	viewport = null;
 	toolClass = null;
 
+	state: any = {};
+
 	constructor() {
 		makeAutoObservable(this);
 	}
@@ -92,4 +94,10 @@ export class PictureEditorStorage implements IPictureEditorStore {
 		this.setPan(newPan);
 		this.setZoom(zoomFactor);
 	}
+
+	subscribe(event: string, cb: any) {
+
+	}
 }
+
+export const storage = new PictureEditorStorage();
