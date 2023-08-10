@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 <rt-import name="GalleryControls" from="./gallery-controls.component" />
 <rt-import name="FileUploader" from="controls/file-uploader" />
 <rt-import name="IconPreview" from="controls/icon-preview" />

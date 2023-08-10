@@ -1,4 +1,4 @@
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
 
 <div rt-scope="this.context.t as t">
 	<TextField class="wide" label="{ t('APP_PROJECT_CATEGORY_NAME') }" onChange="{(event) => this.setCategoryName(event.target.value)}" required="{true}" />

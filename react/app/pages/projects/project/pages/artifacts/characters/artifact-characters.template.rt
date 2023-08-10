@@ -1,5 +1,5 @@
 <rt-import name="Fragment" from="react" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material" />
 <rt-import name="ILink" from="controls/item-link" />
 <rt-import name="DragNDrop" from="controls/drag-n-drop" />
 <rt-import name="Modal" from="controls/materials" />

@@ -1,6 +1,6 @@
 <rt-import name="UIView" from="@uirouter/react" />
-<rt-import name="Button" from="@material-ui/core" />
-<rt-import name="MenuItem" from="@material-ui/core" />
+<rt-import name="Button" from="@mui/material/Button" />
+<rt-import name="MenuItem" from="@mui/material/MenuItem" />
 
 <rt-import name="TextEdited" from="controls/materials" />
 <rt-import name="Popup" from="controls/popup" />

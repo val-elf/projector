@@ -20,7 +20,7 @@ app.use(from, (req, res) => {
 
 if (isDev) {
 	middleware = require('webpack-dev-middleware')(compiler, {
-		noInfo: true,
+		// noInfo: true,
 		publicPath: wpconfig.output.publicPath
 	});
 	app.use(middleware);

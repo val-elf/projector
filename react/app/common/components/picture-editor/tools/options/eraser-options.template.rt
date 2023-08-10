@@ -1,4 +1,4 @@
-<rt-import name="TextField" from="@material-ui/core" />
+<rt-import name="TextField" from="@mui/material" />
 <rt-import name="Slider" from="controls/materials" />
 <div>
     <Slider value="{this.state.size}" label="{ 'eraser size ' + this.state.size }" type="number" onChange="{ value => this.setSize(value) }" min="1" max="120" step="1" />

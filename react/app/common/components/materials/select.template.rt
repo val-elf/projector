@@ -1,6 +1,6 @@
-<rt-import name="Select" from="@material-ui/core" />
-<rt-import name="FormControl" from="@material-ui/core" />
-<rt-import name="InputLabel" from="@material-ui/core" />
+<rt-import name="Select" from="@mui/material" />
+<rt-import name="FormControl" from="@mui/material" />
+<rt-import name="InputLabel" from="@mui/material" />
 
 <FormControl className="{this.props.className}">
 	<InputLabel>{this.props.label}</InputLabel>

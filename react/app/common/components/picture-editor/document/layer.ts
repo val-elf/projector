@@ -12,7 +12,17 @@ export class Layer {
 	private document: PictureDocument;
 	private working: Layer;
 
-	layerStorage: LayerStorage;
+interface ILayerState {
+	document: PictureDocument;
+	working: boolean;
+	data: ILayerData;
+	active: boolean;
+	composite: GlobalCompositeOperation;
+	opacity: number;
+	offsetX: number;
+	offsetY: number;
+	isVisible: boolean;
+}
 
 	static generateId() {
 		return (Math.random() * 100000).toFixed(0);
@@ -32,6 +42,11 @@ export class Layer {
 	}
 	set composite(value: OverlayMappingEnum) {
 		this.layerStorage.setComposite(value);
+	}
+	set overlay(value) {
+		const key = (Object.keys(overlayMapping)
+			.find(key => overlayMapping[key] === value) || 'source-over') as GlobalCompositeOperation;
+		this.composite = key;
 	}
 	get context() { return this.ctx; }
 	get state() { return this.layerStorage.state; }
@@ -184,9 +199,9 @@ export class Layer {
 		);
 		if (this.working) {
 			this.mergedCtx.save();
-			this.mergedCtx.globalAlpha = this.working.opacity;
-			this.mergedCtx.globalCompositeOperation = this.working.composite;
-			this.mergedCtx.drawImage(this.working.canvas, 0, 0);
+			this.mergedCtx.globalAlpha = this._working.opacity;
+			this.mergedCtx.globalCompositeOperation = this._working.composite as GlobalCompositeOperation;
+			this.mergedCtx.drawImage(this._working.canvas, 0, 0);
 			this.mergedCtx.restore();
 		}
 		return this.mergedCanvas;

@@ -21,6 +21,8 @@ export class LayersManager extends Component {
 		return newState;
 	}
 
+	context: any;
+
 	state: {
 		document?: PictureDocument,
 		showed?: boolean,

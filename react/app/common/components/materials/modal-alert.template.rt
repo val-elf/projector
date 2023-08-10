@@ -1,5 +1,5 @@
-<rt-import name="Modal" from="@material-ui/core" />
-<rt-import name="Button" from="@material-ui/core" />
+<rt-import name="Modal" from="@mui/material" />
+<rt-import name="Button" from="@mui/material" />
 
 <Modal open="{this.state.isShow}" rt-scope="this.context.t as t; this.state as state" onClose="{() => this.close()}" className="modal {this.props.className || ''}">
 	<div className="modal-dialog alert" style="{{minWidth: this.props.minWidth, maxHeight: this.props.maxHeight, minHeight: this.props.minHeight}}">

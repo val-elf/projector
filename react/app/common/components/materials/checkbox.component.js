@@ -1,6 +1,6 @@
 import React from "react";
 import template from "./checkbox.template"
-import { Checkbox as ICheckbox } from "@material-ui/core";
+import { Checkbox as ICheckbox } from "@mui/material";
 
 export class Checkbox extends React.Component {
   state = {};

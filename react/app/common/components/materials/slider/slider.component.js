@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/system';
 import { styles } from './slider.styles';
 import { clearSelection } from 'common/utils';
 import template from './slider.template';
@@ -89,4 +89,4 @@ class SliderComponent extends React.Component {
     }
 }
 
-export const Slider = withStyles(styles)(SliderComponent);
+export const Slider = SliderComponent;

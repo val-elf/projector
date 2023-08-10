@@ -10,7 +10,7 @@ module.exports = {
 			'components': path.resolve(__dirname, './app/components'),
             'styles': path.resolve(__dirname, './app/common/styles'),
             'contextes': path.resolve(__dirname, './app/contextes'),
-			'_localizations': path.resolve(__dirname, '../localization'),
+			'_localizations': path.resolve(__dirname, '../../projector-localizations'),
 		},
 	}
 };
