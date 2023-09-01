@@ -1,8 +1,6 @@
 import { ICommonEntity } from '~/backend/core/models';
 import { IDbObjectBase } from './db-base.models';
 
-// @OA:schema
-// description: Base timeline interface
 export interface IBaseTimeline {
     // @OA:property
     // description: Timeline name
@@ -25,6 +23,10 @@ export interface IBaseTimeline {
     locked?: boolean;
 }
 
+// @OA:schema
+// description: Timeline interface
 export interface ITimeline extends IBaseTimeline, Partial<IDbObjectBase> { }
 
+// @OA:schema
+// description: Init timeline interface
 export interface IInitTimeline extends IBaseTimeline, Partial<ICommonEntity> { }

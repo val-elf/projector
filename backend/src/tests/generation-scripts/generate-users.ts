@@ -9,7 +9,6 @@ export class GenerateUsers implements IGenerationScript {
             login: 'admin',
             password: 'admin'
         });
-        console.log('ADMIN TOKENT', authData);
         core.setAuthToken(authData.sessionToken);
     }
 

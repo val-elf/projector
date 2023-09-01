@@ -1,16 +1,43 @@
-// @OA:schema
-// description: 2D coordinate
-export interface ICoord2D {
-    // @OA:property
-    // description: X coordinate
-    x: number;
+import { EMethod, Route, Router } from '~/network';
 
-    // @OA:property
-    // description: Y coordinate
-    y: number;
+export interface QualifyiedInterface<T> {
+    room: string;
+    proj: T[];
 }
 
-
 // @OA:schema
-// description: Array of the 2D coordinates
-export type TShape = ICoord2D[];
+// name: Artifact
+export interface Artifact<T, A extends { b: boolean; t: string }> extends QualifyiedInterface<T> {
+    // @OA:property
+    // description: Artifact's ID
+    id: T;
+
+    // @OA:property
+    // description: Artifact's name
+    name: string;
+
+    // @OA:property
+    // description: get artifacts properties
+    getProperties(): Promise<number[]>;
+}
+
+/*
+// @OA:tag
+// name: Artifacts
+// description: Project's artifacts management API
+@Router()
+export class ArtifactRouter  {
+
+    // @OA:route
+    // description: Delete artifact by its ID
+    @Route(EMethod.DELETE, '/artifacts/:artifactId')
+    public async deleteArtifact(key): Promise<{ deleted: boolean }> {
+        console.warn('[API] Delete Artifact', key);
+        return Promise.resolve({ deleted: true });
+    }
+
+    public async helloArtifact(): Promise<boolean> {
+        return Promise.resolve(false);
+    }
+}
+*/

@@ -1,5 +1,5 @@
 import { OpenApi } from '~/openapi/components';
-import { TsTypeBase } from '~/openapi/ts-parser/ts-type/type-base';
+// import { TsTypeBase } from '~/openapi/ts-parser/ts-type/type-base';
 
 export function typeBaseTest(openApi: OpenApi) {
     const typeBaseDeclaration = `
@@ -10,6 +10,5 @@ export function typeBaseTest(openApi: OpenApi) {
     }
     `;
 
-    const typeBase = new TsTypeBase(typeBaseDeclaration);
-    console.log(typeBase.toOpenApi(openApi));
+    // const typeBase = new TsTypeBase(typeBaseDeclaration);
 }

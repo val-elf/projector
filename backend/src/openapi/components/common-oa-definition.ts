@@ -1,6 +1,6 @@
 import { isBalanced } from '../utils';
 import { TsComment } from '../ts-parser/ts-comment';
-import { ETsEntityTypes, ITsReader } from '../ts-parser/ts-readers/model';
+import { ETsEntitySymbolTypes, ITsParser } from '../ts-parser/ts-readers/model';
 
 type TTagPropertyValueBase = string | string[]
 type TTagPropertyValue = TTagPropertyValueBase | { [key: string]: TTagPropertyValue };
@@ -39,11 +39,11 @@ export class CommonOADefinition {
         }, {});
     }
 
-    public static readFromReader(initComment: TsComment, reader: ITsReader): CommonOADefinition {
+    public static readFromReader(initComment: TsComment, reader: ITsParser): CommonOADefinition {
         const lines: { value: string, indent: number }[] = [];
         while (true) {
             reader.lock();
-            const comment = reader.readEntity(ETsEntityTypes.Comment);
+            const comment = reader.readEntity(ETsEntitySymbolTypes.Comment);
             if (!comment || !(comment instanceof TsComment) || comment.isOA) {
                 reader.unlock();
                 break;

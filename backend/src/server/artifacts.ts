@@ -24,27 +24,30 @@ export class ArtifactRouter implements IRouter {
     // @OA:route
     // description: Get list of artifacts for particular project
     // security: [APIKeyHeader: []]
-    // response: [200: List of artifacts of the project, 401: Bad request]
-    // parameter: []
-    @Route(EMethod.GET, '/projects/:project/artifacts')
+    // responses: [200: List of artifacts of the project, 401: Bad request]
+    // parameters: [projectId: Project ID]
+    @Route(EMethod.GET, '/projects/:projectId/artifacts')
     public async getArtifactsList(key): Promise<IArtifact[]> {
         console.warn('[API] Get Artifacts', key);
-        return await this.model.getArtifactsList(key.project, key._metadata);
+        return await this.model.getArtifactsList(key.projectId, key._metadata);
     }
 
     // @OA:route
     // description: Get artifact by its ID
-    @Route(EMethod.GET, '/artifacts/:artifact')
-    public async getArtifact(key) {
+    // security: [APIKeyHeader: []]
+    // responses: [200: Artifact Item, 401: Bad request]
+    // parameters: [artifactId: Artifact ID]
+    @Route(EMethod.GET, '/artifacts/:artifactId')
+    public async getArtifact(key): Promise<IArtifact> {
         console.warn('[API] Get Artifact', key);
-        return await this.model.getArtifact(key.artifact);
+        return await this.model.getArtifact(key.artifactId);
     }
 
     // @OA:route
     // description: Create new artifact
     // parameters: [projectId: Project ID]
     @Route(EMethod.POST, '/projects/:projectId/artifacts')
-    public async createArtifact(key, item) {
+    public async createArtifact(key, item): Promise<IArtifact> {
         console.warn('[API] Create Artifact', key);
         await this._prepareArtifact(item);
         return await this.model.createArtifact(item, key.projectId);
@@ -53,7 +56,7 @@ export class ArtifactRouter implements IRouter {
     // @OA:route
     // description: Update existing artifact
     @Route(EMethod.PUT, '/artifacts/:artifact')
-    public async updateArtifact(key, item) {
+    public async updateArtifact(key, item): Promise<IArtifact> {
         console.warn('[API] Update Artifact', key);
         await this._prepareArtifact(item);
         return await this.model.updateArtifact(item);

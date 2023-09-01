@@ -1,8 +1,9 @@
-import { ETsEntityTypes, ITsReader, TsEntity } from './ts-readers/model';
+import { TsEntity } from './model';
+import { ETsEntityTypes, ITsParser } from './ts-readers/model';
 
 export class TsVariable extends TsEntity {
     constructor(
-        reader: ITsReader,
+        reader: ITsParser,
         private isExported: boolean,
         private variableType: "const" | "let" | "var"
     ) {
@@ -11,7 +12,7 @@ export class TsVariable extends TsEntity {
         this.read(reader, constDefinition);
     }
 
-    private read(reader: ITsReader, definition: string) {
+    private read(reader: ITsParser, definition: string) {
         // console.log('Reader variable:', definition);
     }
 }

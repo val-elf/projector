@@ -39,7 +39,6 @@ export class Core {
 		}
 
 		return new Promise((resolve, reject) => {
-			// console.log('Request options', opts, data);
 			var req = request(opts, (res) => {
 				var body = "";
 				res.on('data', function(chunk){

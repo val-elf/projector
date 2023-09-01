@@ -1,4 +1,5 @@
-import { ETsEntityTypes, ITsReader, TsEntity } from './ts-readers/model';
+import { TsEntity } from './model';
+import { ETsEntityTypes, ITsParser } from './ts-readers/model';
 
 export class TsExpression extends TsEntity {
     constructor(

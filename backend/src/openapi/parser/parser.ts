@@ -1,8 +1,8 @@
 import { OATag, OASchema, OAModule, CommonOADefinition, OpenApi } from '../components';
-import { TsParser } from '../ts-parser/ts-readers/ts-parser';
+import { TsFileParser } from '../ts-parser/ts-readers/ts-file-parser';
 import { TsComment } from '../ts-parser/ts-comment';
-import { TsClass } from '../ts-parser/ts-type/ts-type-definitions/ts-class-definition/ts-class-definition';
-import { TsBaseTypeDefinition } from '../ts-parser/ts-type/ts-type-definitions/ts-base-type-definition';
+import { TsClass } from '../ts-parser/ts-types/ts-type-definitions/ts-class-definition/ts-class-definition';
+import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
 
 export enum EDeclarationType {
     Module = 'module',
@@ -15,7 +15,7 @@ export enum EDeclarationType {
 export function analyseFile(result: OpenApi, content: string, fileName: string): any {
     console.log(`\n--------------------------------- ANALYSE FILE '${fileName}' ---------------------------------`);
 
-    const parser = new TsParser(content);
+    const parser = new TsFileParser(content);
     let latestTag: OATag | undefined;
 
     while(true) {

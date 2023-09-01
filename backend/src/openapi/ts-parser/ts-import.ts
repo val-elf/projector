@@ -1,8 +1,9 @@
-import { ETsEntityTypes, ITsReader, TsEntity } from './ts-readers/model';
+import { TsEntity } from './model';
+import { ETsEntityTypes, ITsParser } from './ts-readers/model';
 
 export class TsImport extends TsEntity {
     constructor(
-        reader: ITsReader,
+        reader: ITsParser,
     ) {
         super('import', ETsEntityTypes.Import);
         const definition = reader.expectOf(';');

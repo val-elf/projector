@@ -1,10 +1,10 @@
-import util from "util";
+import { ITsEntity } from '../model';
 
-export enum ETsEntityTypes {
+export enum ETsEntitySymbolTypes {
     Class = 'class',
-    CodeBlock = 'code-block',
     Interface = 'interface',
-    Expression = 'expression',
+    Extends = 'extends',
+    Implements = 'implements',
     Enum = 'enum',
     Type = 'type',
     Method = 'method',
@@ -25,7 +25,7 @@ export enum ETsEntityTypes {
     ArrowFunction = 'arrow-function',
     TypeDefinition = 'type-definition',
     Abstract = 'abstract',
-    Argument = 'argument',
+    ArgumentStart = 'argument-start',
     Variable = 'variable',
     Assignment = 'assignment',
     Get = 'get',
@@ -36,22 +36,39 @@ export enum ETsEntityTypes {
     CloseSquareBracket = 'close-square-bracket',
     OpenParenthesis = 'open-parenthesis',
     CloseParenthesis = 'close-parenthesis',
+    GenericOpen = 'generic-open',
+    GenericClose = 'generic-close',
+    Comma = 'comma',
+    Union = 'union',
+    Intersection = 'intersection',
     EntityName = 'entity-name',
     Optional = 'optional',
 }
 
-export class TsEntity {
-    constructor(
-        public name: string,
-        public entityType: ETsEntityTypes,
-    ) {}
-
-    [util.inspect.custom](depth: number, options: any): any {
-        return {
-            name: this.name,
-            entityType: this.entityType,
-        }
-    }
+export enum ETsEntityTypes {
+    Argument = 'argument',
+    Class = 'class',
+    Interface = 'interface',
+    Enum = 'enum',
+    Type = 'type',
+    TypeList = 'type-list',
+    Method = 'method',
+    Field = 'field',
+    Property = 'property',
+    Decorator = 'decorator',
+    Export = 'export',
+    Import = 'import',
+    Comment = 'comment',
+    Variable = 'variable',
+    Assignment = 'assignment',
+    TypeDefinition = 'type-definition',
+    Generic = 'generic',
+    EntityName = 'entity-name',
+    Function = 'function',
+    ArrowFunction = 'arrow-function',
+    Unnamed = 'unnamed', // empty code block
+    Unknown = 'unknown',
+    Expression = 'expression',
 }
 
 export type TAttributes = {
@@ -67,10 +84,12 @@ export type TAttributes = {
     isOptional?: boolean;
 }
 
-export interface ITsReader {
+export type TReadEntityResult = ITsEntity | ITsEntity[] | ETsEntityTypes | undefined;
+
+export interface ITsParser {
     readonly code: string;
-    readonly lastEntity: { entity: string, entityType: ETsEntityTypes };
-    readEntity(needNextType?: ETsEntityTypes): TsEntity | ETsEntityTypes | undefined;
+    readonly lastEntity: { entity: string, entityType: ETsEntitySymbolTypes };
+    readEntity(needNextType?: ETsEntitySymbolTypes): TReadEntityResult;
     expectOf(regex: RegExp, exclude?: boolean): string | undefined;
     expectOf(chars: string, exclude?: boolean): string | undefined;
     readToBalanced(chars: string, inside?: boolean): string | undefined;

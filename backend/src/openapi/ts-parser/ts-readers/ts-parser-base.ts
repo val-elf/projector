@@ -1,9 +1,16 @@
 import { getBalancedEnd } from '../../utils';
+import { ITsDecorator } from '../model';
 import { TsComment } from '../ts-comment';
-import { TsDecorator } from '../ts-decorator';
 import { TsImport } from '../ts-import';
-import { ETsEntityTypes, ITsReader, TAttributes, TsEntity } from './model';
+import { ETsEntitySymbolTypes, ITsParser, TAttributes, TReadEntityResult } from './model';
 import util from "util";
+
+let createDecorator: (reader: ITsParser) => ITsDecorator;
+
+import('../ts-decorator').then(module => {
+    createDecorator = module.createDecorator;
+});
+
 
 enum EQuoteCode {
     Single = 39,
@@ -13,7 +20,7 @@ enum EQuoteCode {
 
 const SPECIAL_CHARS = ['!', '@', '^', '&', '*', '(', ')', '-', '+', '[', ']', '{', '}', ';', ':', ',', '.', '?', '<', '>', '|', '\\'];
 
-export abstract class TsParserBase implements ITsReader {
+export abstract class TsParserBase implements ITsParser {
     private _index: number = 0;
     protected get index(): number {
         return this._index;
@@ -32,10 +39,10 @@ export abstract class TsParserBase implements ITsReader {
     private _strings: { [key: string]: string[] } = {};
 
     protected _code: string = '';
-    protected parent?: ITsReader;
+    protected parent?: ITsParser;
 
-    private _lastEntity: { entity: string, entityType: ETsEntityTypes } ;
-    public get lastEntity(): { entity: string, entityType: ETsEntityTypes } {
+    private _lastEntity: { entity: string, entityType: ETsEntitySymbolTypes } ;
+    public get lastEntity(): { entity: string, entityType: ETsEntitySymbolTypes } {
         return this._lastEntity;
     }
 
@@ -49,20 +56,20 @@ export abstract class TsParserBase implements ITsReader {
     }
 
     protected attributes: TAttributes = {};
-    protected decorators: TsDecorator[] = [];
+    protected decorators: ITsDecorator[] = [];
 
     public get code() {
         return this.restoreCode();
     }
 
-    constructor(parent: ITsReader);
-    constructor(code: string, parent?: ITsReader);
-    constructor(...args: any[]) {
-        if (typeof args[0] === "string") {
-            this._code = args[0];
-            this.parent = args[1];
+    // constructor(parent: ITsParser);
+    //constructor(code: string, parent?: ITsParser);
+    constructor(parentOrCode: ITsParser | string, parent?: ITsParser) {
+        if (typeof parentOrCode === "string") {
+            this._code = parentOrCode;
+            this.parent = parent;
         } else {
-            this.parent = args[0];
+            this.parent = parentOrCode;
             this._code = (this.parent as TsParserBase).current;
         }
 
@@ -73,7 +80,7 @@ export abstract class TsParserBase implements ITsReader {
         }
     }
 
-    public readEntity(needEntityType?: ETsEntityTypes): TsEntity | ETsEntityTypes | undefined {
+    public readEntity(needEntityType?: ETsEntitySymbolTypes): TReadEntityResult {
 
         while (true) {
             const { entity, entityType } = this.readEntityFromCode() ?? {};
@@ -92,23 +99,23 @@ export abstract class TsParserBase implements ITsReader {
     }
 
     // Decorator, Comment and Abstract should not be processed in the child classes
-    protected analyseEntity(entity: string, entityType): TsEntity | ETsEntityTypes | undefined {
+    protected analyseEntity(entity: string, entityType: ETsEntitySymbolTypes): TReadEntityResult {
         switch (entityType) {
-            case ETsEntityTypes.Abstract:
+            case ETsEntitySymbolTypes.Abstract:
                 this.index += entity.length;
                 this.attributes.isAbstract = true;
                 break;
-            case ETsEntityTypes.Comment:
+            case ETsEntitySymbolTypes.Comment:
                 return new TsComment(this);
-            case ETsEntityTypes.Decorator:
-                this.decorators.push(new TsDecorator(this));
+            case ETsEntitySymbolTypes.Decorator:
+                this.decorators.push(createDecorator(this));
                 break;
             default:
                 return;
         }
     }
 
-    protected readEntityFromCode(): { entity: string, entityType: ETsEntityTypes | undefined } {
+    protected readEntityFromCode(): { entity: string, entityType: ETsEntitySymbolTypes | undefined } {
         while(/\s/.test(this.current.charAt(0))) {
             this.index++;
         }
@@ -153,6 +160,39 @@ export abstract class TsParserBase implements ITsReader {
         }
     }
 
+    public seekOf(chars: RegExp, exclude: boolean): { value: string, position: number } | undefined;
+    public seekOf(chars: string, exclude: boolean): { value: string, position: number}  | undefined;
+    public seekOf(charsOrReg: RegExp | string, exclude: boolean = false): { value: string, position: number } | undefined {
+        let index;
+        let count = 0;
+        if (charsOrReg instanceof RegExp) {
+            const rexp = charsOrReg as RegExp;
+            const read = this.current.match(rexp);
+            if (!read) return;
+            index = read.index;
+            count = read[0].length;
+        } else {
+            const chars = charsOrReg as string;
+            index = this.current.indexOf(chars);
+            count = chars.length;
+        }
+
+        if (index > -1) {
+            const exlength = exclude ? 0 : count;
+            const result = this.current.substring(0, index + exlength);
+            return { position: index + exlength, value: result };
+        }
+    }
+
+    public nextIs(sym: string, moveForward: boolean = false) {
+        const isNext = this.current.trim().startsWith(sym);
+        if (moveForward && isNext) {
+            const pos = this.current.indexOf(sym);
+            this.index += pos + 1;
+        }
+        return isNext;
+    }
+
     public readToBalanced(rlimit: string, inside = false): string | undefined {
         const llimit = this.current.charAt(0);
         const bindex = getBalancedEnd(this.current, [llimit, rlimit]);
@@ -179,31 +219,100 @@ export abstract class TsParserBase implements ITsReader {
         return this.current.substring(0, count);
     }
 
-    protected defineEntityType(entity: string): ETsEntityTypes | undefined {
-        if (entity === 'import') return ETsEntityTypes.Import;
-        if (entity === 'function') return ETsEntityTypes.Function;
-        if (entity === '=>') return ETsEntityTypes.ArrowFunction;
-        if (entity === '=') return ETsEntityTypes.Assignment;
-        if (entity === ':') return ETsEntityTypes.TypeDefinition;
-        if (entity === 'async') return ETsEntityTypes.Async;
-        if (/^\/\*/.test(entity)) return ETsEntityTypes.Comment;
-        if (entity === '//') return ETsEntityTypes.Comment;
-        if (entity === 'abstract') return ETsEntityTypes.Abstract;
-        if (entity.startsWith('@')) return ETsEntityTypes.Decorator;
-        if (entity.startsWith('(')) return ETsEntityTypes.Argument;
-        if (entity.startsWith('[')) return ETsEntityTypes.OpenSquareBracket;
-        if (entity.startsWith(']')) return ETsEntityTypes.CloseSquareBracket;
+    protected defineEntityType(entity: string): ETsEntitySymbolTypes | undefined {
+        if (entity === 'import') return ETsEntitySymbolTypes.Import;
+        if (entity === 'function') return ETsEntitySymbolTypes.Function;
+        if (entity === '=>') return ETsEntitySymbolTypes.ArrowFunction;
+        if (entity === '=') return ETsEntitySymbolTypes.Assignment;
+        if (entity === ':') return ETsEntitySymbolTypes.TypeDefinition;
+        if (entity === 'async') return ETsEntitySymbolTypes.Async;
+        if (/^\/\*/.test(entity)) return ETsEntitySymbolTypes.Comment;
+        if (entity === '//') return ETsEntitySymbolTypes.Comment;
+        if (entity === 'abstract') return ETsEntitySymbolTypes.Abstract;
+        if (entity.startsWith('@')) return ETsEntitySymbolTypes.Decorator;
+        if (entity.startsWith('(')) return ETsEntitySymbolTypes.ArgumentStart;
+        if (entity.startsWith('[')) return ETsEntitySymbolTypes.OpenSquareBracket;
+        if (entity.startsWith(']')) return ETsEntitySymbolTypes.CloseSquareBracket;
     }
 
-    private prepareCode() {
-        // first, remove all comments;
-        const comments = this.removeComments();
+    public restoreCode(source?: string): string {
+        // restore all coded strings to the original strings;
+        let code = source ?? this._code;
+        return ['"', "'", '`'].reduce((res, quote) => this.restoreStringWith(quote, res), code);
+    }
 
-        // replace all string to the coded strings;
-        ['"', "'", '`'].forEach(quote => this.replaceStringWith(quote));
+    protected restoreStringWith(quote: string, code: string) {
+        const quoteCode = quote.charCodeAt(0) as EQuoteCode;
+        this.strings[quoteCode]?.forEach((string, index) => {
+            const codeIndex = new RegExp(`"__${quoteCode}:${index}__"`, 'g');
+            code = code.replace(codeIndex, string);
+        });
+        return code;
+    }
 
-        // then restore all comments;
-        this.restoreComments(comments);
+    protected extractParameters(): any {
+        const { attributes, decorators } = this;
+        this.attributes = {};
+        this.decorators = [];
+        return { attributes, decorators };
+    }
+
+    public lock() {
+        this.lockers.push(this.index);
+    }
+
+    public unlock() {
+        if (this.lockers.length) {
+            this.index = this.lockers.pop() || 0;
+        }
+    }
+
+    public apply() {
+        this.lockers.pop();
+    }
+
+    private replaceStringWith(quote: string) {
+        let { _code: code } = this;
+        let index = 0;
+        const quoteCode = quote.charCodeAt(0) as EQuoteCode;
+        this.strings[quoteCode] = [];
+        while (true) {
+            const start = code.indexOf(quote, index);
+            if (start === -1) break;
+            let end = start;
+            while(true) {
+                end = code.indexOf(quote, end + 1);
+                if (code.charAt(end - 1) === '\\') continue;
+                break;
+            }
+
+            if (end === -1) break;
+
+            const string = code.substring(start, end + 1);
+            const codeIndex = this.strings[quoteCode].push(string) - 1;
+            const codeSign = `"__${quoteCode}:${codeIndex}__"`;
+            code = code.substring(0, start) + codeSign + code.substring(end + 1);
+            index = start + codeSign.length + 1;
+        }
+        this._code = code;
+    }
+
+    private restoreComments(comments: any) {
+        const ckeys = Object.keys(comments);
+        ckeys.forEach((key) => {
+            const commentAKey = `\x01_${key}`;
+            const commentBKey = `\x02_${key}`;
+            const indexA = this._code.indexOf(commentAKey);
+            const indexB = this._code.indexOf(commentBKey);
+            if (indexA > -1) {
+                this._code = this._code.replace(commentAKey, comments[key]);
+                return;
+            }
+            if (indexB > -1) {
+                this._code = this._code.replace(commentBKey, comments[key]);
+                return;
+            }
+        });
     }
 
     private removeComments() {
@@ -237,84 +346,15 @@ export abstract class TsParserBase implements ITsReader {
         return comments;
     }
 
-    private restoreComments(comments: any) {
-        const ckeys = Object.keys(comments);
-        ckeys.forEach((key) => {
-            const commentAKey = `\x01_${key}`;
-            const commentBKey = `\x02_${key}`;
-            const indexA = this._code.indexOf(commentAKey);
-            const indexB = this._code.indexOf(commentBKey);
-            if (indexA > -1) {
-                this._code = this._code.replace(commentAKey, comments[key]);
-                return;
-            }
-            if (indexB > -1) {
-                this._code = this._code.replace(commentBKey, comments[key]);
-                return;
-            }
-        });
-    }
+    private prepareCode() {
+        // first, remove all comments;
+        const comments = this.removeComments();
 
-    public restoreCode(source?: string): string {
-        // restore all coded strings to the original strings;
-        let code = source ?? this._code;
-        return ['"', "'", '`'].reduce((res, quote) => this.restoreStringWith(quote, res), code);
-    }
+        // replace all string to the coded strings;
+        ['"', "'", '`'].forEach(quote => this.replaceStringWith(quote));
 
-    protected restoreStringWith(quote: string, code: string) {
-        const quoteCode = quote.charCodeAt(0) as EQuoteCode;
-        this.strings[quoteCode]?.forEach((string, index) => {
-            const codeIndex = new RegExp(`"__${quoteCode}:${index}__"`, 'g');
-            code = code.replace(codeIndex, string);
-        });
-        return code;
-    }
-
-    private replaceStringWith(quote: string) {
-        let { _code: code } = this;
-        let index = 0;
-        const quoteCode = quote.charCodeAt(0) as EQuoteCode;
-        this.strings[quoteCode] = [];
-        while (true) {
-            const start = code.indexOf(quote, index);
-            if (start === -1) break;
-            let end = start;
-            while(true) {
-                end = code.indexOf(quote, end + 1);
-                if (code.charAt(end - 1) === '\\') continue;
-                break;
-            }
-
-            if (end === -1) break;
-
-            const string = code.substring(start, end + 1);
-            const codeIndex = this.strings[quoteCode].push(string) - 1;
-            const codeSign = `"__${quoteCode}:${codeIndex}__"`;
-            code = code.substring(0, start) + codeSign + code.substring(end + 1);
-            index = start + codeSign.length + 1;
-        }
-        this._code = code;
-    }
-
-    lock() {
-        this.lockers.push(this.index);
-    }
-
-    unlock() {
-        if (this.lockers.length) {
-            this.index = this.lockers.pop() || 0;
-        }
-    }
-
-    apply() {
-        this.lockers.pop();
-    }
-
-    protected extractParameters(): any {
-        const { attributes, decorators } = this;
-        this.attributes = {};
-        this.decorators = [];
-        return { attributes, decorators };
+        // then restore all comments;
+        this.restoreComments(comments);
     }
 
     [util.inspect.custom]() {

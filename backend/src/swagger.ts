@@ -25,21 +25,19 @@ const options = {
         },
     },
     apis: [
-        // './src/openapi/tests/code-samples/initial.ts', // tests
+        './src/openapi/tests/code-samples/initial.ts', // tests
+        // './src/openapi/tests/code-samples/artifacts.actual.ts', // tests
+        './src/openapi/tests/code-samples/temporary.ts', // tests
         // './src/openapi/tests/code-samples/models.actual.ts', // tests
         // './src/openapi/tests/code-samples/dbbase.actual.ts', // tests
         // './src/openapi/tests/code-samples/entity.model.ts', // tests
         // './src/openapi/tests/code-samples/navigation.actual.ts', // tests
         // './src/openapi/tests/code-samples/routers.actual.ts', // tests
-        //'./src/openapi/tests/code-samples/artifacts.actual.ts', // tests
-        // './src/openapi/tests/code-samples/temporary.ts', // tests
         // './src/openapi/tests/code-samples/core.model.ts', // tests
 
-
-
-        './src/backend/core/models.ts', // models
-        './src/backend/entities/models/**.ts', // models
-        './src/server/**.ts', // paths
+        // './src/backend/core/models.ts', // models
+        // './src/backend/entities/models/**.ts', // models
+        // './src/server/**.ts', // paths
     ],
 };
 

@@ -1,9 +1,9 @@
 import { OAModule } from './oa-module';
-import { TsClass } from '../ts-parser/ts-type/ts-type-definitions/ts-class-definition/ts-class-definition';
+import { TsClass } from '../ts-parser/ts-types/ts-type-definitions/ts-class-definition/ts-class-definition';
 import { IOpenApiGather, IOpenApiSerializable, IPathsDefinition, ISchema, ITag } from './model';
 import { mergeDeep } from '../utils';
-import { TsBaseTypeDefinition } from '../ts-parser/ts-type/ts-type-definitions/ts-base-type-definition';
-import { TsEntity } from '../ts-parser/ts-readers/model';
+import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
+import { TsEntity } from '../ts-parser/model';
 
 export class OpenApi implements IOpenApiGather, IOpenApiSerializable {
     components: { schemas: { [key: string]: ISchema} } = {
@@ -31,7 +31,8 @@ export class OpenApi implements IOpenApiGather, IOpenApiSerializable {
     }
 
     findType(name: string): TsBaseTypeDefinition | null {
-        const res = this.types.find(type => type.name === name);
+        const schema = this.findSchema(name)
+        const res = schema ? schema.entity : this.types.find(type => type.name === name);
         res?.setCurrentGatherer(this);
         return res;
     }

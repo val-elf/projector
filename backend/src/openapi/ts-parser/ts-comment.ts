@@ -1,4 +1,5 @@
-import { ETsEntityTypes, ITsReader, TsEntity } from './ts-readers/model';
+import { ETsEntityTypes, ITsParser } from './ts-readers/model';
+import { TsEntity } from './model';
 import util from "util";
 
 export enum ETsCommentType {
@@ -21,7 +22,7 @@ export class TsComment extends TsEntity {
         return this.lines[0].replace('@OA:', '').trim();
     }
 
-    constructor(reader: ITsReader);
+    constructor(reader: ITsParser);
     constructor(
         comment: string,
         commentType: ETsCommentType
@@ -56,7 +57,7 @@ export class TsComment extends TsEntity {
         return this.indents[line];
     }
 
-    private static read(parser: ITsReader): { comment: string, commentType: ETsCommentType } | undefined {
+    private static read(parser: ITsParser): { comment: string, commentType: ETsCommentType } | undefined {
         const commentType: ETsCommentType = parser.readString(2) as ETsCommentType;
         const endComment = commentType === '//' ? '\n' : '*/';
         const comment = parser.expectOf(endComment);

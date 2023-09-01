@@ -1,5 +1,5 @@
-import { TsEntity } from '../ts-parser/ts-readers/model';
-import { TsBaseTypeDefinition } from '../ts-parser/ts-type/ts-type-definitions/ts-base-type-definition';
+import { ITsEntity } from '../ts-parser/model';
+import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
 
 export interface IOpenApiGather {
     components: {
@@ -7,8 +7,8 @@ export interface IOpenApiGather {
             [key: string]: ISchema;
         };
     };
-    get currentContext(): TsEntity;
-    set currentContext(value: TsEntity);
+    get currentContext(): ITsEntity;
+    set currentContext(value: ITsEntity);
     findSchema(name: string): ISchema | null;
     findType(name: string): TsBaseTypeDefinition | null;
     typeExists(typeName: string): boolean;

@@ -1,5 +1,5 @@
 import { CommonOADefinition } from './common-oa-definition';
-import { TsBaseTypeDefinition } from '../ts-parser/ts-type/ts-type-definitions/ts-base-type-definition';
+import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
 import { IOpenApiGather, IOpenApiSerializable, ISchema } from './model';
 import { OpenApi } from './openApi';
 

@@ -1,8 +1,6 @@
 import { ICommonEntity } from '~/backend/core/models';
 import { IDbObjectBase } from './db-base.models';
 
-// @OA:schema
-// description: Base timespot interface
 export interface IBaseTimespot {
     // @OA:property
     // description: Timespot start date
@@ -37,6 +35,10 @@ export interface IBaseTimespot {
     locked?: boolean;
 }
 
+// @OA:schema
+// description: Timespot interface
 export interface ITimespot extends IBaseTimespot, Partial<IDbObjectBase> { }
 
+// @OA:schema
+// description: Init Timespot interface
 export interface IInitTimespot extends IBaseTimespot, Partial<ICommonEntity> { }
