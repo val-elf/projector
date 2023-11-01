@@ -18,6 +18,7 @@ function detectMediaType(file: any){
 
 // @OA:tag
 // name: Documents
+// description: Documents management APIs
 @Router()
 export class DocumentsRouter implements IRouter {
 	model: Documents;
@@ -28,51 +29,60 @@ export class DocumentsRouter implements IRouter {
 
 	// @OA:route
 	// description: Create a document
-	@Route(EMethod.POST, '/owner/:owner/documents')
-	public async createDocument(key, data: IInitDocument & { _owner?: string }) {
+	// security: [APIKeyHeader: []]
+	// parameters: [ownerId: Id of the owner]
+	// requestBody: [item: IInitDocument]
+	// responses: [200: Return of the document, 401: Bad Request]
+	@Route(EMethod.POST, '/owner/:ownerId/documents')
+	public async createDocument(key, data: IInitDocument): Promise<IDocument> {
 		console.warn('[API] create Document', key);
-		if (key.owner) data._owner = key.owner;
-		return await this.model.createDocument(data);
+		return await this.model.createDocument(data, key.owner);
 	}
 
 	// @OA:route
 	// description: Get owner documents
-	@Route(EMethod.GET, '/owner/:owner/documents')
-	public async getOwnerDocuments(key) {
+	// security: [APIKeyHeader:[]]
+	// parameters: [ownerId: Id of the owner]
+	// responses: [200: List of the owner's document, 401: Bad Request]
+	@Route(EMethod.GET, '/owner/:ownerId/documents')
+	public async getOwnerDocuments(key): Promise<IDocument[]> {
 		console.warn('[API] Get Owner Documents', key);
 		const list = await this.model.getDocuments(key.owner);
-		/*list.result.forEach(item => {
-			const { _file } = item;
-			if(_file) item.metadata = {
-				...item.metadata,
-				...detectMediaType(_file)
-			};
-		});*/
-		return list;
+		return list.result;
 	}
 
 	// @OA:route
 	// description: Delete a document
-	@Route(EMethod.DELETE, '/documents/:document')
-	public async deleteDocument(key) {
+	// security: [APIKeyHeader:[]]
+	// parameters: [documentId: Id of the document]
+	// responses: [200: Deleted flag for the operation,401: Bad Request]
+	@Route(EMethod.DELETE, '/documents/:documentId')
+	public async deleteDocument(key): Promise<{ deleted: boolean }> {
 		console.warn('[API] Delete Owner Document', key);
-		await this.model.removeDocument(key.document);
-		return { deleted: true };
+		const deleted = await this.model.removeDocument(key.document);
+		return { deleted };
 	}
 
 	// @OA:route
 	// description: Update a document
+	// security: [APIKeyHeader:[]]
+	// parameters: [documentId: Id of the updated document]
+	// requestBody: [item: IInitDocument]
+	// responses: [200: Updated document,401: Bad Request]
 	@Route(EMethod.PUT, '/documents/:documentId')
-	public async updateDocument(key, document) {
+	public async updateDocument(key, document: IInitDocument): Promise<IDocument> {
 		console.warn('[API] Update Document', key);
-		if (document) delete document._file;
+		if (document) delete (document as any)._file;
 		return await this.model.updateDocument(document);
 	}
 
 	// @OA:route
-	// description: Get a document
-	@Route(EMethod.GET, '/documents/:document')
-	public async getDocument(key) {
+	// description: Get a particular document
+	// security: [APIKeyHeader:[]]
+	// parameters: [documentId: Id of the document]
+	// responses: [200: Document item, 401: Bad Request]
+	@Route(EMethod.GET, '/documents/:documentId')
+	public async getDocument(key): Promise<IDocument> {
 		console.warn('[API] Get Document', key);
 		return await this.model.getDocument(key.document);
 	}

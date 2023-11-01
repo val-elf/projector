@@ -1,5 +1,5 @@
 import { DbBridge, DbModel } from '../core';
-import { TFindList, TObjectId } from '../core/models';
+import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { Files } from './files';
@@ -10,7 +10,8 @@ export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 	private fileManager = DbBridge.getInstance<Files>('files');
 
 	@PermissionsCheck({ permissions: [] })
-	async createDocument(doc: IInitDocument) {
+	async createDocument(doc: IInitDocument, ownerId: string) {
+		this.setOwners([ownerId]);
 		return this.model.create(doc);
 	}
 
@@ -28,7 +29,7 @@ export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 	@PermissionsCheck({ permissions: [] })
 	public async getDocuments(owner: string) {
 		this.setOwners(owner);
-		const list = (await this.model.findList()) as TFindList<IDocument>;
+		const list = (await this.model.findList()) as IFindList<IDocument>;
 
 		//get files if its consist
 		const fileOwners = list.result.map(item => (item._id as string));

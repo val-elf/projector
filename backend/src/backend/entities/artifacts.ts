@@ -1,5 +1,5 @@
 import { DbModel } from '../core';
-import { TFindArray, TFindList, TObjectId } from '../core/models';
+import { IFindList, TObjectId } from '../core/models';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { IArtifact, IInitArtifact, IMetadata, IUser } from './models';
 import { Service } from '~/network/service';
@@ -14,7 +14,7 @@ export class Artifacts extends DbObjectAncestor<IArtifact, IInitArtifact> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async getArtifactsList(projectId: TObjectId, metadata: IMetadata): Promise<TFindArray<IArtifact>> {
+	async getArtifactsList(projectId: TObjectId, metadata: IMetadata): Promise<IArtifact[]> {
 		this.setOwners([projectId]);
 		const arg: any = {};
 		if (metadata.hasContent) arg.hasContent = metadata.hasContent === 'true';
@@ -24,7 +24,7 @@ export class Artifacts extends DbObjectAncestor<IArtifact, IInitArtifact> {
 			}
 		}
 		const items = await this.model.findList(arg, { 'preview.preview': 0 }, metadata);
-		return (items as TFindList<IArtifact>).result;
+		return (items as IFindList<IArtifact>).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })

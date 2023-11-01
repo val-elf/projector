@@ -1,5 +1,5 @@
 import { DbBridge, DbModel } from '../core';
-import { TFindList, TObjectId } from '../core/models';
+import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { IArtifact, ICharacter, IDbObject, IInitCharacter, IMetadata, IOwned, IUser } from './models';
@@ -11,7 +11,7 @@ export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async createCharacter(
-		character: IInitCharacter & { owners: string[] },
+		character: IInitCharacter,
 		projectId: string,
 		user?: IUser
 	) {
@@ -44,7 +44,7 @@ export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 			})};
 		}*/
 
-		const list = (await this.model.findList({}, { 'preview.preview': 0 }, metadata)) as TFindList<ICharacter>;
+		const list = (await this.model.findList({}, { 'preview.preview': 0 }, metadata)) as IFindList<ICharacter>;
 		return list.result;
 	}
 
@@ -55,7 +55,7 @@ export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 			{ 'preview.preview': 0 }
 		);
 
-		return (list as TFindList<IArtifact & IOwned>).result;
+		return (list as IFindList<IArtifact & IOwned>).result;
 			// .filter(art => art.characters.find(char => char._id.toString() === characterId))
 			/*.map(async art => {
 				const charObjects = await this.dbObjectModel

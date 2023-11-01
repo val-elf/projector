@@ -18,13 +18,14 @@ export interface IDbEntity<TEntity extends ICommonEntity> {
     _doc: TEntity
 }
 
-export type TFindArray<T extends ICommonEntity> = T[];
-export type TFindList<T extends ICommonEntity> = {
-    result: TFindArray<T>;
+// @OA:schema
+// description: result of the elements of list
+export interface IFindList<T extends ICommonEntity> {
+    result: T[];
     options: { [key: string]: string | number | boolean | null | undefined };
 };
 
-export type TFindListResult<T extends ICommonEntity> =  TFindList<T> | { count: number };
+export type TFindListResult<T extends ICommonEntity> =  IFindList<T> | { count: number };
 
 export interface IRouter {
     model: IEntityController<any, any>;

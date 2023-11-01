@@ -1,5 +1,5 @@
 import { DbModel } from '../core';
-import { TFindList, TObjectId } from '../core/models';
+import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { IInitLocation, ILocation, IMetadata } from './models';
@@ -24,7 +24,7 @@ export class Locations extends DbObjectAncestor<ILocation, IInitLocation> {
 			}, [projectId, metadata.orderByType]);
 		}*/
 		this.setOwners([projectId]);
-		return ((await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)) as TFindList<ILocation>).result;
+		return ((await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)) as IFindList<ILocation>).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })

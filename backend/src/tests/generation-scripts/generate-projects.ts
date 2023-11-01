@@ -2,11 +2,11 @@ import { IInitPreviewed, IInitProject, IProject } from '~/backend/entities/model
 import { core } from '../core';
 import { IGenerationScript } from '../model';
 import { utils } from '../utils';
-import { TFindList } from '~/backend/core/models';
+import { IFindList } from '~/backend/core/models';
 
 export class GenerateProjects implements IGenerationScript {
     public static async getRandomProjects(count = 3) {
-        const projects = (await core.get<TFindList<IProject>>('/projects', {})).result;
+        const projects = (await core.get<IFindList<IProject>>('/projects', {})).result;
         const projectIds = [];
         for(let a = 0; a < count; a++) {
             const aprojects = projects.filter(p => !projectIds.includes(p._id));

@@ -16,7 +16,7 @@ export class CategoriesRouter implements IRouter {
 	}
 
 	// @OA:route
-	// security: [ APIKeyHeader: []]
+	// security: [APIKeyHeader: []]
 	// description: Get count of categories
 	// parameters: [ownerId: Owner ID]
 	// responses: [200: List of categories, 401: Bad request]
@@ -27,7 +27,7 @@ export class CategoriesRouter implements IRouter {
 	}
 
 	// @OA:route
-	// security: [ APIKeyHeader: []]
+	// security: [APIKeyHeader: []]
 	// description: Get count of categories
 	// parameters: [ownerId: Owner ID]
 	// requestBody: [item: IInitCategory]
@@ -39,7 +39,7 @@ export class CategoriesRouter implements IRouter {
 	}
 
 	// @OA:route
-	// security: [ APIKeyHeader: []]
+	// security: [APIKeyHeader: []]
 	// description: Get count of categories
 	// parameters: [ownerId: Owner ID, categoryId: Category ID]
 	// requestBody: [item: IInitCategory]

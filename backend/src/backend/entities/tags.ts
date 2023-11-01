@@ -1,5 +1,5 @@
 import { DbBridge, DbModel } from '../core';
-import { TFindList, TObjectId } from '../core/models';
+import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { DbObjectController } from './dbobjects';
 import { PermissionsCheck } from './decorators/permissions-check';
@@ -15,13 +15,13 @@ export class Tags extends DbObjectAncestor<ITag, ITag> {
     @PermissionsCheck({ permissions: [] })
     public async getTagsList(ownerId: TObjectId) {
         this.setOwners(ownerId);
-        return (await this.model.findList() as TFindList<ITag>).result;
+        return (await this.model.findList() as IFindList<ITag>).result;
     }
 
     @PermissionsCheck({ permissions: [] })
     public async getTagsListByNames(ownerIds: TObjectId[], names: string[]) {
         this.setOwners(ownerIds);
-        return (await this.model.findList({ name: { $in: names } }) as TFindList<ITag>).result;
+        return (await this.model.findList({ name: { $in: names } }) as IFindList<ITag>).result;
     }
 
     @PermissionsCheck({ permissions: [] })
