@@ -18,8 +18,6 @@ export enum EArtifactSubtype {
     FireArms = 'fireArms',
 }
 
-// @OA:schema
-// description: Artifact entity base schema
 interface IBaseArtifact {
     // @OA:property
     // description: Artifact name
@@ -41,7 +39,7 @@ interface IBaseArtifact {
 
 // @OA:schema
 // description: Common artifact entity
-export interface IArtifact extends IBaseArtifact, Partial<IDbObjectBase>, Partial<IPreviewed> { }
+export interface IArtifact extends IBaseArtifact, IDbObjectBase, Partial<IPreviewed> { }
 
 // @OA:schema
 // description: Update artifact entity client schema (create or update)

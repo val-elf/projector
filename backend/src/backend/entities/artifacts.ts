@@ -1,14 +1,14 @@
 import { DbModel } from '../core';
 import { TFindArray, TFindList, TObjectId } from '../core/models';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IArtifact, IMetadata, IUser } from './models';
+import { IArtifact, IInitArtifact, IMetadata, IUser } from './models';
 import { Service } from '~/network/service';
 import { DbObjectAncestor } from './dbbase';
 
 @DbModel({
 	model: 'artifacts',
 })
-export class Artifacts extends DbObjectAncestor<IArtifact> {
+export class Artifacts extends DbObjectAncestor<IArtifact, IInitArtifact> {
 	constructor(app: Service) {
 		super(app);
 	}
@@ -28,7 +28,7 @@ export class Artifacts extends DbObjectAncestor<IArtifact> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async createArtifact(item: IArtifact & { owners: string[] }, projectId: string, user?: IUser) {
+	async createArtifact(item: IInitArtifact & { owners: string[] }, projectId: string) {
 		this.setOwners([projectId]);
 		return this.model.create(item);
 	}
@@ -39,7 +39,7 @@ export class Artifacts extends DbObjectAncestor<IArtifact> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async updateArtifact(item: IArtifact) {
+	async updateArtifact(item: IInitArtifact): Promise<IArtifact> {
 		return this.model.updateItem(item);
 	}
 

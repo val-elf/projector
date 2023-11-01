@@ -3,7 +3,7 @@ import { config as outerConfig } from "../../config";
 import { ICommonEntity, TFindListResult, TObjectId } from './models';
 import { IEntityController, IPreselectResult } from './entity-processor';
 
-export const controllers: { [key: string]: IEntityController<any> } = {};
+export const controllers: { [key: string]: IEntityController<unknown, unknown> } = {};
 
 function TransactionMethod() {
 	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
@@ -54,17 +54,17 @@ export const reconnect = async (config = outerConfig) => {
 	}
 };
 
-export class DbBridge<TEntity extends ICommonEntity> {
+export class DbBridge<TEntity extends ICommonEntity, TInitEntity extends ICommonEntity> {
 	private dbModel: db.Model<TEntity, {}, {}>;
 	private name: string;
 	private owner?: { model: string, foreignField: string };
 
 	public get modelName(): string { return this.name; }
-    private static _models: { [key: string]: DbBridge<any> } = {};
+    private static _models: { [key: string]: DbBridge<any, any> } = {};
 
 	private transactionOptions?: ITransactionOptions;
 
-	public itemUpdate$: Subject<Partial<TEntity>> = new Subject();
+	public itemUpdate$: Subject<Partial<TInitEntity>> = new Subject();
 	public itemLoad$: Subject<TEntity> = new Subject();
 
 	public get transaction(): ITransactionOptions {
@@ -85,32 +85,32 @@ export class DbBridge<TEntity extends ICommonEntity> {
 		this.dbModel = db.model<TEntity>(name, schema, name);
 	}
 
-	public static getBridgeByType(e: new () => IEntityController<ICommonEntity>) {
+	public static getBridgeByType(e: new () => IEntityController<ICommonEntity, ICommonEntity>) {
 		const modelName: string = (e as any).modelName;
 		return this.getBridge(modelName);
 	}
 
-	public static getBridge<TEntity extends ICommonEntity>(
+	public static getBridge<TEntity extends ICommonEntity, TInitEntity extends ICommonEntity = TEntity>(
         modelName: string,
         schema?: db.Schema,
 		owner?: {
 			model: string,
 			foreignField: string,
 		}
-    ): DbBridge<TEntity> {
+    ): DbBridge<TEntity, TInitEntity> {
 		schema = schema || new db.Schema({}, { strict: false });
 		if(this.models[modelName]) return this.models[modelName];
-		const model = new DbBridge<TEntity>(modelName, schema, owner);
+		const model = new DbBridge<TEntity, TInitEntity>(modelName, schema, owner);
 		this.models[modelName] = model;
 		return model;
 	}
 
-	public static getNameByInstance(m: IEntityController<any>) {
+	public static getNameByInstance(m: IEntityController<any, any>) {
 		const names = Object.keys(controllers)
 		return names.find(name => controllers[name] === m);
 	}
 
-	public static getInstance<TController extends IEntityController<any>>(model: string) {
+	public static getInstance<TController extends IEntityController<any, any>>(model: string) {
 		return controllers[model] as TController;
 	}
 
@@ -139,19 +139,6 @@ export class DbBridge<TEntity extends ICommonEntity> {
 			meta.limit = count;
 		return meta;
 	}
-
-	/*eval(func, args) {
-		return new Promise((resolve, reject) => {
-			db.connection.db.command(func, args, (err, res) => {
-				if(err){
-					reject(err);
-					return;
-				}
-				const result = res.map(item => this.itemLoad$.next(item));
-				resolve(result);
-			});
-		});
-	}*/
 
 	private prepareAggregation(
 		condition?: any,
@@ -256,8 +243,8 @@ export class DbBridge<TEntity extends ICommonEntity> {
 	}
 
 	@TransactionMethod()
-	public async create(data: Partial<TEntity>): Promise<TEntity> {
-		let cp = { ...data };
+	public async create(data: Partial<TInitEntity>): Promise<TEntity> {
+		let cp: any = { ...data };
 		const controller = controllers[this.modelName];
 
 		if (controller?.preCreate) {
@@ -269,24 +256,24 @@ export class DbBridge<TEntity extends ICommonEntity> {
 	}
 
 	@TransactionMethod()
-	public async update(condition: db.FilterQuery<TEntity>, obj: Partial<TEntity>): Promise<TEntity> {
-		let cp = { ...obj };
+	public async update(condition: db.FilterQuery<TEntity>, obj: Partial<TInitEntity>): Promise<TEntity> {
+		let cp: any = { ...obj };
 		const controller = controllers[this.modelName];
 		if (controller?.preUpdate) {
 			// making preUpdate operations
 			cp = await controller.preUpdate(cp);
 		}
 		// remove all extra fields
-		this.itemUpdate$.next(cp as TEntity);
+		this.itemUpdate$.next(cp as TInitEntity);
 		const res = await this.dbModel.updateMany(condition, cp as db.UpdateQuery<TEntity>, {});
 		return res[0];
 	}
 
 	@TransactionMethod()
-	async updateItem(item: Partial<TEntity>): Promise<TEntity> {
+	async updateItem(item: Partial<TInitEntity>): Promise<TEntity> {
 		if(!item._id) throw new Error("Object should be exist!");
 
-		let cp = { ...item };
+		let cp: any = { ...item };
 
 		const controller = controllers[this.modelName];
 		if (controller?.preUpdate) {

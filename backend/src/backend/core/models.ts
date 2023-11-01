@@ -27,6 +27,6 @@ export type TFindList<T extends ICommonEntity> = {
 export type TFindListResult<T extends ICommonEntity> =  TFindList<T> | { count: number };
 
 export interface IRouter {
-    model: IEntityController<any>;
+    model: IEntityController<any, any>;
     configure(app: Service);
 }

@@ -1,14 +1,14 @@
 import { DbBridge, DbModel } from "../core";
-import { ITimeline, ITimespot } from './models';
+import { IInitTimeline, ITimeline, ITimespot } from './models';
 import { TObjectId } from '../core/models';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { DbObjectAncestor } from './dbbase';
 import { Timespots } from './timespots';
 
-type TServerTimeline = ITimeline & { timespots?: ITimespot[] };
+type TServerTimeline = IInitTimeline & { timespots?: ITimespot[] };
 
 @DbModel({ model: 'timelines' })
-export class Timelines extends DbObjectAncestor<ITimeline> {
+export class Timelines extends DbObjectAncestor<ITimeline, IInitTimeline> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getProjectTimelines(projectId: TObjectId) {

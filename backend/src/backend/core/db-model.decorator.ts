@@ -8,11 +8,11 @@ export function DbModel({ model, owner }: {
 		foreignField: string,
 	}
 }) {
-    return <TEntityCreator extends new(...args: any[]) => IEntityController<any>>(base: TEntityCreator) => {
+    return <TEntityCreator extends new(...args: any[]) => IEntityController<any, any>>(base: TEntityCreator) => {
         return class extends base {
 
 			static modelName: string = model;
-			_model: DbBridge<any>;
+			_model: DbBridge<any, any>;
 			_owner;
 
             get model() {

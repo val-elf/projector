@@ -5,7 +5,6 @@ import fs from "fs";
 import { configureTestEnvironment, runUnitTests } from './tests';
 import SwaggerUi from 'swagger-ui-express';
 import { improveConsoleOutput } from './utils/utils';
-import { runSwaggerTests } from './swagger';
 
 const isDev = process.env.NODE_ENV === 'development' || process.argv.indexOf('--dev') > 0;
 const isTest = process.env.NODE_ENV === 'test' || process.argv.indexOf('--test') > 0;
@@ -52,9 +51,10 @@ function startClusterElement() {
 
 	import('./program').then(module => {
 		const app = express();
+		app.use(cookieParser());
+
 		import('./swagger').then(async swagger => {
-			// await runSwaggerTests();
-			const spec = await swagger.getOpenApiSpecification();
+			const spec = await swagger.getOpenApiSpecification({ silent: !isDev });
 			app.use('/swagger', SwaggerUi.serve, SwaggerUi.setup(spec, {
 				explorer: true,
 				swaggerOptions: {
@@ -65,7 +65,6 @@ function startClusterElement() {
 				res.send(spec);
 			});
 		});
-		app.use(cookieParser());
 
 		module.runExpress(app);
 	});

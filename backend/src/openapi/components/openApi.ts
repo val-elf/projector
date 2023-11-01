@@ -1,55 +1,63 @@
-import { OAModule } from './oa-module';
-import { TsClass } from '../ts-parser/ts-types/ts-type-definitions/ts-class-definition/ts-class-definition';
-import { IOpenApiGather, IOpenApiSerializable, IPathsDefinition, ISchema, ITag } from './model';
+import { IOpenApiSerializable, IPathsDefinition, IOASchema, IOATag, IOAModule } from './model';
 import { mergeDeep } from '../utils';
 import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
-import { TsEntity } from '../ts-parser/model';
+import { TsFile } from '../reader';
+import { TsClass } from '../ts-parser/ts-types/ts-type-definitions/ts-class-definition';
+import { ITsType } from '../ts-parser/ts-types';
 
-export class OpenApi implements IOpenApiGather, IOpenApiSerializable {
-    components: { schemas: { [key: string]: ISchema} } = {
-        schemas: {},
-    };
-    paths: IPathsDefinition;
-    classes: TsClass[] = [];
-    types: TsBaseTypeDefinition[] = [];
-    tags: ITag[];
-    module?: OAModule;
-
-    private context: TsEntity[] = [];
-
-    findSchema(name: string): ISchema | null {
-        // if (typeof name !== 'string') return null;
-        const res = this.components.schemas[name];
-        if (res?.entity instanceof TsBaseTypeDefinition) {
-            res.entity.setCurrentGatherer(this);
+export class OpenApi implements IOpenApiSerializable {
+    private dependencies: { [key: string]: ITsType[] } = {};
+    public addDependency(name: string, dep: ITsType) {
+        if (!this.dependencies[name]) {
+            this.dependencies[name] = [];
         }
-        return res;
+        this.dependencies[name].push(dep);
     }
 
-    typeExists(typeName: string): boolean {
-        return this.types.some(type => type.name === typeName);
+    private get tags(): IOATag[] {
+        return this.tsFiles.reduce((result, tsFile) => {
+            return result.concat(tsFile.tags);
+        }, []);
     }
 
-    findType(name: string): TsBaseTypeDefinition | null {
-        const schema = this.findSchema(name)
-        const res = schema ? schema.entity : this.types.find(type => type.name === name);
-        res?.setCurrentGatherer(this);
-        return res;
+    public get module(): IOAModule | undefined {
+        return this.tsFiles.find(tsFile => tsFile.moduleDefinition)?.moduleDefinition;
     }
 
-    addClass(cls: TsClass) {
-        this.classes.push(cls);
+    private tsFiles: TsFile[] = [];
+
+    protected getAllTypes(onlyExported = false): TsBaseTypeDefinition[] {
+        return this.tsFiles.reduce((result, tsFile) => {
+            const types = tsFile.types.filter(type => !onlyExported || type.isExport);
+            return [...result, ...types];
+        }, []);
     }
 
-    setModule(module: OAModule) {
-        this.module = module;
+    private isClassRouter(tsclass: TsClass): boolean {
+        return tsclass.decorators.some(decorator => decorator.name === 'Router');
     }
 
-    getModule() {
-        return this.module;
+    public getAllClasses(onlyRouters = false): TsClass[] {
+        return this.tsFiles.reduce((result, tsFile) => {
+            const classes = tsFile.classes.filter(cls => !onlyRouters || this.isClassRouter(cls));
+            return [...result, ...classes];
+        }, []);
     }
 
-    mergePaths(paths: IPathsDefinition[]): IPathsDefinition {
+    protected get allComponents(): Map<string, IOASchema> {
+        return this.tsFiles.reduce((result, tsFile) => {
+            tsFile.schemas.forEach(schema => {
+                result.set(schema.name, schema);
+            });
+            return result;
+        }, new Map<string, IOASchema>());
+    }
+
+    public addTsFile(tsFile: TsFile) {
+        this.tsFiles.push(tsFile);
+    }
+
+    private mergePaths(paths: IPathsDefinition[]): IPathsDefinition {
         const result = {};
         paths.forEach(pathDef => {
             const paths = Object.keys(pathDef);
@@ -67,35 +75,44 @@ export class OpenApi implements IOpenApiGather, IOpenApiSerializable {
         return result;
     }
 
-    set currentContext(value: TsEntity) {
-        this.context.push(value);
+    private outSchema(schemaName: string, output: { [key: string]: any }) {
+        if (output[schemaName]) return;
+
+        if (this.dependencies[schemaName]) {
+            const deps = this.dependencies[schemaName];
+            delete this.dependencies[schemaName];
+            deps.filter(dep => !!dep.referencedTypeName).forEach(dep => this.outSchema(dep.referencedTypeName, output));
+        }
+        const schema = this.allComponents.get(schemaName);
+        Object.assign(output, schema.toOpenApi());
     }
 
-    get currentContext(): TsEntity {
-        return this.context[this.context.length - 1];
-    }
-
-    releaseContext() {
-        this.context.pop();
+    private getAllSchemas(): { [key: string]: IOASchema } {
+        const allComponents = this.allComponents;
+        const allSchemaNames = [...allComponents.keys()];
+        const result = allSchemaNames.reduce((result, schemaName) => {
+            this.outSchema(schemaName, result);
+            return result;
+        }, {});
+        return result;
     }
 
     toOpenApi() {
         const { tags } = this;
-        const allSchemas = Object.keys(this.components.schemas);
-        const { paths: opaths } = this;
-        const cpaths = this.classes.map(cls => cls.toOpenApi(this));
-        const paths = this.mergePaths([opaths, ...cpaths]);
-        const moduleBase = this.module?.toOpenApi(this) ?? {};
+        const allSchemas = this.getAllSchemas();
+        const cpaths = this.getAllClasses().map(cls => cls.toOpenApi());
+        const paths = this.mergePaths([{}, ...cpaths]);
+        const moduleBase = this.module?.toOpenApi() ?? {};
 
         return mergeDeep(moduleBase, {
-            tags: tags.map(tag => tag.toOpenApi(this)),
+            tags: tags.map(tag => tag.toOpenApi()),
             paths,
             components: {
-                schemas: allSchemas.reduce((result, schemaName) => {
-                    const schema = this.components.schemas[schemaName] as IOpenApiSerializable;
-                    return Object.assign(result, schema.toOpenApi(this));
-                }, {})
-            }
+                schemas: allSchemas,
+            },
         });
     }
 }
+
+export const OpenApiInstance = new OpenApi();
+

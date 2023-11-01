@@ -3,7 +3,7 @@ import { Projects } from '../backend';
 import { IRouter } from '../backend/core/models';
 import { Service, Route, Router } from '../network';
 import { utils } from '../utils/utils';
-import { IInitProject, IProject } from '~/backend/entities/models';
+import { IInitProject, IPreviewed, IProject } from '~/backend/entities/models';
 
 // @OA:tag
 // name: Projects
@@ -17,7 +17,7 @@ export class ProjectsRouter implements IRouter {
     }
 
     private async prepareProject(project: IInitProject) {
-        return await utils.preparePreview<IProject>(project);
+        return await utils.preparePreview<IInitProject & Partial<IPreviewed>>(project);
     }
 
     // @OA:route
@@ -52,9 +52,9 @@ export class ProjectsRouter implements IRouter {
     // @OA:route
     // description: Update project
     @Route(EMethod.PUT, '/projects/:project')
-    async updateProject(key, project) {
+    async updateProject(key, project: IInitProject) {
         console.warn('[API] Update project', key);
-        await this.prepareProject(project);
-        return await this.model.updateProject(project);
+        const updated = await this.prepareProject(project);
+        return await this.model.updateProject(updated);
     }
 }

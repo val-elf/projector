@@ -2,7 +2,7 @@ import { EMethod, Router, Route } from '~/network';
 import { Documents } from '../backend';
 import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
-import { IDocument } from '~/backend/entities/models';
+import { IDocument, IInitDocument } from '~/backend/entities/models';
 
 function detectMediaType(file: any){
 	const res: any = {};
@@ -29,7 +29,7 @@ export class DocumentsRouter implements IRouter {
 	// @OA:route
 	// description: Create a document
 	@Route(EMethod.POST, '/owner/:owner/documents')
-	public async createDocument(key, data: IDocument & { _owner?: string }) {
+	public async createDocument(key, data: IInitDocument & { _owner?: string }) {
 		console.warn('[API] create Document', key);
 		if (key.owner) data._owner = key.owner;
 		return await this.model.createDocument(data);

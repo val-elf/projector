@@ -24,7 +24,7 @@ export class ObjectsRouter implements IRouter {
 	// @OA:route
 	// description: Get full information about database object
 	@Route(EMethod.GET, '/dbobjects/:objectId')
-	public async getObject (key) {
+	public async getObject(key) {
 		console.warn('[API] Get DbObject', key);
 		return await this.model.getDbObject(key.objectId);
 	}
@@ -34,7 +34,7 @@ export class ObjectsRouter implements IRouter {
 		response.setError(new Error('Not found'), 404);
 	}
 
-	public async getPreviewHash (model, objectId) {
+	public async getPreviewHash(model, objectId) {
 		let obj = await model.find({ _id: objectId }, { }, {});
 		obj = obj.pop();
 		if (obj.preview && obj.preview.hash) return obj.preview.hash;
@@ -49,7 +49,7 @@ export class ObjectsRouter implements IRouter {
 	// @OA:route
 	// description: Get preview image of database object by its type
 	@Route(EMethod.GET, '/dbobjects/:objectId/preview/:type')
-	public async getObjectPreviewByType (key, ...args: any[]) {
+	public async getObjectPreviewByType(key, ...args: any[]) {
 		console.warn('[API] Get DbObject preview by type', key, args);
 
 		const { request, response } = this.app;
@@ -61,7 +61,7 @@ export class ObjectsRouter implements IRouter {
 	// @OA:route
 	// description: Get preview image of database object
 	@Route(EMethod.GET, '/dbobjects/:objectId/preview')
-	public async getObjectPreview (key) {
+	public async getObjectPreview(key) {
 		console.warn('[API] Get DbObject preview', key);
 
 		const { request, response } = this.app;
@@ -76,7 +76,7 @@ export class ObjectsRouter implements IRouter {
 		return await this.getObjectPreviewInfo(key.objectId, type, oldEtag, requestCache, response);
 	}
 
-	private async getObjectPreviewInfo (objectId: TObjectId, type: string, oldEtag: string, requestCache: string, response: Response) {
+	private async getObjectPreviewInfo(objectId: TObjectId, type: string, oldEtag: string, requestCache: string, response: Response) {
 		response.setHeader('Content-Type', 'image/jpeg');
 		response.setHeader('Cache-Control', 'max-age=86400');
 		const objectModel = DbBridge.getBridge(type);

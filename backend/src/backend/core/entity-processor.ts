@@ -9,22 +9,22 @@ export interface IPreselectResult {
 	$projection?: any,
 }
 
-export interface IEntityController<T extends ICommonEntity> {
-	model: DbBridge<T>;
+export interface IEntityController<T extends ICommonEntity, C extends ICommonEntity> {
+	model: DbBridge<T, C>;
 	registryModel(): void;
-	preCreate?(item: T, ...options: any[]): Promise<T>;
-	preUpdate?(item: T, ...options: any[]): Promise<T>;
-	preSelect?(...options: any[]): Promise<IPreselectResult>;
+	preCreate?(item: T, ...options: unknown[]): Promise<T>;
+	preUpdate?(item: T, ...options: unknown[]): Promise<T>;
+	preSelect?(...options: unknown[]): Promise<IPreselectResult>;
 	processMetadata(metadata: QueryString.ParsedQs);
-	prepareArguments(args: any[]): any[];
+	prepareArguments(args: unknown[]): unknown[];
 }
 
-export abstract class EntityControllerBase implements IEntityController<any> {
-    public abstract get model(): DbBridge<any>;
+export abstract class EntityControllerBase<T, C> implements IEntityController<T, C> {
+    public abstract get model(): DbBridge<T, C>;
 	public abstract registryModel();
 	public static modelName: string;
 	public abstract processMetadata(metadata: QueryString.ParsedQs);
-	public abstract prepareArguments(args: any[]): any[];
+	public abstract prepareArguments(args: unknown[]): unknown[];
 
 	constructor(public app: Service) { }
 }

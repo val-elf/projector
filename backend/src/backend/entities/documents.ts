@@ -6,11 +6,11 @@ import { Files } from './files';
 import { IInitDocument, IDocument, IFile } from './models';
 
 @DbModel({ model: 'documents' })
-export class Documents extends DbObjectAncestor<IDocument> {
+export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 	private fileManager = DbBridge.getInstance<Files>('files');
 
 	@PermissionsCheck({ permissions: [] })
-	async createDocument(doc: IDocument) {
+	async createDocument(doc: IInitDocument) {
 		return this.model.create(doc);
 	}
 
@@ -62,7 +62,7 @@ export class Documents extends DbObjectAncestor<IDocument> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async updateDocument(document: IDocument) {
+	async updateDocument(document: IInitDocument) {
 		return this.model.updateItem(document);
 	}
 

@@ -7,13 +7,16 @@
     "start:prod": "node --enable-source-maps dist/app.js",
     "start:test": "node --enable-source-maps dist/app.js --test",
     "start:swagger": "npm run build && node --enable-source-maps dist/swagger.js",
+    "start:jsdoc:test": "npm run build && npm run run:jsdoc:test",
     "watch": "npm run clean && nodemon -e ts --exec \"npm run build && npm run start:dev",
     "watch:test": "nodemon -e ts --exec \"npm run test",
+    "watch:jsdoc:test": "npm run clean && nodemon -e ts --exec \"npm run start:jsdoc:test",
     "clean": "rimraf dist",
     "start": "npm run build && npm run start:dev",
     "build": "tsc && tsc-alias",
     "test": "npm run build && npm run start:test",
-    "postinstall": "link-module-alias"
+    "postinstall": "link-module-alias",
+    "run:jsdoc:test": "cls && node --enable-source-maps dist/openapi/tests/tests.js --test --verbose=true"
   },
   "devDependencies": {
     "@types/md5": "^2.3.2",

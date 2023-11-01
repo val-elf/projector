@@ -1,36 +1,60 @@
 import { ITsEntity } from '../ts-parser/model';
+import { ETsEntityTypes } from '../ts-parser/ts-readers/model';
+import { ITsMethod } from '../ts-parser/ts-types';
 import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
+import { CommonOADefinition } from './common-oa-definition';
 
-export interface IOpenApiGather {
-    components: {
-        schemas: {
-            [key: string]: ISchema;
-        };
-    };
-    get currentContext(): ITsEntity;
-    set currentContext(value: ITsEntity);
-    findSchema(name: string): ISchema | null;
-    findType(name: string): TsBaseTypeDefinition | null;
-    typeExists(typeName: string): boolean;
-    getModule(): IOAModule;
-    releaseContext(): void;
+export enum EDeclarationType {
+    Module = 'module',
+    Schema = 'schema',
+    Property = 'property',
+    Route = 'route',
+    Tag = 'tag',
 }
 
 export interface IOpenApiSerializable {
-    toOpenApi(gatherer: IOpenApiGather): { [key: string]: string | number | null | object };
+    toOpenApi(...args: any[]): any;
 }
 
-export interface IOAModule {
+export interface IOAContainer<T extends IOADefinition> {
+    definition?: T;
+    setDefinition(definition: T): void;
+}
+
+export interface IOADefinition extends IOpenApiSerializable, ITsEntity {
+    type: EDeclarationType;
+}
+
+export interface IOAModule extends IOADefinition{
     getDefaultResponse(code: number): string;
 }
 
-export interface ISchema extends IOpenApiSerializable {
+export interface IOASchema extends IOADefinition {
     name: string;
     description: string;
     entity: TsBaseTypeDefinition;
+    toOpenApi(): { [key: string]: string | number | null | object };
 }
 
-export interface ITag extends IOpenApiSerializable, ITagDefinition {
+export interface IOATag extends IOADefinition {
+    name: string;
+    description: string;
+    summary?: string;
+    externalDocs?: any;
+}
+
+export interface IOARoute extends IOADefinition {
+    readonly parameters?: object;
+    readonly description?: string;
+    readonly security?: object;
+    readonly responses?: object;
+    readonly tags?: string[];
+    setEntityOwner(method: ITsMethod): void;
+    toOpenApi(): IPathsDefinition;
+}
+
+export interface IOAProperty extends IOADefinition {
+    description: string;
 }
 
 export interface IOpenApi {
@@ -41,13 +65,6 @@ export interface IOpenApi {
             [key: string]: any;
         }
     }
-}
-
-export interface ITagDefinition {
-    name: string;
-    description: string;
-    summary?: string;
-    externalDocs?: any;
 }
 
 export interface IParametersDefinition {
@@ -113,9 +130,9 @@ export interface IPathDefinition {
     description: string;
     operationId: string;
     parameters: IParametersDefinition[];
-    requestBody: IRequestBodyDefinition;
-    responses: IResponsesDefinition;
-    security: ISecurityDefinition[];
+    requestBody?: IRequestBodyDefinition;
+    responses?: IResponsesDefinition;
+    security?: ISecurityDefinition[];
 }
 
 export interface IPathsDefinition {
@@ -124,3 +141,15 @@ export interface IPathsDefinition {
     }
 }
 
+export abstract class OADefinition implements IOADefinition {
+    public abstract readonly name: string;
+    public abstract readonly type: EDeclarationType;
+    public abstract readonly entityType: ETsEntityTypes;
+
+    constructor(
+        protected readonly data: CommonOADefinition,
+    ) {
+    }
+
+    public abstract toOpenApi(): any;
+}

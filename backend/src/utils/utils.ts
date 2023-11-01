@@ -86,6 +86,7 @@ export const utils = {
 
 const path = require('path');
 const sourcePath = process.cwd();
+const originalLog = console.log;
 
 function eLog(logger: any, ...args: any[]) {
 
@@ -93,16 +94,26 @@ function eLog(logger: any, ...args: any[]) {
 
 	const parts = stackLine.match(/^\s+at\s+(.*)\s+\((.*)\)$/);
 	if (parts) {
-		const destination = parts[1];
+		let destination = parts[1];
+		if (destination.startsWith('Function.')) {
+			destination = destination.replace(/^Function\./, 'static ');
+		}
 		const position = parts[2];
 
 		const positionParts = position.match(/^(.*):(\d+):(\d+)$/);
-		const fileName = positionParts[1];
+		const fullFileName = positionParts[1];
 		const lineNumber = positionParts[2];
 		const columnNumber = positionParts[3];
-		const message = `\t\t(${path.relative(sourcePath, fileName)}:${destination}, ${lineNumber}:${columnNumber})`
+		const fileName = path.basename(fullFileName);
+		const message = `\n\x1b[20G\x1b]8;;file://${fullFileName.replace(/\\/g, '/')}\x1b\\${fileName}:${lineNumber}:${columnNumber}\x1b]8;;\x1b\\ (${destination}))`
 
-		logger(...args, colors.gray(message));
+		const currentLogHandler = console.log;
+		try {
+			console.log = originalLog;
+			logger(...args, colors.gray(message));
+		} finally {
+			console.log = currentLogHandler;
+		}
 	} else logger(...args);
 }
 
@@ -117,7 +128,7 @@ export function improveConsoleOutput() {
 		require('child_process').execSync('cls', {stdio: 'inherit'});
 	}
 
-	['debug', 'log', 'warn', 'error'].forEach((methodName) => {
+	['debug', 'log', 'warn', 'error', 'group', 'groupCollapsed', 'groupEnd'].forEach((methodName) => {
 		const originalLoggingMethod = console[methodName];
 		console[methodName] = (...args: any[]) => {
 			eLog(originalLoggingMethod, ...args);

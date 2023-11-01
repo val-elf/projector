@@ -1,79 +1,89 @@
-import { IOpenApiGather, IOpenApiSerializable } from '~/openapi/components/model';
-import { TsDecorator } from '../../ts-decorator';
-import { ETsEntityTypes, ITsParser } from '../../ts-readers/model';
-import { TsType } from '../ts-type';
-import { ITsProperty } from '../ts-property';
-import { CommonOADefinition } from '~/openapi/components';
-import { TsEntity } from '../../model';
+import { IOpenApiSerializable } from '~/openapi/components/model';
+import { ETsEntityTypes } from '../../ts-readers/model';
+import { OASchema } from '~/openapi/components';
+import { ITsDecorator, TsEntity } from '../../model';
+import { ITsMethod, ITsProperty, ITsType } from '../model';
+import { TsGenericsList } from '../ts-generics-list/ts-generics-list';
+import { TsTypeService } from '~/openapi/services/ts-type.service';
+import { isArray } from '~/backend/entities/utils';
 
 export abstract class TsBaseTypeDefinition extends TsEntity implements IOpenApiSerializable {
-    protected _contextGatherer: IOpenApiGather;
-    protected _type: TsType;
+    public readonly entityType = ETsEntityTypes.TypeDefinition;
+    protected _type: ITsType;
     protected propertyKeyName = 'properties';
+    protected _genericList?: TsGenericsList;
+    protected _schema?: OASchema;
 
     protected abstract get typeName(): string;
-    public get type(): TsType {
+    public get definitionType(): ITsType {
         return this._type;
     }
 
-    protected data: CommonOADefinition
+    public get schema(): OASchema | undefined{
+        return this._schema;
+    }
+
+    public get isGeneric() {
+        return this._genericList?.length > 0;
+    }
+
+    public get genericList(): TsGenericsList | undefined {
+        return this._genericList;
+    }
 
     protected constructor(
-        protected reader: ITsParser,
+        name: string,
         public readonly isExport: boolean,
-        public readonly decorators?: TsDecorator[],
+        public readonly decorators?: ITsDecorator[],
     ) {
-        super('', ETsEntityTypes.TypeDefinition);
-        this.read(this.reader);
+        super(name);
+        TsTypeService.getService().registerType(this);
     }
 
-    public setOAData(data: CommonOADefinition) {
-        this.data = data;
-    }
-
-    public setCurrentGatherer(gatherer: IOpenApiGather) {
-        this._contextGatherer = gatherer;
-    }
-
-    protected abstract read(reader: ITsParser);
-
-    public get properties(): ITsProperty[] {
-        return this._type?.properties ?? [];
+    public get properties(): ITsProperty[] | undefined {
+        return this._type?.properties;
     };
 
-    private preparePropertiesToOutput(gatherer: IOpenApiGather): { [key: string]: {} ; } {
+    public get methods(): ITsMethod[] | undefined {
+        return this._type?.methods;
+    }
+
+    public applySchema(schema: OASchema) {
+        this._schema = schema;
+        schema.setEntityOwner(this);
+    }
+
+    public getProperty(name: string): ITsProperty | undefined {
+        return this.properties.find(p => p.name === name);
+    }
+
+    protected outProperty(prop: ITsProperty): { [key: string]: {} ; } | [string]{
         return {
-            [this.propertyKeyName]: this.properties?.reduce((acc, prop) => ({
-                ...acc,
-                ...prop.toOpenApi(gatherer),
-            }), {}) ?? {},
+            [prop.name]: prop.propertyType.toOpenApi(),
         };
     }
 
-    public propertiesToOpenApi(gatherer: IOpenApiGather): { [key: string]: {} ; } {
-        return this.preparePropertiesToOutput(gatherer);
-    }
+    public abstract propertiesToOpenApi(): { [key: string]: any[] ; };
 
-    toOpenApi(gatherer: IOpenApiGather): { [key: string]: string | number | object; } {
-        if (gatherer === undefined) {
-            throw new Error('Gatherer is undefined');
+    toOpenApi(): { [key: string]: string | number | object; } {
+        if (this.schema && this.schema.aliasType) {
+            return {
+                [this.name]: {
+                    type: this.schema.aliasType,
+                }
+            }
         }
-        this._contextGatherer = gatherer;
-        // const required = this._type?.getRequiredProperties().map(p => p.name) ?? [];
-
         if (this._type) {
             return {
-                [this.name]: this._type.toOpenApi(gatherer),
+                [this.name]: this._type.toOpenApi(),
             }
         }
 
-        const properties = this.preparePropertiesToOutput(gatherer);
-        const required = this.properties.filter(p => !p.isOptional).map(p => p.name);
+        const properties = this.propertiesToOpenApi();
         return {
             [this.name]: {
                 type: this.typeName,
-                ...(Object.keys(properties[this.propertyKeyName]).length > 0 ? { ...properties } : {}),
-                ...(required.length > 0 ? { required } : {})
+                ...properties,
             }
         };
     }

@@ -1,12 +1,11 @@
 import { DbModel } from '../core';
 import { TFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
-import { DbObjectController } from './dbobjects';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { ILocation, IMetadata, IUser } from './models';
+import { IInitLocation, ILocation, IMetadata } from './models';
 
 @DbModel({ model: 'locations' })
-export class Locations extends DbObjectAncestor<ILocation> {
+export class Locations extends DbObjectAncestor<ILocation, IInitLocation> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getLocationsList(projectId: TObjectId, metadata: IMetadata) {
@@ -34,13 +33,13 @@ export class Locations extends DbObjectAncestor<ILocation> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async createLocation(projectId: string, item: ILocation) {
+	public async createLocation(projectId: string, item: IInitLocation) {
 		this.setOwners([projectId]);
 		return this.model.create(item);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateLocation(_id: string, item: ILocation) {
+	public async updateLocation(_id: string, item: IInitLocation) {
 		if (item._id !== _id) throw new Error('Invalid location id');
 		return this.model.updateItem(item);
 	}

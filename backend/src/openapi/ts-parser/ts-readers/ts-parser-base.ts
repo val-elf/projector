@@ -1,16 +1,7 @@
 import { getBalancedEnd } from '../../utils';
 import { ITsDecorator } from '../model';
-import { TsComment } from '../ts-comment';
-import { TsImport } from '../ts-import';
-import { ETsEntitySymbolTypes, ITsParser, TAttributes, TReadEntityResult } from './model';
+import { ETsEntitySymbolTypes, ITsParser, LANGUAGE_KEYWORDS, TPropertyModifiers, TReadEntityResult } from './model';
 import util from "util";
-
-let createDecorator: (reader: ITsParser) => ITsDecorator;
-
-import('../ts-decorator').then(module => {
-    createDecorator = module.createDecorator;
-});
-
 
 enum EQuoteCode {
     Single = 39,
@@ -18,8 +9,13 @@ enum EQuoteCode {
     Backtick = 96,
 }
 
-const SPECIAL_CHARS = ['!', '@', '^', '&', '*', '(', ')', '-', '+', '[', ']', '{', '}', ';', ':', ',', '.', '?', '<', '>', '|', '\\'];
+const SPECIAL_CHARS = ['!', '@', '^', '&', '|', '/', '*', '(', ')', '\'', '"', '`', '-', '+', '[', ']', '{', '}', ';', ':', ',', '.', '?', '<', '>', '\\'];
+const LONG_OPERATORS = ['!=', '==', '===', '+=', '-=', '*=', '/=', '%=', '>=', '<=', '&&', '||', '++','--', '=>', '??', '//', '/*', '*/', '...'];
 
+interface ILocker {
+    index: number;
+    symbol: Symbol;
+}
 export abstract class TsParserBase implements ITsParser {
     private _index: number = 0;
     protected get index(): number {
@@ -34,7 +30,7 @@ export abstract class TsParserBase implements ITsParser {
         }
     }
 
-    private lockers: number[] = [];
+    private lockers: ILocker[] = [];
 
     private _strings: { [key: string]: string[] } = {};
 
@@ -46,7 +42,6 @@ export abstract class TsParserBase implements ITsParser {
         return this._lastEntity;
     }
 
-
     protected get strings() {
         return (this.parent as TsParserBase)?.strings ?? this._strings;
     }
@@ -55,11 +50,24 @@ export abstract class TsParserBase implements ITsParser {
         return this._code.substring(this.index);
     }
 
-    protected attributes: TAttributes = {};
+    protected modifiers: TPropertyModifiers = {};
     protected decorators: ITsDecorator[] = [];
 
     public get code() {
         return this.restoreCode();
+    }
+
+    private entityTypesStack: ETsEntitySymbolTypes[] = [];
+
+    protected get previousEntityType(): ETsEntitySymbolTypes | undefined {
+        return this.entityTypesStack[this.entityTypesStack.length - 1];
+    }
+
+    private pushEntityTypeToStack(entityType: ETsEntitySymbolTypes) {
+        this.entityTypesStack.push(entityType);
+        while (this.entityTypesStack.length > 3) {
+            this.entityTypesStack.shift();
+        }
     }
 
     // constructor(parent: ITsParser);
@@ -80,39 +88,89 @@ export abstract class TsParserBase implements ITsParser {
         }
     }
 
-    public readEntity(needEntityType?: ETsEntitySymbolTypes): TReadEntityResult {
+    public readEntity(...additionalArguments: any[]): TReadEntityResult {
 
         while (true) {
             const { entity, entityType } = this.readEntityFromCode() ?? {};
 
             this._lastEntity = { entity, entityType };
+            // console.log('Read entity (parser base):', entity, entityType);
+            if (entity === undefined && entityType === undefined) {
+                // console.log('Undefined entity reading from here: ', this.index, this.code.length, this.code.substring(this.index));
+                return null;
+            }
+            // console.log('ETYPE', entityType, entity);
 
-            if (needEntityType && entityType !== needEntityType) return;
-            if (entity === undefined && entityType === undefined) return;
-
-            const result = this.analyseEntity(entity, entityType);
+            const result = this.analyseEntity(entity, entityType, ...additionalArguments);
+            this.pushEntityTypeToStack(entityType)
             // we have to return only if result is defined
-            if (result) {
+            if (result || result === null) {
                 return result;
             }
         }
     }
 
     // Decorator, Comment and Abstract should not be processed in the child classes
-    protected analyseEntity(entity: string, entityType: ETsEntitySymbolTypes): TReadEntityResult {
+    protected analyseEntity(entity: string, entityType: ETsEntitySymbolTypes, ...additionalArguments: any[]): TReadEntityResult {
         switch (entityType) {
             case ETsEntitySymbolTypes.Abstract:
                 this.index += entity.length;
-                this.attributes.isAbstract = true;
+                this.modifiers.isAbstract = true;
                 break;
-            case ETsEntitySymbolTypes.Comment:
-                return new TsComment(this);
-            case ETsEntitySymbolTypes.Decorator:
-                this.decorators.push(createDecorator(this));
+            case ETsEntitySymbolTypes.Async:
+                this.index += entity.length;
+                this.modifiers.isAsync = true;
+                break;
+            case ETsEntitySymbolTypes.Protected:
+                this.index += entity.length;
+                this.modifiers.accessModifier = ETsEntitySymbolTypes.Protected;
+                break;
+            case ETsEntitySymbolTypes.Private:
+                this.index += entity.length;
+                this.modifiers.accessModifier = ETsEntitySymbolTypes.Private;
+                break;
+            case ETsEntitySymbolTypes.Public:
+                this.index += entity.length;
+                this.modifiers.accessModifier = ETsEntitySymbolTypes.Public;
+                break;
+            case ETsEntitySymbolTypes.Static:
+                this.index += entity.length;
+                this.modifiers.isStatic = true;
+                break;
+            case ETsEntitySymbolTypes.Readonly:
+                this.index += entity.length;
+                this.modifiers.isReadonly = true;
                 break;
             default:
                 return;
         }
+    }
+
+    protected defineEntityType(entity: string): ETsEntitySymbolTypes | undefined {
+        if (entity === 'import') return ETsEntitySymbolTypes.Import;
+        if (entity === 'export') return ETsEntitySymbolTypes.Export;
+        if (entity === 'function') return ETsEntitySymbolTypes.Function;
+        if (entity === 'public') return ETsEntitySymbolTypes.Public;
+        if (entity === 'private') return ETsEntitySymbolTypes.Private;
+        if (entity === 'protected') return ETsEntitySymbolTypes.Protected;
+        if (entity === 'static') return ETsEntitySymbolTypes.Static;
+        if (entity === 'readonly') return ETsEntitySymbolTypes.Readonly;
+        if (entity === 'async') return ETsEntitySymbolTypes.Async;
+        if (entity === '=>') return ETsEntitySymbolTypes.ArrowFunction;
+        if (entity === '=') return ETsEntitySymbolTypes.Assignment;
+        if (entity === ':') return ETsEntitySymbolTypes.TypeDefinition;
+        if (entity === ';') return ETsEntitySymbolTypes.Semicolon;
+        if (entity === 'async') return ETsEntitySymbolTypes.Async;
+        if (/^\/\*/.test(entity)) return ETsEntitySymbolTypes.Comment;
+        if (entity === '//') return ETsEntitySymbolTypes.Comment;
+        if (entity === 'abstract') return ETsEntitySymbolTypes.Abstract;
+        if (entity.startsWith('@')) return ETsEntitySymbolTypes.Decorator;
+        if (entity.startsWith('(')) return ETsEntitySymbolTypes.ArgumentStart;
+        if (entity.startsWith(')')) return ETsEntitySymbolTypes.ArgumentEnd;
+        if (entity.startsWith('[')) return ETsEntitySymbolTypes.OpenSquareBracket;
+        if (entity.startsWith(']')) return ETsEntitySymbolTypes.CloseSquareBracket;
+        if (entity.startsWith('{')) return ETsEntitySymbolTypes.OpenBrace;
+        if (entity.startsWith('}')) return ETsEntitySymbolTypes.CloseBrace;
     }
 
     protected readEntityFromCode(): { entity: string, entityType: ETsEntitySymbolTypes | undefined } {
@@ -124,13 +182,24 @@ export abstract class TsParserBase implements ITsParser {
         const charat = this.current.charAt(0);
 
         if (SPECIAL_CHARS.includes(charat)) {
+            let i = 1;
             entity = charat;
+            // character could be double or even triple
+            let longOperator = entity;
+            while(SPECIAL_CHARS.includes(this.current.charAt(i))) {
+                longOperator += this.current.charAt(i);
+                i++;
+            }
+            if (LONG_OPERATORS.find(operator => longOperator.startsWith(operator))) {
+                entity = longOperator;
+            }
         } else {
             const reg = /\w/.test(charat) ? /(\w+)/ : /([^\s]+)/;
             const read = this.current.match(reg);
             if (!read) return;
             entity = read[1];
         }
+
         entityType = this.defineEntityType(entity);
         return {entity, entityType };
     }
@@ -211,28 +280,22 @@ export abstract class TsParserBase implements ITsParser {
         return result;
     }
 
+    public readString(): string {
+        if (this.current[0] === '"') this.index ++;
+        const code = this.expectOf('"', true);
+        this.index ++;
+        return this.getStringByCode(code);
+    }
+
+    public readCleanString(): string {
+        if (this.current[0] === '"') this.index ++;
+        const code = this.expectOf('"', true);
+        this.index ++;
+        return this.getStringByCode(code, true);
+    }
+
     public move(index: number): void {
         this.index += index;
-    }
-
-    public readString(count: number) {
-        return this.current.substring(0, count);
-    }
-
-    protected defineEntityType(entity: string): ETsEntitySymbolTypes | undefined {
-        if (entity === 'import') return ETsEntitySymbolTypes.Import;
-        if (entity === 'function') return ETsEntitySymbolTypes.Function;
-        if (entity === '=>') return ETsEntitySymbolTypes.ArrowFunction;
-        if (entity === '=') return ETsEntitySymbolTypes.Assignment;
-        if (entity === ':') return ETsEntitySymbolTypes.TypeDefinition;
-        if (entity === 'async') return ETsEntitySymbolTypes.Async;
-        if (/^\/\*/.test(entity)) return ETsEntitySymbolTypes.Comment;
-        if (entity === '//') return ETsEntitySymbolTypes.Comment;
-        if (entity === 'abstract') return ETsEntitySymbolTypes.Abstract;
-        if (entity.startsWith('@')) return ETsEntitySymbolTypes.Decorator;
-        if (entity.startsWith('(')) return ETsEntitySymbolTypes.ArgumentStart;
-        if (entity.startsWith('[')) return ETsEntitySymbolTypes.OpenSquareBracket;
-        if (entity.startsWith(']')) return ETsEntitySymbolTypes.CloseSquareBracket;
     }
 
     public restoreCode(source?: string): string {
@@ -250,25 +313,81 @@ export abstract class TsParserBase implements ITsParser {
         return code;
     }
 
+    protected getStringByCode(code: string, clean = false):string {
+        const codeRegez = /^__(\d+):(\d+)__$/;
+        const read = code.match(codeRegez);
+        if (!read) return;
+        const quoteCode: EQuoteCode = Number(read[1]) as EQuoteCode;
+        const quoteIndex = Number(read[2]);
+        return this.getStringCodeEntity(quoteCode, quoteIndex, clean);
+    }
+
+    protected getStringCodeEntity(code: EQuoteCode, index: number, clean = false): string {
+        let result = this.strings[code][index];
+        if (clean) {
+            result = result.substring(1, result.length - 1);
+        }
+        return result;
+    }
+
+    protected isNumber(entity: string): boolean {
+        const trimmed = entity.trim();
+        return /^\d+$/.test(trimmed);
+    }
+
+    protected isEntityName(entity: string, excludeKeywords: boolean = false): boolean {
+        const trimmed = entity.trim();
+        if (!excludeKeywords && LANGUAGE_KEYWORDS.includes(trimmed)) return false;
+        return /^\w+$/.test(trimmed) && /^[^\d]/.test(trimmed);
+    }
+
+    public extractModifiers(): TPropertyModifiers {
+        const { modifiers } = this;
+        this.modifiers = {};
+        return modifiers;
+    }
+
     protected extractParameters(): any {
-        const { attributes, decorators } = this;
-        this.attributes = {};
+        const { modifiers, decorators } = this;
+        this.modifiers = {};
         this.decorators = [];
-        return { attributes, decorators };
+        return { modifiers, decorators };
     }
 
-    public lock() {
-        this.lockers.push(this.index);
+    public lock(lockSybmol?: Symbol) {
+        if (lockSybmol && this.lockers.find(l => l.symbol === lockSybmol)) return;
+        const item = {
+            symbol: lockSybmol ?? Symbol(),
+            index: this.index,
+        };
+        this.lockers.push(item);
     }
 
-    public unlock() {
+    public unlock(lockSybmol?: Symbol) {
         if (this.lockers.length) {
-            this.index = this.lockers.pop() || 0;
+            if (!lockSybmol || !this.lockers.find(l => l.symbol === lockSybmol)) {
+                const item = this.lockers.pop();
+                this.index = item?.index ?? 0;
+            } else {
+                const index = this.lockers.findIndex(l => l.symbol === lockSybmol);
+                const item = this.lockers[index];
+                this.lockers.splice(index, this.lockers.length - index);
+                if (item) {
+                    this.index = item.index;
+                }
+            }
         }
     }
 
-    public apply() {
-        this.lockers.pop();
+    public apply(lockSybmol?: Symbol) {
+        if (this.lockers.length) {
+            if (!lockSybmol || !this.lockers.find(l => l.symbol === lockSybmol)) {
+                this.lockers.pop();
+            } else {
+                const index = this.lockers.findIndex(l => l.symbol === lockSybmol);
+                this.lockers.splice(index, this.lockers.length - index);
+            }
+        }
     }
 
     private replaceStringWith(quote: string) {

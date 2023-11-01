@@ -4,7 +4,7 @@ import { Service } from '../network/service';
 import { utils } from '~/utils/utils';
 import { Route } from '~/network';
 import { EMethod, Router } from '~/network/route.decorator';
-import { IArtifact } from '~/backend/entities/models';
+import { IArtifact, IInitArtifact } from '~/backend/entities/models';
 
 // @OA:tag
 // name: Artifacts
@@ -45,18 +45,26 @@ export class ArtifactRouter implements IRouter {
 
     // @OA:route
     // description: Create new artifact
+    // security: [APIKeyHeader: []]
     // parameters: [projectId: Project ID]
+    // requestBody: [item: IInitArtifact]
+    // responses: [200: Created Artifact Item, 401: Bad request]
     @Route(EMethod.POST, '/projects/:projectId/artifacts')
-    public async createArtifact(key, item): Promise<IArtifact> {
+    public async createArtifact(key, item: IInitArtifact): Promise<IArtifact> {
         console.warn('[API] Create Artifact', key);
         await this._prepareArtifact(item);
-        return await this.model.createArtifact(item, key.projectId);
+        const createdItem = { ...item, owners: [], };
+        return await this.model.createArtifact(createdItem, key.projectId);
     }
 
     // @OA:route
+    // security: [APIKeyHeader: []]
     // description: Update existing artifact
-    @Route(EMethod.PUT, '/artifacts/:artifact')
-    public async updateArtifact(key, item): Promise<IArtifact> {
+    // parameters: [artifactId: Artifact ID]
+    // requestBody: [item: IInitArtifact]
+    // responses: [200: Updated Artifact Item, 401: Bad request]
+    @Route(EMethod.PUT, '/artifacts/:artifactId')
+    public async updateArtifact(key, item: IInitArtifact): Promise<IArtifact> {
         console.warn('[API] Update Artifact', key);
         await this._prepareArtifact(item);
         return await this.model.updateArtifact(item);
@@ -64,9 +72,12 @@ export class ArtifactRouter implements IRouter {
 
 
     // @OA:route
+    // security: [APIKeyHeader: []]
     // description: Delete artifact by its ID
+    // parameters: [artifactId: Artifact ID]
+    // responses: [200: Deleted flag, 401: Bad request]
     @Route(EMethod.DELETE, '/artifacts/:artifactId')
-    public async deleteArtifact(key) {
+    public async deleteArtifact(key): Promise<{ deleted: boolean }> {
         console.warn('[API] Delete Artifact', key);
         await this.model.deleteArtifact(key.artifactId);
         return { deleted: true };

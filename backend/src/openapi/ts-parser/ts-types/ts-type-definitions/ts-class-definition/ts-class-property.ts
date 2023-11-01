@@ -1,52 +1,25 @@
-import { ETsEntityTypes, ITsParser } from '~/openapi/ts-parser/ts-readers/model';
+import { ETsEntitySymbolTypes } from '~/openapi/ts-parser/ts-readers/model';
 import { TsProperty } from '../../ts-property';
 import { TsDecorator } from '~/openapi/ts-parser/ts-decorator';
-import { TsPropertyParser } from '~/openapi/ts-parser/ts-types/ts-property/ts-property-parser';
-import { IOpenApiGather } from '~/openapi/components/model';
-import { ITsEntity } from '~/openapi/ts-parser/model';
+import { ITsExpression } from '~/openapi/ts-parser/model';
+import { TsClass } from './ts-class-definition';
 
-export class TsClassProperty extends TsProperty {
-    public readonly value: ITsEntity | ITsEntity[] | ETsEntityTypes | undefined;
-    public readonly accessMofidyer: ETsEntityTypes;
-    public readonly isStatic: boolean;
-    public readonly isAbstract: boolean;
-    public readonly isReadonly: boolean;
-    public readonly isOptional: boolean;
-    public readonly decorators?: TsDecorator[];
+export abstract class TsClassProperty extends TsProperty {
+    public value: ITsExpression<unknown> | undefined;
+    public accessModifier: ETsEntitySymbolTypes;
+    public isStatic: boolean;
+    public isAbstract: boolean;
+    public isReadonly: boolean;
+    public isOptional: boolean;
+    public decorators: TsDecorator[] = [];
 
-    constructor(name: string, value: string);
-    constructor(
-        reader: ITsParser,
-        name: string,
-        accessMofidyer: ETsEntityTypes,
-        isStatic: boolean,
-        isAbstract: boolean,
-        isReadonly: boolean,
-        isOptional: boolean,
-        decorators?: TsDecorator[]
-    );
-    constructor(...args: any[]) {
-        if (args.length === 2) {
-            super(args[0]);
-            this.value = args[1];
-        } else {
-            const reader = new TsPropertyParser(args[0]);
-            super(args[1]);
-            this.accessMofidyer = args[2];
-            this.isStatic = args[3];
-            this.isAbstract = args[4];
-            this.isReadonly = args[5];
-            this.isOptional = args[6];
-            this.decorators = args[7];
-
-            this.propertyType = reader.propertyType;
-            this.value = reader.propertyValue;
-        }
+    constructor(protected owner: TsClass) {
+        super('');
     }
 
-    public toOpenApi(gatherer: IOpenApiGather): { [key: string]: any } {
+    public toOpenApi(): { [key: string]: any } {
         return {
-            [this.name]: this.propertyType?.toOpenApi(gatherer) ??
+            [this.name]: this.propertyType?.toOpenApi() ??
                 ((this.value as any).toOpenApi ? (this.value as any).toOpenApi() : undefined) ??
                 { type: 'unknown' },
         }

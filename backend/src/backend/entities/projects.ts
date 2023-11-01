@@ -1,13 +1,14 @@
 import { DbModel } from '../core';
 import { DbObjectAncestor } from './dbbase';
-import { DbObjectController } from './dbobjects';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IProject, IUser } from './models';
+import { IInitProject, IPreviewed, IProject, IUser } from './models';
+
+type TProjectUpdate = IInitProject & Partial<IPreviewed>;
 
 @DbModel({
 	model: 'projects',
 })
-export class Projects extends DbObjectAncestor<IProject> {
+export class Projects extends DbObjectAncestor<IProject, IInitProject & Partial<IPreviewed>> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getProjects(metadata: any, user?: IUser) {
@@ -25,12 +26,12 @@ export class Projects extends DbObjectAncestor<IProject> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async createProject(project) {
+	public async createProject(project: TProjectUpdate) {
 		return this.model.create(project);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateProject(project: IProject) {
+	public async updateProject(project: TProjectUpdate) {
 		return this.model.updateItem(project);
 	}
 };

@@ -5,8 +5,8 @@ import { DbObjectBase } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
 
 @DbModel({ model: 'dbobjects' })
-export class DbObjectController extends DbObjectBase {
-	readonly model: DbBridge<IDbObject>
+export class DbObjectController extends DbObjectBase<IDbObject, IDbObject> {
+	readonly model: DbBridge<IDbObject, IDbObject>
 
 	@PermissionsCheck({ permissions: [] })
 	public async getDbObject(itemId: TObjectId) {

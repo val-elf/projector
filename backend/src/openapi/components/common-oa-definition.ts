@@ -1,6 +1,14 @@
 import { isBalanced } from '../utils';
 import { TsComment } from '../ts-parser/ts-comment';
-import { ETsEntitySymbolTypes, ITsParser } from '../ts-parser/ts-readers/model';
+import { OATag } from './oa-tag';
+import { OASchema } from './oa-schema';
+import { OAModule } from './oa-module';
+import { OAProperty } from './oa-property';
+import { ITsEntity } from '../ts-parser/model';
+import { ITsProperty } from '../ts-parser/ts-types';
+import { TsBaseTypeDefinition } from '../ts-parser/ts-types/ts-type-definitions/ts-base-type-definition';
+import { EDeclarationType } from './model';
+import { OARoute } from './oa-route';
 
 type TTagPropertyValueBase = string | string[]
 type TTagPropertyValue = TTagPropertyValueBase | { [key: string]: TTagPropertyValue };
@@ -13,7 +21,7 @@ export class CommonOADefinition {
         return this._properties;
     }
 
-    constructor(public name: string, lines: { value: string, indent: number}[]) {
+    constructor(public name: EDeclarationType, lines: { value: string, indent: number}[]) {
         let currentProperty: string;
         let propIndent = 0;
         this._properties = lines.reduce((res, line) => {
@@ -39,18 +47,29 @@ export class CommonOADefinition {
         }, {});
     }
 
-    public static readFromReader(initComment: TsComment, reader: ITsParser): CommonOADefinition {
-        const lines: { value: string, indent: number }[] = [];
-        while (true) {
-            reader.lock();
-            const comment = reader.readEntity(ETsEntitySymbolTypes.Comment);
-            if (!comment || !(comment instanceof TsComment) || comment.isOA) {
-                reader.unlock();
-                break;
-            }
-            reader.apply();
-            lines.push(...(comment.lines.map((value, index) => ({ value, indent: comment.getLineIndent(index) }))));
+    public getOAEntity() {
+        switch(this.name) {
+            case EDeclarationType.Tag:
+                return new OATag(this);
+            case EDeclarationType.Schema:
+                return new OASchema(this);
+            case EDeclarationType.Module:
+                return new OAModule(this);
+            case EDeclarationType.Property:
+                return new OAProperty(this);
+            case EDeclarationType.Route:
+                return new OARoute(this);
         }
+    }
+
+    public static getDefinitionFromComments(comments: TsComment[]) {
+        const initComment = comments.shift();
+        const lines = comments.reduce((res, comment) => {
+            return [
+                ...res,
+                ...comment.lines.map((line, index) => ({ value: line, indent: comment.getLineIndent(index) }))
+            ];
+        }, [] as { value: string, indent: number }[]);
         return new CommonOADefinition(initComment.OAType, lines);
     }
 }

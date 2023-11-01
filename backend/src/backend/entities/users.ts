@@ -5,7 +5,7 @@ import { PermissionsCheck } from './decorators/permissions-check';
 import { DbObjectAncestor } from './dbbase';
 
 @DbModel({ model: 'users' })
-export class Users extends DbObjectAncestor<IUser> {
+export class Users extends DbObjectAncestor<IUser, IUser> {
 	private roles = DbBridge.getBridge<IRole>('roles');
 	private sessions = DbBridge.getBridge<ISession>('sessions');
 

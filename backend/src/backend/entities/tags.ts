@@ -8,7 +8,7 @@ import { ITag } from './models/tag.model';
 @DbModel({
     model: 'tags'
 })
-export class Tags extends DbObjectAncestor<ITag> {
+export class Tags extends DbObjectAncestor<ITag, ITag> {
 
     db = DbBridge.getInstance('dbobjects') as DbObjectController;
 

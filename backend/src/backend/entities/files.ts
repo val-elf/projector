@@ -2,20 +2,20 @@ import { DbModel } from '../core';
 import { TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IFile, IMetadata, IUser } from './models';
+import { IFile, IInitFile, IMetadata, IUser } from './models';
 import { config } from "~/config";
 import { http } from "~/utils/simpleHttp";
 
 @DbModel({ model: 'files' })
-export class Files extends DbObjectAncestor<IFile> {
+export class Files extends DbObjectAncestor<IFile, IInitFile> {
 
 	@PermissionsCheck({ permissions: [] })
-	async createFile(fileInfo: IFile, user?: IUser) {
+	async createFile(fileInfo: IInitFile, user?: IUser) {
 		return this.model.create(fileInfo);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async updateFile(fileInfo: IFile, internal = false, user?: IUser) {
+	async updateFile(fileInfo: IInitFile, internal = false, user?: IUser) {
 		const _user = !internal ? user : { internal };
 		return this.model.updateItem(fileInfo);
 	}

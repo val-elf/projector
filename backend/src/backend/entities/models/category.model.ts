@@ -1,9 +1,8 @@
+import { ICommonEntity } from '~/backend/core/models';
 import { IDbObjectBase } from './db-base.models';
 
-// @OA:schema
-// description: Category
-export interface ICategory extends IDbObjectBase {
-    // @OA:property
+interface IBaseCategory {
+   // @OA:property
     // description: Category name
     name: string;
 
@@ -11,3 +10,11 @@ export interface ICategory extends IDbObjectBase {
     // description: Category description
     description: string;
 }
+
+// @OA:schema
+// description: Category
+export interface ICategory extends IBaseCategory, IDbObjectBase {}
+
+// @OA:schema
+// description: Initiated category item
+export interface IInitCategory extends IBaseCategory, Partial<ICommonEntity> {}

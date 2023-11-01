@@ -1,25 +1,39 @@
-import { CommonOADefinition } from '../../../components';
-import { IOpenApiGather, IOpenApiSerializable } from '../../../components/model';
+import { IOAProperty, IOpenApiSerializable } from '../../../components/model';
 import { ETsEntityTypes } from '../../ts-readers/model';
-import { ITsProperty } from './model';
-import { ITsType } from '..';
+import { ITsProperty, ITsType } from '..';
 import { TsEntity } from '../../model';
 
+import util from 'util';
+import { OAProperty } from '~/openapi/components/oa-property';
 
-export class TsProperty extends TsEntity implements IOpenApiSerializable, ITsProperty {
-    public propertyType: ITsType;
-    public isOptional: boolean;
-    public definition: CommonOADefinition;
+export abstract class TsProperty extends TsEntity implements IOpenApiSerializable, ITsProperty {
+    public readonly entityType = ETsEntityTypes.Property;
+    public abstract propertyType: ITsType;
+    public abstract isOptional: boolean;
+    public abstract isReadonly: boolean;
+
+    public definition?: OAProperty;
+    setDefinition(definition: IOAProperty): void {
+        this.definition = definition as OAProperty;
+    }
 
     constructor(
         name: string,
     ) {
-        super(name, ETsEntityTypes.Property);
+        super(name);
     }
 
-    public toOpenApi(gatherer: IOpenApiGather) {
+    public toOpenApi() {
         return {
-            [this.name]: this.propertyType.toOpenApi(gatherer),
+            [this.name]: this.propertyType.toOpenApi(),
+        }
+    }
+
+    [util.inspect.custom]() {
+        return {
+            name: this.name,
+            propertyType: this.propertyType.referencedTypeName,
+            isOptional: this.isOptional,
         }
     }
 }

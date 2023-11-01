@@ -2,16 +2,16 @@ import { DbBridge, DbModel } from '../core';
 import { TFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IArtifact, ICharacter, IDbObject, IMetadata, IOwned, IUser } from './models';
+import { IArtifact, ICharacter, IDbObject, IInitCharacter, IMetadata, IOwned, IUser } from './models';
 
 @DbModel({ model: 'characters' })
-export class Characters extends DbObjectAncestor<ICharacter> {
+export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 	artifactModel = DbBridge.getBridge<IArtifact>('artifacts');
 	dbObjectModel = DbBridge.getBridge<IDbObject>('dbobjects');
 
 	@PermissionsCheck({ permissions: [] })
 	public async createCharacter(
-		character: ICharacter & { owners: string[] },
+		character: IInitCharacter & { owners: string[] },
 		projectId: string,
 		user?: IUser
 	) {
@@ -20,11 +20,11 @@ export class Characters extends DbObjectAncestor<ICharacter> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateCharacter(characterId: string, character: ICharacter) {
+	public async updateCharacter(characterId: string, character: IInitCharacter) {
 		if (characterId !== character._id) throw new Error('Character id mismatch');
-		character = await this.model.updateItem(character);
+		const result = await this.model.updateItem(character);
 		// delete character.preview.preview;
-		return character;
+		return result;
 	}
 
 	@PermissionsCheck({ permissions: [] })

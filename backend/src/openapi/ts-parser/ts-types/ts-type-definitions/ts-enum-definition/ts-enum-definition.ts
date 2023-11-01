@@ -1,62 +1,50 @@
-import { IOpenApiGather } from '~/openapi/components/model';
-import { TsDecorator } from '../../../ts-decorator';
-import { ITsParser } from '../../../ts-readers/model';
+import { ITsDecorator } from '~/openapi/ts-parser/model';
+import { ITsProperty } from '../../model';
 import { TsBaseTypeDefinition } from '../ts-base-type-definition';
 import { TsEnumProperty } from './ts-enum-property';
-import { ITsProperty } from '../../ts-property';
 
-export class TsEnumDefinition extends TsBaseTypeDefinition {
+export abstract class TsEnumDefinition extends TsBaseTypeDefinition {
 
     protected propertyKeyName = 'enum';
-    private  _properties: TsEnumProperty[];
+    private  _properties: ITsProperty[] = [];
 
     public get properties(): ITsProperty[] {
         return this._properties;
     }
 
+    public addProperties(properties: ITsProperty[]): void {
+        this._properties.push(...properties);
+    }
+
     constructor(
-        reader: ITsParser,
+        name: string,
         isExport: boolean,
-        decorators?: TsDecorator[],
+        decorators?: ITsDecorator[],
     ) {
-        super(reader, isExport, decorators);
+        super(name, isExport, decorators);
     }
 
     public get typeName(): string {
-        return 'enum';
+        return 'string';
     }
 
-    protected read(reader: ITsParser) {
-        const typeDefinition = reader.expectOf('{', true);
-        const body = reader.restoreCode(reader.readToBalanced('}', true));
-        if (typeDefinition && body) {
-            this.parseDefinition(typeDefinition);
-            this.parseBody(body);
-        }
+    /*protected outProperty(prop: ITsProperty): [string] {
+        const enumProperty = prop as TsEnumProperty;
+        return [enumProperty.value];
+    }*/
+
+    public propertiesToOpenApi(): { [key: string]: any[]; } {
+        return {
+            [this.propertyKeyName]: this.properties.map(prop => {
+                const enumProperty = prop as TsEnumProperty;
+                return enumProperty.value;
+            }),
+        };
     }
 
-    private parseDefinition(definition: string) {
-        const match = definition.match(/^enum\s+(.+)$/);
-        if (match) {
-            this.name = match[1].trim();
-        }
-    }
-
-    private parseBody(body: string) {
-        const items = body
-            .replace(/(^\s*{|}\s*$)/g, '')
-            .split(',')
-            .map(i => i.trim())
-        ;
-        this._properties = items.map(item => {
-                const match = item.match(/^(.+?)\s*(=\s*(.+?))?\s*$/);
-                if (match) {
-                    const value = match[3] ? match[3].trim().replace(/(^['"`]|['"`]$)/g, '') : undefined;
-                    return new TsEnumProperty(match[1], value);
-                }
-            })
-            .filter(i => i)
-        ;
+    public override toOpenApi(): { [key: string]: string | number | object; } {
+        const result = super.toOpenApi();
+        return result;
     }
 }
 

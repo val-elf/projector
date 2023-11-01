@@ -12,11 +12,11 @@ import { Tags } from './tags';
 
 const USER_LOGOUT_MESSAGE = "User must be authorized";
 
-export interface IUserManagement extends IEntityController<any>{
+export interface IUserManagement extends IEntityController<unknown, unknown>{
 	getUserBySession(sessionId): Promise<IUser>;
 }
 
-export abstract class DbObjectBase extends EntityControllerBase {
+export abstract class DbObjectBase<T, C> extends EntityControllerBase<T, C> {
 	private static onceSession: string;
 
 	public static getSession() {
@@ -173,8 +173,8 @@ export abstract class DbObjectBase extends EntityControllerBase {
 		foreignField: '_id',
 	}
 })
-export class DbObjectAncestor<T extends ICommonEntity> extends DbObjectBase {
-	get model(): DbBridge<T> {
+export class DbObjectAncestor<T extends ICommonEntity, C extends ICommonEntity = T> extends DbObjectBase<T, C> {
+	get model(): DbBridge<T, C> {
 		return null;
 	}
 
@@ -189,7 +189,7 @@ export class DbObjectAncestor<T extends ICommonEntity> extends DbObjectBase {
 	}
 
 	public async preCreate(item: T & { tags?: string[] }, owners?: (ObjectId | string)[]): Promise<T> {
-		const dbModel = DbBridge.getBridge<IDbObject>('dbobjects');
+		const dbModel = DbBridge.getBridge<IDbObject, IDbObject>('dbobjects');
 		const user = await this.getCurrentUser();
 		const { ownerIds } = this.model.transaction.data;
 		owners = DbObjectBase.fixIds([user._id, ...(owners ?? []), ...(ownerIds ?? [])]);
@@ -211,7 +211,7 @@ export class DbObjectAncestor<T extends ICommonEntity> extends DbObjectBase {
 
 		if (tags && tags.length) {
 			const tagOwners = [res._id];
-			const tagModel = DbBridge.getInstance('tags') as Tags;
+			const tagModel = DbBridge.getInstance('tags') as unknown as Tags;
 			const existingTags = await tagModel.getTagsListByNames(tagOwners, tags);
 			const newTagNames = tags.filter(tag => !existingTags.find(t => t.name === tag));
 			const newTags = await tagModel.createTagsBundle(tagOwners, newTagNames);
@@ -282,7 +282,7 @@ export class DbObjectAncestor<T extends ICommonEntity> extends DbObjectBase {
 	}
 
 	public async preUpdate(item: T): Promise<T> {
-		const dbModel = DbBridge.getBridge<IDbObject>('dbobjects');
+		const dbModel = DbBridge.getBridge<IDbObject, IDbObject>('dbobjects');
 		const user = await this.getCurrentUser();
 		const dbUpdate: Partial<IDbObject> = {
 			_id: item._id,
