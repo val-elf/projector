@@ -6,10 +6,10 @@ import { TsTypeParser } from '../../../ts-type/parsers/ts-type-parser';
 import { ITsType } from '../../../model';
 import { TsInterfaceDefinition } from '../ts-interface-definition';
 import { TsGenericsList } from '../../../ts-generics-list/ts-generics-list';
-import { TsGenericsListParser } from '../../../ts-generics-list/ts-generics-list-parser';
 import { TsExtendsListParser } from './ts-extends-list-parser';
 import { OpenApiInstance } from '~/openapi/components';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
+import { TsGenericsArgumentsListParser } from '../../../ts-generics-list/parsers/ts-generics-arguments-list-parser';
 
 enum EReadMode {
     Undefined = 'undefined',
@@ -46,7 +46,7 @@ class TsInterfaceDefinitionImpl extends TsInterfaceDefinition {
 
 export class TsInterfaceParser extends TsParserBase {
 
-    public static readInterfaceDefinition(parent: ITsParser, isExport: boolean): TsInterfaceDefinition {
+    public static readInterfaceDefinition(parent: ITsParser, isExport: boolean = false): TsInterfaceDefinition {
         const parser = new TsInterfaceParser(parent);
         try {
             console.group('Read interface definition');
@@ -128,7 +128,7 @@ export class TsInterfaceParser extends TsParserBase {
     }
 
     private readGenerics(owner: TsInterfaceDefinition): TsGenericsList {
-        return TsGenericsListParser.getGenericsList(this, owner);
+        return TsGenericsArgumentsListParser.getGenericsList(this, owner);
     }
 
     private readExtendsList(owner: TsInterfaceDefinition): TsExtendsList {

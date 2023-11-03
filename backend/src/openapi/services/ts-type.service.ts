@@ -58,7 +58,7 @@ class TsTypeImpl extends TsType {
 
     public get properties(): ITsProperty[] {
         if (this.referencedTypeName) {
-            const originType = TsTypeService.getService().findTsType(this.referencedTypeName);
+            const originType = TsTypeService.getService().findTsTypeDefinition(this.referencedTypeName);
             if (originType) {
                 return originType.properties;
             }
@@ -100,21 +100,6 @@ class TsTypePrimitive extends TsTypeImpl {
     }
 }
 
-class TsTypeDate extends TsTypeImpl {
-    protected readonly _referencedTypeName: string = 'Date';
-    constructor() {
-        super('Date');
-    }
-
-    public toOpenApi() {
-        return {
-            type: 'string',
-        }
-    }
-}
-
-
-
 export abstract class TsTypeService {
     private typeRegister: Map<string, TFileTypeRegister> = new Map<string, TFileTypeRegister>();
     private actualFile: TsFile | undefined;
@@ -141,8 +126,8 @@ export abstract class TsTypeService {
         fileRegister.push(type);
     }
 
-    public findTsType(referencedName: string): TsBaseTypeDefinition | undefined {
-        for (const [fileName, fileRegister] of this.typeRegister) {
+    public findTsTypeDefinition(referencedName: string): TsBaseTypeDefinition | undefined {
+        for (const [, fileRegister] of this.typeRegister) {
             const type = fileRegister.find(type => type.name === referencedName);
             if (type) {
                 return type;

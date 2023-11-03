@@ -59,7 +59,6 @@ export class TsInterfacePropertyParser extends TsParserBase {
                 break;
             case ETsEntitySymbolTypes.TypeDefinition:
                 this.index += entity.length;
-                console.log('Reading type with owner:', propertyData.owner);
                 const type = TsTypeParser.readType(this);
                 const { decorators } = this.extractParameters() as { decorators?: TsDecorator[] };
                 const property = new TsInterfacePropertyImpl(

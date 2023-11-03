@@ -22,7 +22,7 @@ export interface ITsType extends IOpenApiSerializable, ITsEntity {
     intersectTypes?: ITsType[];
     genericBase?: ITsType;
 
-    toOpenApi(): any;
+    toOpenApi(genericsParameters?: TsGenericsList): any;
     getLatestUnion(): ITsType;
     intersectWith(type: ITsType): void;
     addUnionItem(member: ITsType): void;

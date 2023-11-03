@@ -25,7 +25,7 @@ export class OARoute extends OADefinition implements IOARoute {
     public readonly description?: string;
     public readonly security?: object;
     public readonly responses?: object;
-    public readonly requestBody?: { item: string };
+    public readonly requestBody?: { item: string } | string;
     public readonly tags: string[];
     public readonly summary?: string;
 
@@ -116,12 +116,24 @@ export class OARoute extends OADefinition implements IOARoute {
     private prepareRequests(): any {
         const requestBody = this.requestBody;
         if (!requestBody) return;
-        const { item } = requestBody;
-        return {
-            content: {
-                'application/json': {
-                    schema: { $ref: `#/components/schemas/${item}` },
-                },
+        if (requestBody === 'multipart/form-data') {
+            return {
+                content: {
+                    'multipart/form-data': {
+                        schema: {
+                            type: 'object',
+                        }
+                    },
+                }
+            }
+        } else {
+            const { item } = requestBody as { item: string };
+            return {
+                content: {
+                    'application/json': {
+                        schema: { $ref: `#/components/schemas/${item}` },
+                    },
+                }
             }
         }
 

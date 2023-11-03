@@ -19,10 +19,7 @@ export class TsStringServiceType extends TsTypeBase {
         super('string');
     }
 
-    toOpenApi();
-    toOpenApi(asRef: boolean);
-    toOpenApi(asRef?: unknown);
-    toOpenApi(asRef?: unknown): any {
+    toOpenApi(): { [key: string]: any; } {
         return {};
     }
 

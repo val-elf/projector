@@ -1,29 +1,15 @@
-import { ITsType } from "..";
-import { ITsEntity } from "../../model";
-import { TsParserBase } from "../../ts-readers";
-import { ETsEntitySymbolTypes, ITsParser } from "../../ts-readers/model";
-import { TsTypeParser } from "../ts-type/parsers/ts-type-parser";
-import { TsGenericOwners } from "./model";
-import { TsGenericItem } from "./ts-generic-item";
-import { TsGenericsList } from "./ts-generics-list";
+import { TsParserBase } from "~/openapi/ts-parser/ts-readers";
+import { ETsEntitySymbolTypes, ITsParser } from "~/openapi/ts-parser/ts-readers/model";
+import { ITsGenericItem, TsGenericOwners } from "../model";
+import { TsGenericsList } from "../ts-generics-list";
+import { TsGenericArgumentItem } from "../ts-generic-argument-item";
+import { ITsType } from "../../model";
+import { ITsEntity } from "~/openapi/ts-parser/model";
+import { TsTypeParser } from "../../ts-type/parsers/ts-type-parser";
 
-/*class TsGenericsListImpl extends TsGenericsList {
-    constructor(owner: TsGenericOwners) {
-        super(owner);
-    }
-
-    public populateItems(items: TsGenericItem[]) {
-        this._genericsList = items;
-    }
-}*/
-
-export class TsGenericsListParser extends TsParserBase {
-    /*private createGenericsListImpl = (owner: TsGenericOwners) => {
-        return new TsGenericsListImpl(owner);
-    }*/
-
+export class TsGenericsArgumentsListParser extends TsParserBase {
     private isInitialState = true;
-    private genericName: ITsType;
+    private genericName: string;
     private extendsType: ITsType;
 
     constructor(
@@ -34,9 +20,9 @@ export class TsGenericsListParser extends TsParserBase {
     }
 
     public static getGenericsList(parser: ITsParser, owner: TsGenericOwners): TsGenericsList {
-        const genericParser = new TsGenericsListParser(parser, owner);
+        const genericParser = new TsGenericsArgumentsListParser(parser, owner);
         try {
-            console.group('Read generics list');
+            console.group('Read arguments generics list');
             return genericParser.readGenericsList();
         } finally {
             console.groupEnd();
@@ -45,12 +31,12 @@ export class TsGenericsListParser extends TsParserBase {
 
     public static createGenericsListByInstances(owner: TsGenericOwners, ...generics: ITsType[]) {
         const result = new TsGenericsList(owner);
-        result.push(...generics.map(g => new TsGenericItem(g, undefined, owner)));
+        result.push(...generics.map(g => new TsGenericArgumentItem(g, undefined, owner)));
         return result;
     }
 
     public readGenericsList(): TsGenericsList {
-        const items: TsGenericItem[] = [];
+        const items: ITsGenericItem[] = [];
         const result = new TsGenericsList(this.owner);
         while(true) {
             const entity = this.readEntity(items) as ITsEntity;
@@ -61,17 +47,15 @@ export class TsGenericsListParser extends TsParserBase {
         return result;
     }
 
-    protected analyseEntity(entity: string, entityType: ETsEntitySymbolTypes, items: TsGenericItem[]): ITsEntity {
+    protected analyseEntity(entity: string, entityType: ETsEntitySymbolTypes, items: ITsGenericItem[]): ITsEntity {
         let eResult = super.analyseEntity(entity, entityType);
         if (eResult) return eResult;
 
-        //console.log('Entity for reading generic list', entity, entityType);
+        // console.log('Entity for reading generic list', entity, entityType);
         switch(entityType) {
             case ETsEntitySymbolTypes.EntityName:
-            case ETsEntitySymbolTypes.OpenBrace:
-            case ETsEntitySymbolTypes.String:
-                // this.index += entity.length;
-                this.genericName = TsTypeParser.readType(this);
+                this.index += entity.length;
+                this.genericName = entity;
                 break;
             case ETsEntitySymbolTypes.Extends:
                 this.index += entity.length;
@@ -80,13 +64,13 @@ export class TsGenericsListParser extends TsParserBase {
             case ETsEntitySymbolTypes.GenericClose: {
                 this.index += entity.length;
                 const { genericName, extendsType } = this.extractParameters();
-                items.push(new TsGenericItem(genericName, extendsType, this.owner));
+                items.push(new TsGenericArgumentItem(genericName, extendsType, this.owner));
                 return null;
             }
             case ETsEntitySymbolTypes.Comma: {
                 this.index += entity.length;
                 const { genericName, extendsType } = this.extractParameters();
-                items.push(new TsGenericItem(genericName, extendsType, this.owner));
+                items.push(new TsGenericArgumentItem(genericName, extendsType, this.owner));
                 break;
             }
 
@@ -127,4 +111,6 @@ export class TsGenericsListParser extends TsParserBase {
         };
 
     }
+
+
 }

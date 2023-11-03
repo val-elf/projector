@@ -25,6 +25,6 @@ export class TsExpressionObjectAccess extends TsExpression<string> {
     }
 
     public get paramType(): TsBaseTypeDefinition {
-        return TsTypeService.getService().findTsType(this.expressionValue);
+        return TsTypeService.getService().findTsTypeDefinition(this.expressionValue);
     }
 }

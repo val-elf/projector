@@ -4,14 +4,14 @@ import { TsEntityNamed, TsTypeOwner } from '../../../model';
 import { ITsType } from '../..';
 import { TsInterfaceDefinition } from '../../ts-type-definitions';
 import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
-import { TsGenericsListParser } from '../../ts-generics-list/ts-generics-list-parser';
 import { TsInterfaceBodyParser } from './ts-interface-body-parser';
 import { TsCommentParser } from '~/openapi/ts-parser/ts-comment/ts-comment-parser';
 import { TsGenericsFabric } from '../service-types/ts-generics-fabric';
 import { TsStringServiceType } from '../service-types/ts-string-service-type';
 import { TsUnionServiceType } from '../service-types/ts-union-service-type';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
-import { TsGenericItem } from '../../ts-generics-list/ts-generic-item';
+import { TsGenericParameterItem } from '../../ts-generics-list/ts-generic-parameter-item';
+import { TsGenericsParametersListParser } from '../../ts-generics-list/parsers/ts-generics-parameters-list-parser';
 
 export class TsTypeParser extends TsParserBase {
     // private readUnionList = false;
@@ -66,12 +66,12 @@ export class TsTypeParser extends TsParserBase {
         const readEntity = super.analyseEntity(entity, entityType);
         if (readEntity) return readEntity;
 
-        // console.log('Reading type, entity is', entity, entityType);
+        // console.log('Reading type, entity is', entity, entityType, result, result.properties);
         try {
             switch(entityType) {
                 case ETsEntitySymbolTypes.GenericOpen:
                     this.index += entity.length;
-                    return TsGenericsListParser.getGenericsList(this, result);
+                    return TsGenericsParametersListParser.getGenericsList(this, result);
 
                 case ETsEntitySymbolTypes.GenericClose:
                     // CLARIFIED: we do not increment index here
@@ -136,7 +136,7 @@ export class TsTypeParser extends TsParserBase {
                     // array definition
                     this.index += entity.length;
                     const genericsList = new TsGenericsList(this.owner);
-                    genericsList.push(new TsGenericItem(result, undefined, this.owner));
+                    genericsList.push(new TsGenericParameterItem(result, undefined, this.owner));
                     return TsGenericsFabric.getGenericsType(TsTypeService.ArrayType, genericsList);
 
                 case ETsEntitySymbolTypes.CloseSquareBracket:

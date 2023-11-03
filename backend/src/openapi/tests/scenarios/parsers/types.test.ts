@@ -2,7 +2,9 @@ import assert, { strictEqual } from "node:assert";
 import { describe, it } from "node:test"
 import { TsTypeService } from "~/openapi/services/ts-type.service";
 import { TsParserBase } from "~/openapi/ts-parser/ts-readers";
-import { TsGenericItem } from "~/openapi/ts-parser/ts-types/ts-generics-list/ts-generic-item";
+import { TsGenericArgumentItem } from "~/openapi/ts-parser/ts-types/ts-generics-list/ts-generic-argument-item";
+import { TsGenericParameterItem } from "~/openapi/ts-parser/ts-types/ts-generics-list/ts-generic-parameter-item";
+import { TsInterfaceParser } from "~/openapi/ts-parser/ts-types/ts-type-definitions/ts-interface-definition/parsers/ts-interface-parser";
 import { TsTypeParser } from "~/openapi/ts-parser/ts-types/ts-type/parsers/ts-type-parser";
 
 const TYPES_MOCKS = {
@@ -15,7 +17,7 @@ const TYPES_MOCKS = {
     generics: [
         'Promise<string>'
     ],
-    genericsList: 'Promise<Krate, BGeneric extends Promise<Krate>, Authentic extends Object>',
+    genericsList: `interface Aromise<Krate, BGeneric extends Promise<Krate>, Authentic extends Object> {}`,
     genericsWithTheObject: 'Promise<{ deleted: boolean }>',
 }
 
@@ -38,7 +40,7 @@ describe('TsTypes tests', () => {
         types.forEach((type, index) => {
             assert(type.isGeneric);
             strictEqual(type.genericBase, TsTypeService.ArrayType);
-            const genericItem: TsGenericItem = type.genericList[0];
+            const genericItem = type.genericList[0] as TsGenericParameterItem;
             strictEqual(genericItem.itemType, TsTypeService.PRIMITIVES[index]);
         });
     });
@@ -49,21 +51,19 @@ describe('TsTypes tests', () => {
         assert(type.isGeneric);
         strictEqual(type.genericBase, TsTypeService.PromiseType);
         strictEqual(type.genericList.length, 1);
-        const genericItem: TsGenericItem = type.genericList[0];
+        const genericItem = type.genericList[0] as TsGenericParameterItem;
         strictEqual(genericItem.itemType, TsTypeService.String);
     });
 
     // TODO
     it('Should read generics list', () => {
-        const type = TsTypeParser.readType(getBaseParser(TYPES_MOCKS.genericsList));
+        const type = TsInterfaceParser.readInterfaceDefinition(getBaseParser(TYPES_MOCKS.genericsList));
         assert(type);
         assert(type.isGeneric);
         strictEqual(type.genericList.length, 3);
-        const { genericBase, genericList } = type;
-        assert(genericBase);
+        const { genericList } = type;
         assert(genericList);
-        strictEqual(genericBase, TsTypeService.PromiseType);
-        const [krateType, bgenericType, authenticType] = genericList;
+        const [krateType, bgenericType, authenticType] = (genericList as unknown as TsGenericArgumentItem[]);
         assert(krateType);
         assert(bgenericType);
         assert(authenticType);
@@ -92,10 +92,10 @@ describe('TsTypes tests', () => {
         assert(genericList);
         strictEqual(genericBase, TsTypeService.PromiseType);
 
-        const [objectType] = genericList;
+        const [objectType] = (genericList as unknown as TsGenericParameterItem[]);
         assert(objectType);
 
-        assert(objectType.itemType);
+        assert((objectType).itemType);
         assert(objectType.itemType.properties);
         strictEqual(objectType.itemType.properties.length, 1);
 

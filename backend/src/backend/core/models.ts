@@ -18,8 +18,6 @@ export interface IDbEntity<TEntity extends ICommonEntity> {
     _doc: TEntity
 }
 
-// @OA:schema
-// description: result of the elements of list
 export interface IFindList<T extends ICommonEntity> {
     result: T[];
     options: { [key: string]: string | number | boolean | null | undefined };

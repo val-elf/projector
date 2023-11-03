@@ -1,10 +1,9 @@
 import { ITsEntity } from '../../model';
 import { ETsEntityTypes } from '../../ts-readers/model';
-import { TsGenericOwners } from './model';
-import { TsGenericItem } from './ts-generic-item';
+import { ITsGenericItem, TsGenericOwners } from './model';
 import util from 'util';
 
-export class TsGenericsList extends Array<TsGenericItem> implements ITsEntity{
+export class TsGenericsList extends Array<ITsGenericItem> implements ITsEntity{
 
     constructor(
         protected owner: TsGenericOwners,
@@ -22,12 +21,14 @@ export class TsGenericsList extends Array<TsGenericItem> implements ITsEntity{
     name: string = 'generic-list';
     entityType: ETsEntityTypes = ETsEntityTypes.GenericsList;
 
-
     [util.inspect.custom]() {
+        const items = [...this].map(t => ({
+            name: t?.name,
+        }));
         return {
-            type: this.constructor.name,
+            type: this.entityType,
             count: this.length,
-            types: this.map(t => t?.itemType?.name ?? 'undefined'),
+            items,
             owner: this.owner
         };
     }

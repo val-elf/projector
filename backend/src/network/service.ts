@@ -161,7 +161,7 @@ export abstract class Service {
 			const body = request.body ?
 				typeof(request.body) != "object" && req.headers['content-type'] === 'application/json' ? JSON.parse(request.body) : request.body
 				: null;
-			const params = Object.assign({}, req.params, {_metadata: req.query});
+			const params = Object.assign({}, req.params, { _metadata: req.query });
 
 			if(request.multipart){
 				Object.assign(params, request.multipart.parsed);

@@ -3,6 +3,7 @@ import { ITsType, ITsMethod, ITsProperty } from "../../model";
 import { TsGenericsList } from "../../ts-generics-list/ts-generics-list";
 import { TsTypeBase } from "../ts-type";
 import { TsTypeOwner } from "~/openapi/ts-parser/model";
+import { TsGenericParameterItem } from "../../ts-generics-list/ts-generic-parameter-item";
 
 export class TsGenericServiceType extends TsTypeBase {
     public readonly isGeneric = true;
@@ -21,20 +22,31 @@ export class TsGenericServiceType extends TsTypeBase {
 
     constructor(
         public readonly genericBase: ITsType,
-        public readonly genericList: TsGenericsList
+        public readonly genericList: TsGenericsList // generic parameters list
     ) {
         super('generic-type');
     }
 
-    toOpenApi(): { [key: string]: any; } {
+    toOpenApi(genericParameters?: TsGenericsList): { [key: string]: any; } {
         const { genericBase, genericList } = this;
         if (genericBase === TsTypeService.ArrayType) {
-            return {
+            const result = {
                 type: 'array',
-                items: genericList[0].itemType.toOpenApi(),
+                items: (genericList[0] as TsGenericParameterItem).itemType.toOpenApi(genericParameters),
             };
+            return result;
         } else if (genericBase === TsTypeService.PromiseType) {
-            return genericList[0].itemType.toOpenApi();
+            return (genericList[0] as TsGenericParameterItem).itemType.toOpenApi(genericParameters);
+        } else {
+            if (genericBase.referencedTypeName) {
+                const genericDefinition = TsTypeService.getService().findTsTypeDefinition(genericBase.referencedTypeName);
+                if (genericDefinition && genericDefinition.schema) {
+                    return genericBase.toOpenApi(genericParameters);
+                } else {
+                    return genericDefinition.definitionType.toOpenApi(genericList);
+                }
+            }
+            return genericBase.toOpenApi();
         }
     }
 

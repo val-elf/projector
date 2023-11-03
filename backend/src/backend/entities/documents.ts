@@ -27,7 +27,7 @@ export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async getDocuments(owner: string) {
+	public async getDocuments(owner: string): Promise<IFindList<IDocument>> {
 		this.setOwners(owner);
 		const list = (await this.model.findList()) as IFindList<IDocument>;
 

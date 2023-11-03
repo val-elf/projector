@@ -27,7 +27,6 @@ class TsClassesTest extends BaseTest {
     }
 
     public static checkForClassMethodsImplementation() {
-        console.log(this.tsFile.classes);
         const [classDefinition] = this.tsFile.classes;
         assert(classDefinition);
         const [deleteMethod, helloMethod] = classDefinition.methods;

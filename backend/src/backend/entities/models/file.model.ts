@@ -2,6 +2,14 @@ import { ICommonEntity } from '~/backend/core/models';
 import { IDbObjectBase, IPreviewed } from './db-base.models';
 
 // @OA:schema
+// description: File status
+export interface IFileStatus {
+    status: string;
+    exif?: string;
+    preview?: string;
+}
+
+// @OA:schema
 // description: Base File interface
 export interface IBaseFile {
     // @OA:property
@@ -34,7 +42,7 @@ export interface IBaseFile {
 
     // @OA:property
     // description: File status
-    _status?: { status: string; exif?: string; preview?: string };
+    _status?: IFileStatus;
 }
 
 // @OA:schema

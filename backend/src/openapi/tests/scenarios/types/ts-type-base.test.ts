@@ -77,7 +77,6 @@ export class TypeBaseTest extends BaseTest {
         const typeItem: TsTypeDefinition = this.tsFile.items[4] as TsTypeDefinition;
         assert(typeItem);
         const [unionOne, unionTwo] = typeItem.definitionType.unionTypes;
-        console.log('Union one', unionOne, unionTwo);
         assert(unionOne);
         assert(unionTwo);
     }

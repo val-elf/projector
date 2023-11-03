@@ -19,7 +19,6 @@ export class TsInterfaceBodyParser extends TsBaseCommentParser {
             console.group('Read interface implementation:');
             return parser.readInterfaceImplementation(receiver);
         } finally {
-            console.log('end of reading interface implementation');
             console.groupEnd();
         }
     }
@@ -70,7 +69,7 @@ export class TsInterfaceBodyParser extends TsBaseCommentParser {
         const result = super.analyseEntity(entity, entityType);
         if (result) return result;
 
-        console.log('Read interface body (entity):', entity, entityType, this.current.substring(0, 20));
+        // console.log('Read interface body (entity):', entity, entityType, this.current.substring(0, 20));
         switch(entityType) {
             case ETsEntitySymbolTypes.ArgumentStart:
             {

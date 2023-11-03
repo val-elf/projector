@@ -3,6 +3,8 @@ import { ITsProperty } from '../..';
 import { TsExtendsList } from './ts-extends-list';
 import { TsAddtitionalInterfaceProperty } from './ts-additional-interface-property';
 import { TsProperty } from '../../ts-property';
+import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
+import { TsTypeService } from '~/openapi/services/ts-type.service';
 
 
 export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
@@ -29,7 +31,7 @@ export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
         return properties;
     }
 
-    public override propertiesToOpenApi(): { [key: string]: any[] | any; } {
+    public override propertiesToOpenApi(genericParameters?: TsGenericsList): { [key: string]: any[] | any; } {
         const properties = this.properties;
 
         const result = {
@@ -41,7 +43,19 @@ export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
             if (prop instanceof TsAddtitionalInterfaceProperty) {
                 result.additionalProperties = prop.toOpenApi();
             } else if (prop instanceof TsProperty) {
-                Object.assign(result.properties, prop.toOpenApi());
+                if (this.isGeneric && genericParameters) {
+                    const propertyTypeName = prop.propertyType.referencedTypeName;
+                    const genericItemIndex = this.genericList.findIndex(genericItem => genericItem.name === propertyTypeName);
+                    if (genericItemIndex > -1) {
+                        const genericParameter = genericParameters[genericItemIndex];
+                        const realItemType = TsTypeService.getService().findTsTypeDefinition(genericParameter.name);
+                        if (realItemType) {
+                            result.properties[prop.name] = realItemType.toOpenApi();
+                            return;
+                        }
+                    }
+                }
+                Object.assign(result.properties, prop.toOpenApi(genericParameters));
                 if (!prop.isOptional) {
                     result.required.push(prop.name);
                 }
@@ -55,13 +69,13 @@ export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
         }
     }
 
-    public override toOpenApi(): { [key: string]: string | number | object; } {
+    public override toOpenApi(genericParameters?: TsGenericsList): { [key: string]: string | number | object; } {
         // the quiestion is: do we need to make reading properties always
         const res: any = {
             type: this.typeName,
         };
 
-        Object.assign(res, this.propertiesToOpenApi());
+        Object.assign(res, this.propertiesToOpenApi(genericParameters));
         return {
             [this.name]: res,
         };

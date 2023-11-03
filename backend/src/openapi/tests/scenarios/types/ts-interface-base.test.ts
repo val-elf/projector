@@ -8,6 +8,7 @@ import { TsFileParser } from '~/openapi/ts-parser/ts-readers/ts-file-parser';
 import { TsGenericServiceType } from '~/openapi/ts-parser/ts-types/ts-type/service-types/ts-generic-service-type';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
 import { TsAddtitionalInterfaceProperty } from '~/openapi/ts-parser/ts-types/ts-type-definitions/ts-interface-definition/ts-additional-interface-property';
+import { TsGenericArgumentItem } from '~/openapi/ts-parser/ts-types/ts-generics-list/ts-generic-argument-item';
 
 class TsInterfaceBaseTest extends BaseTest {
     public static fileToLoad = 'interface-tests/interface.test.ts';
@@ -29,8 +30,7 @@ class TsInterfaceBaseTest extends BaseTest {
     public static checkForGenericsImplementation() {
         const interfaceDefinition = this.tsFile.types[0];
         const genericList = interfaceDefinition.genericList;
-        const [krateType, bgenericType, authenticType] = genericList;
-        console.log('Generics list', genericList[0], krateType);
+        const [krateType, bgenericType, authenticType] = (genericList as unknown as TsGenericArgumentItem[]);
         strictEqual(krateType.name, 'Krate');
         strictEqual(bgenericType.name, 'BGeneric');
         strictEqual(authenticType.name, 'Authentic');
@@ -65,7 +65,6 @@ class TsInterfaceBaseTest extends BaseTest {
     public static checkForIntefaceExtendsByOmitWithGenerics() {
         const interfaceDefinition = this.tsFile.types[4] as TsInterfaceDefinition;
         assert(interfaceDefinition);
-        console.log('IDef', interfaceDefinition.extendsList);
     }
 
     public static checkInterfaceWithAdditionalProperties() {

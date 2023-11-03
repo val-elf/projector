@@ -10,7 +10,7 @@ describe('File base parser tests', () => {
     it('should parse file', async () => {
         const content = await getFileContent('exports-tests.test.ts');
         const parserResult = getFileParserResult(content);
-        console.log(parserResult);
+        // console.log(parserResult);
         assert(parserResult);
     });
 });

@@ -7,7 +7,7 @@ import { TsClass } from '../ts-class-definition';
 import { TsClassBodyParser } from './ts-class-body-parser';
 import { ITsDecorator } from '~/openapi/ts-parser/model';
 import { TsClassImplementsListParser } from './ts-class-implements-list-parser';
-import { TsGenericsListParser } from '../../../ts-generics-list/ts-generics-list-parser';
+import { TsGenericsArgumentsListParser } from '../../../ts-generics-list/parsers/ts-generics-arguments-list-parser';
 
 class TsClassImpl extends TsClass {
     constructor(isExport: boolean, isAbstract: boolean, decorators?: ITsDecorator[]) {
@@ -79,7 +79,7 @@ export class TsClassParser extends TsParserBase {
             }
             case ETsEntitySymbolTypes.GenericOpen:
                 this.index += entity.length;
-                const genericList = TsGenericsListParser.getGenericsList(this, result);
+                const genericList = TsGenericsArgumentsListParser.getGenericsList(this, result);
                 result.genericsList = genericList;
                 break;
             default:

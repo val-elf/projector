@@ -48,3 +48,31 @@ export class ElementsApi {
     }
 }
 
+interface IFindList<T> {
+    items: T[];
+    options: { [key: string]: string | number | boolean | null | undefined };
+}
+
+// @OA:tag
+// name: ArrayOutput
+// description: Array output API
+@Router({ baseUrl: '/api/v1/' })
+export class ArrayLists {
+
+    // @OA:route
+    // description: Get all elements
+    // responses: [200: Return list of the elements]
+    @Route(EMethod.GET, 'array')
+    public async getArray(): Promise<IFindList<IElement>> {
+        return {
+            items: [],
+            options: {
+                limit: 10,
+                offset: 0,
+                total: 100,
+            },
+        };
+    }
+
+}
+

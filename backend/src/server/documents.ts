@@ -1,6 +1,6 @@
 import { EMethod, Router, Route } from '~/network';
 import { Documents } from '../backend';
-import { IRouter } from '../backend/core/models';
+import { IFindList, IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
 import { IDocument, IInitDocument } from '~/backend/entities/models';
 
@@ -45,10 +45,10 @@ export class DocumentsRouter implements IRouter {
 	// parameters: [ownerId: Id of the owner]
 	// responses: [200: List of the owner's document, 401: Bad Request]
 	@Route(EMethod.GET, '/owner/:ownerId/documents')
-	public async getOwnerDocuments(key): Promise<IDocument[]> {
+	public async getOwnerDocuments(key): Promise<IFindList<IDocument>> {
 		console.warn('[API] Get Owner Documents', key);
 		const list = await this.model.getDocuments(key.owner);
-		return list.result;
+		return list;
 	}
 
 	// @OA:route

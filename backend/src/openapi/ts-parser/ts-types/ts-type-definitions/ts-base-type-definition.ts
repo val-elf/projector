@@ -63,9 +63,9 @@ export abstract class TsBaseTypeDefinition extends TsEntity implements IOpenApiS
         };
     }
 
-    public abstract propertiesToOpenApi(): { [key: string]: any[] ; };
+    public abstract propertiesToOpenApi(genericParameters?: TsGenericsList): { [key: string]: any[] ; };
 
-    toOpenApi(): { [key: string]: string | number | object; } {
+    toOpenApi(genericParameters?: TsGenericsList): { [key: string]: string | number | object; } {
         if (this.schema && this.schema.aliasType) {
             return {
                 [this.name]: {
@@ -79,7 +79,7 @@ export abstract class TsBaseTypeDefinition extends TsEntity implements IOpenApiS
             }
         }
 
-        const properties = this.propertiesToOpenApi();
+        const properties = this.propertiesToOpenApi(genericParameters);
         return {
             [this.name]: {
                 type: this.typeName,

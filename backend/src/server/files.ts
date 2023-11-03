@@ -1,11 +1,12 @@
 import { utils } from '~/utils/utils';
 import { Files } from '../backend';
-import { IRouter } from '../backend/core/models';
+import { IFindList, IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
-import { IFile } from '~/backend/entities/models';
+import { IFile, IFileStatus, IInitFile } from '~/backend/entities/models';
 import { config } from '~/config';
 import { http } from '~/utils/simpleHttp';
 import { EMethod, Route, Router } from '~/network';
+import { IDuplexDataReader } from '~/network/request';
 
 // @OA:tag
 // name: Files
@@ -22,8 +23,11 @@ export class FilesRouter implements IRouter {
 
 	// @OA:route
 	// description: Upload a file
+	// security: [APIKeyHeader:[]]
+	// requestBody: multipart/form-data
+	// responses: [200: Uploaded file instance]
 	@Route(EMethod.POST, '/upload')
-	public async upload(key, data) {
+	public async upload(key, data: IDuplexDataReader): Promise<IFile> {
 		console.warn('[API] Upload the file', key);
 		const { transcoder } = config;
 		const completeOperation = async (file, content) => {
@@ -50,12 +54,12 @@ export class FilesRouter implements IRouter {
 		try {
 			const { content, header } = await data.getData();
 			const fileInfo: Partial<IFile> = {
-				name: header.parsed.filename,
-				file: header.parsed.filename,
+				name: header.filename,
+				file: header.filename,
 				size: content.length,
 				_status: { status: 'new' },
 				transcoder,
-				type: header.parsed['content-type'],
+				type: header['content-type'],
 			};
 			const file = await this.model.createFile(fileInfo as IFile);
 			completeOperation(file, content);
@@ -67,20 +71,22 @@ export class FilesRouter implements IRouter {
 
 	// @OA:route
 	// description: Get file transcoding status
+	// security: [APIKeyHeader: []]
+	// parameters: [fileId: Id of the file]
+	// responses: [200: Status of the file]
 	@Route(EMethod.GET, '/file/:fileId/status')
-	public async getTranscoderStatus(key) {
-		try {
-			const file = await this.model.getFileInfo(key.file);
-			this.app.response.set(file._status);
-		} catch (error) {
-			this.app.response.setError(error);
-		}
+	public async getTranscoderStatus(key): Promise<IFileStatus> {
+		const file = await this.model.getFileInfo(key.file);
+		return file._status;
 	}
 
 	// @OA:route
 	// description: Delete a file
+	// security: [APIKeyHeader: []]
+	// parameters: [fileId: Id of the deleted file]
+	// responses: [200: Deleted file flag]
 	@Route(EMethod.DELETE, '/files/:fileId')
-	public async deleteFile(key) {
+	public async deleteFile(key): Promise<{ deleted: boolean }> {
 		console.warn('[API] Delete Owner File', key);
 		await this.model.removeFile(key.file);
 		return { deleted:true };
@@ -88,14 +94,20 @@ export class FilesRouter implements IRouter {
 
 	// @OA:route
 	// description: Get file info
+	// security: [APIKeyHeader: []]
+	// parameters: [fileId: Id of the deleted file]
+	// responses: [200: File info for specified file]
 	@Route(EMethod.GET, '/file/:fileId')
-	public async getFileInfo(key) {
+	public async getFileInfo(key): Promise<IFile> {
 		console.warn('[API] Get File Info', key);
 		return await this.model.getFileInfo(key.file);
 	}
 
 	// @OA:route
 	// description: Download file
+	// security: [APIKeyHeader: []]
+	// parameters: [fileId: Id of the deleted file]
+	// responses: [200: Download specified file content]
 	@Route(EMethod.GET, '/download/:fileId')
 	public async downloadFile(key) {
 		console.warn('[API] Download file', key);
@@ -121,10 +133,13 @@ export class FilesRouter implements IRouter {
 
 	// @OA:route
 	// description: Get files list for abstract object
+	// security: [APIKeyHeader: []]
+	// parameters: [objectId: Id of the specified object]
+	// responses: [200: File items for the specified object]
 	@Route(EMethod.GET, '/dbobject/:objectId/files')
-	public async getOwnerFiles(key) {
+	public async getOwnerFiles(key): Promise<IFile[]> {
 		console.warn('[API] Get owner files', key);
-		return await this.model.getOwnerFiles(key.objectId, key._metadata);
+		return ((await this.model.getOwnerFiles(key.objectId, key._metadata)) as IFindList<IFile>).result;
 	}
 }
 

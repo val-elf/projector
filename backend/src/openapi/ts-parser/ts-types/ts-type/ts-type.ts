@@ -6,6 +6,7 @@ import { TsGenericsList } from '../ts-generics-list/ts-generics-list';
 
 import util from 'util';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
+import { TsGenericParameterItem } from '../ts-generics-list/ts-generic-parameter-item';
 
 declare const UtilityTypes: TsType[];
 
@@ -31,18 +32,51 @@ export abstract class TsTypeBase extends TsEntity implements ITsType{
     abstract populateProperties(properties: ITsProperty[]): void;
     abstract populateReferenceName(name: string): void;
 
-    public toOpenApi(): { [key: string]: any; } {
+    public toOpenApi(genericParameters?: TsGenericsList): { [key: string]: any; } {
         if (this.referencedTypeName) {
+
+            if (genericParameters) {
+                const parameter = genericParameters.find((p: TsGenericParameterItem) => {
+                    const ownerDefinition = TsTypeService.getService().findTsTypeDefinition((p.owner as TsType).referencedTypeName);
+                    if (ownerDefinition.isGeneric) {
+                        return ownerDefinition.genericList.find(g => g.name === this.referencedTypeName);
+                    }
+                }) as TsGenericParameterItem;
+                if (parameter) {
+                    return parameter.itemType.toOpenApi();
+                }
+            }
+
             const typeName = this.referencedTypeName !== 'any' ? this.referencedTypeName : 'object';
             return { '$ref': `#/components/schemas/${typeName}` };
         } else if (this.properties) {
             return {
                 type: 'object',
                 properties: this.properties.reduce((acc, prop) => {
-                    acc[prop.name] = prop.propertyType.toOpenApi();
+                    acc[prop.name] = prop.propertyType.toOpenApi(genericParameters);
                     return acc;
                 }, {}),
             };
+        }
+    }
+
+    [util.inspect.custom]() {
+        if (this.isGeneric) {
+            return {
+                type: 'Generic Type',
+                base: this.genericBase,
+                list: this.genericList,
+            }
+        } else {
+            return {
+                name: this.name,
+                entityType: this.entityType,
+                referencedTypeName: this.referencedTypeName,
+                properties: this.properties,
+                methods: this.methods,
+                isUnion: this.isUnion,
+                isIntersection: this.isIntersection
+            }
         }
     }
 }
@@ -128,18 +162,6 @@ export abstract class TsType extends TsTypeBase implements IOpenApiSerializable,
         this._isAlias = false;
         this._intersectionTypes = [];
         this._genericList = undefined;
-    }
-
-    [util.inspect.custom]() {
-        return {
-            entityType: this.entityType,
-            referencedType: this.referencedTypeName,
-            properties: this.properties,
-            methods: this.methods,
-            isGeneric: this.isGeneric,
-            isUnion: this.isUnion,
-            isIntersection: this.isIntersection
-        }
     }
 }
 

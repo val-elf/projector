@@ -3,9 +3,9 @@ import { TsParserBase } from '~/openapi/ts-parser/ts-readers';
 import { ETsEntitySymbolTypes, ETsEntityTypes, ITsParser, TReadEntityResult } from '~/openapi/ts-parser/ts-readers/model';
 import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
 import { TsTypeDefinition } from './ts-type-definition';
-import { TsGenericsListParser } from '../../ts-generics-list/ts-generics-list-parser';
 import { TsTypeParser } from '../../ts-type/parsers/ts-type-parser';
 import { ITsType } from '../../model';
+import { TsGenericsArgumentsListParser } from '../../ts-generics-list/parsers/ts-generics-arguments-list-parser';
 
 class TsTypeDefinitionImpl extends TsTypeDefinition {
     constructor(isExport: boolean) {
@@ -73,7 +73,7 @@ export class TsTypeDefinitionParser extends TsParserBase {
         switch(entityType) {
             case ETsEntitySymbolTypes.GenericOpen:
                 this.index += entity.length;
-                return TsGenericsListParser.getGenericsList(this, typeDefinition);
+                return TsGenericsArgumentsListParser.getGenericsList(this, typeDefinition);
             case ETsEntitySymbolTypes.EntityName:
                 this.index += entity.length;
                 return new TsEntityNamed(entity.trim());
