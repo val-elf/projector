@@ -1,6 +1,6 @@
 import { EMethod } from '~/network/route.decorator';
 import { Projects } from '../backend';
-import { IRouter } from '../backend/core/models';
+import { IFindList, IRouter } from '../backend/core/models';
 import { Service, Route, Router } from '../network';
 import { utils } from '../utils/utils';
 import { IInitProject, IPreviewed, IProject } from '~/backend/entities/models';
@@ -21,24 +21,32 @@ export class ProjectsRouter implements IRouter {
     }
 
     // @OA:route
+    // security: [APIKeyHeader:[]]
     // description: Get list of projects
+    // responses: [200: List of projects]
     @Route(EMethod.GET, '/projects')
-    async getProjects(key) {
+    async getProjects(key): Promise<IFindList<IProject>> {
         console.warn('[API] Get projects list', key);
         const projects = await this.model.getProjects(key._metadata);
         return projects;
     }
 
     // @OA:route
+    // security: [APIKeyHeader:[]]
     // description: Get project by ID
-    @Route(EMethod.GET, '/projects/:project')
-    async getProject(key) {
+    // parameters: [projectId: Project ID]
+    // responses: [200: Project instance]
+    @Route(EMethod.GET, '/projects/:projectId')
+    async getProject(key): Promise<IProject> {
         console.warn('[API] Get Project', key);
-        return await this.model.getProject(key.project);
+        return await this.model.getProject(key.projectId);
     }
 
     // @OA:route
+    // security: [APIKeyHeader:[]]
     // description: Create new project
+    // requestBody: [item: IInitProject]
+    // responses: [200: Project instance]
     @Route(EMethod.POST, '/projects')
     async createProject(
         key,
@@ -50,9 +58,13 @@ export class ProjectsRouter implements IRouter {
     }
 
     // @OA:route
+    // security: [APIKeyHeader:[]]
     // description: Update project
-    @Route(EMethod.PUT, '/projects/:project')
-    async updateProject(key, project: IInitProject) {
+    // parameters: [projectId: Project ID]
+    // requestBody: [item: IInitProject]
+    // responses: [200: Project instance]
+    @Route(EMethod.PUT, '/projects/:projectId')
+    async updateProject(key, project: IInitProject): Promise<IProject> {
         console.warn('[API] Update project', key);
         const updated = await this.prepareProject(project);
         return await this.model.updateProject(updated);

@@ -1,3 +1,4 @@
+import { TsTypeService } from "../services/ts-type.service";
 import { TsExpressionObjectAccess } from "../ts-parser/ts-functions/ts-expressions/ts-expression-object-access";
 import { TsExpressionValue } from "../ts-parser/ts-functions/ts-expressions/ts-expression-value";
 import { ETsEntityTypes } from "../ts-parser/ts-readers/model";
@@ -148,7 +149,7 @@ export class OARoute extends OADefinition implements IOARoute {
     private prepareResponses(responses: ITagResponse = {}, oaSecurity: IPathSecurityDefinition[]): IResponsesDefinition {
         const { returnType } = this._method;
         const gatherer = OpenApiInstance;
-        const responseKeys = Object.keys(responses);
+        let responseKeys = Object.keys(responses);
         const fullDefinitions = {};
         const module = gatherer.module;
         Object.assign(fullDefinitions, {
@@ -176,13 +177,16 @@ export class OARoute extends OADefinition implements IOARoute {
             if (!responseKeys.includes('403')) responseKeys.push('403');
         }
 
-        if (fullDefinitions['200']) {
-            fullDefinitions['200'].type = returnType.toOpenApi();
-        } else if (returnType) {
-            responseKeys.push('200');
-            fullDefinitions['200'] = {
-                type: returnType.toOpenApi(),
-            };
+        if (returnType) {
+            if (returnType === TsTypeService.Void) {
+                responseKeys = responseKeys.filter(k => k !== '200');
+            } else {
+                if (!fullDefinitions['200']) {
+                    responseKeys.push('200');
+                    fullDefinitions['200'] = {};
+                }
+                fullDefinitions['200'].type = returnType.toOpenApi();
+            }
         }
 
         return responseKeys.reduce((acc, k) => ({

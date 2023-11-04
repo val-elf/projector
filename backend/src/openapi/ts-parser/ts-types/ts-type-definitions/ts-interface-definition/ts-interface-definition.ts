@@ -5,6 +5,7 @@ import { TsAddtitionalInterfaceProperty } from './ts-additional-interface-proper
 import { TsProperty } from '../../ts-property';
 import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
+import { mergeDeep } from '~/openapi/utils';
 
 
 export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
@@ -34,7 +35,7 @@ export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
     public override propertiesToOpenApi(genericParameters?: TsGenericsList): { [key: string]: any[] | any; } {
         const properties = this.properties;
 
-        const result = {
+        let result = {
             properties: {},
             additionalProperties: {},
             required: [],
@@ -55,7 +56,8 @@ export abstract class TsInterfaceDefinition extends TsBaseTypeDefinition {
                         }
                     }
                 }
-                Object.assign(result.properties, prop.toOpenApi(genericParameters));
+                const properties = prop.toOpenApi(genericParameters);
+                result = mergeDeep(result, properties);
                 if (!prop.isOptional) {
                     result.required.push(prop.name);
                 }

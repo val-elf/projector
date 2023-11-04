@@ -1,5 +1,6 @@
 import { TsProperty } from '../../ts-property';
 import { ITsType } from '../../model';
+import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
 
 export class TsAddtitionalInterfaceProperty extends TsProperty {
     public readonly keyType: ITsType;
@@ -16,7 +17,9 @@ export class TsAddtitionalInterfaceProperty extends TsProperty {
         this.propertyType = propertyType;
     }
 
-    public toOpenApi(): { [key: string]: any; } {
-        return this.propertyType.toOpenApi();
+    public toOpenApi(genericParameters?: TsGenericsList): { [key: string]: any; } {
+        return {
+            additionalProperties: this.propertyType.toOpenApi(genericParameters)
+        };
     }
 }

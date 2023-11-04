@@ -1,6 +1,6 @@
 import * as db from "mongoose";
 import { config as outerConfig } from "../../config";
-import { ICommonEntity, TFindListResult, TObjectId } from './models';
+import { ICommonEntity, IFindList, TObjectId } from './models';
 import { IEntityController, IPreselectResult } from './entity-processor';
 
 export const controllers: { [key: string]: IEntityController<unknown, unknown> } = {};
@@ -197,11 +197,10 @@ export class DbBridge<TEntity extends ICommonEntity, TInitEntity extends ICommon
 	}
 
 	@TransactionMethod()
-	public async findList(
+	public async getCountOfList(
 		condition: any = {},
 		projection?: any,
-		meta?: any,
-	): Promise<TFindListResult<TEntity>> {
+	): Promise<{ count: number }> {
 		// pagination finding
 		const res: { data?: TEntity[], count?: number } = {};
 		const controller = controllers[this.modelName];
@@ -209,7 +208,29 @@ export class DbBridge<TEntity extends ICommonEntity, TInitEntity extends ICommon
 
 		const aggregations = this.prepareAggregation(condition, projection, additionals);
 
-		const onlyCount = meta?.totalCount === 'true';
+		res.count = (await this.dbModel.aggregate([
+			...aggregations,
+			{ $count: 'count' }
+		]))[0]?.count ?? 0;
+
+		return {
+			count: res.count,
+		};
+	}
+
+	@TransactionMethod()
+	public async findList(
+		condition: any = {},
+		projection?: any,
+		meta?: any,
+	): Promise<IFindList<TEntity>> {
+		// pagination finding
+		const res: { data?: TEntity[], count?: number } = {};
+		const controller = controllers[this.modelName];
+		const additionals = controller?.preSelect ? (await controller.preSelect()) : {}
+
+		const aggregations = this.prepareAggregation(condition, projection, additionals);
+
 		const queryOptions = DbBridge.prepareMetadata(meta);
 
 		res.count = (await this.dbModel.aggregate([
@@ -217,29 +238,19 @@ export class DbBridge<TEntity extends ICommonEntity, TInitEntity extends ICommon
 			{ $count: 'count' }
 		]))[0]?.count ?? 0;
 
-		if (!onlyCount) {
+		const paginations = [
+			queryOptions.sort ? { $sort: queryOptions.sort } : undefined,
+			queryOptions.skip ? { $skip: queryOptions.skip } : undefined,
+			queryOptions.limit ? { $limit: queryOptions.limit } : undefined,
+		].filter(i => i);
 
-			const paginations = [
-				queryOptions.sort ? { $sort: queryOptions.sort } : undefined,
-				queryOptions.skip ? { $skip: queryOptions.skip } : undefined,
-				queryOptions.limit ? { $limit: queryOptions.limit } : undefined,
-			].filter(i => i);
-
-			res.data = await this.dbModel.aggregate<TEntity>([
-				...aggregations,
-				...paginations,
-			]);
-		}
-
-		if (!onlyCount) {
-			const result = res.data;
-			const entities = result.map(i => this.itemLoad$.next(i));
-			return { result: entities, options: { total: res.count } };
-		} else {
-			return {
-				count: res.count,
-			};
-		}
+		res.data = await this.dbModel.aggregate<TEntity>([
+			...aggregations,
+			...paginations,
+		]);
+		const result = res.data;
+		const entities = result.map(i => this.itemLoad$.next(i));
+		return { result: entities, options: { total: res.count } };
 	}
 
 	@TransactionMethod()

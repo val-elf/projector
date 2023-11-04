@@ -68,19 +68,23 @@ class TsTypeImpl extends TsType {
 }
 
 class TsTypePrimitive extends TsTypeImpl {
+    private _alias?: string;
+    public unionTypes?: ITsType[];
+    protected readonly _referencedTypeName: string;
+
+    constructor(referencedTypeName: string, alias?: string) {
+        super(undefined);
+        this._referencedTypeName = referencedTypeName;
+        this._alias = alias;
+    }
+
     public addUnionItem(member: ITsType) {
         throw new Error('Method not implemented.');
     }
-    unionTypes?: ITsType[];
-    getLatestUnion(): ITsType {
+
+    public getLatestUnion(): ITsType {
         throw new Error('Method not implemented.');
     }
-    protected readonly _referencedTypeName: string;
-    constructor(referencedTypeName: string) {
-        super(undefined);
-        this._referencedTypeName = referencedTypeName;
-    }
-
     public populateMethods(methods: ITsMethod[]): void {
         throw new Error('Method not implemented.');
     }
@@ -95,7 +99,7 @@ class TsTypePrimitive extends TsTypeImpl {
 
     public toOpenApi() {
         return {
-            type: this.referencedTypeName,
+            type: this._alias ?? this.referencedTypeName,
         }
     }
 }
@@ -151,8 +155,8 @@ export abstract class TsTypeService {
         return type;
     }
 
-    public static createPrimitiveType(typeName: string): ITsType {
-        const type = new TsTypePrimitive(typeName);
+    public static createPrimitiveType(typeName: string, alias?: string): ITsType {
+        const type = new TsTypePrimitive(typeName, alias);
         return type;
     }
 
@@ -165,7 +169,7 @@ export abstract class TsTypeService {
     public static readonly Any = this.createPrimitiveType('any');
     public static readonly Boolean = this.createPrimitiveType('boolean');
     public static readonly Never = this.createPrimitiveType('never');
-    public static readonly Void = this.createPrimitiveType('void');
+    public static readonly Void = this.createPrimitiveType('void', '\'null\'');
     public static readonly Undefined = this.createPrimitiveType('undefined');
     public static readonly Null = this.createPrimitiveType('null');
     public static readonly Unknown = this.createPrimitiveType('unknown');

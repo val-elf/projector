@@ -23,8 +23,6 @@ export interface IFindList<T extends ICommonEntity> {
     options: { [key: string]: string | number | boolean | null | undefined };
 };
 
-export type TFindListResult<T extends ICommonEntity> =  IFindList<T> | { count: number };
-
 export interface IRouter {
     model: IEntityController<any, any>;
     configure(app: Service);

@@ -27,8 +27,13 @@ export class TsAddtitionalInterfacePropertyParser extends TsParserBase {
     private readMode: EReaderModes = EReaderModes.initial;
 
     public static readAdditionalInterfaceProperty(parser: ITsParser): TsAddtitionalInterfaceProperty {
-        const reader = new TsAddtitionalInterfacePropertyParser(parser);
-        return reader.readEntity() as TsAddtitionalInterfaceProperty;
+        try {
+            console.group('Read additional interface property:');
+            const reader = new TsAddtitionalInterfacePropertyParser(parser);
+            return reader.readEntity() as TsAddtitionalInterfaceProperty;
+        } finally {
+            console.groupEnd();
+        }
     }
 
     protected override analyseEntity(entity: string, entityType: ETsEntitySymbolTypes): ITsEntity {

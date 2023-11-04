@@ -1,8 +1,6 @@
 import { ICommonEntity } from '~/backend/core/models';
 import { IDbObjectBase, IInitPreviewed, IPreviewed } from './db-base.models';
 
-// @OA:schema
-// description: Project entity base schema
 interface IBaseProject {
     // @OA:property
     // description: Project name

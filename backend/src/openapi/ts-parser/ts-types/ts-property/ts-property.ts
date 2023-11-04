@@ -24,9 +24,11 @@ export abstract class TsProperty extends TsEntity implements IOpenApiSerializabl
         super(name);
     }
 
-    public toOpenApi(genericsParameters?: TsGenericsList) {
+    public toOpenApi(genericsParameters?: TsGenericsList): { [key: string]: any } {
         return {
-            [this.name]: this.propertyType.toOpenApi(genericsParameters),
+            properties: {
+                [this.name]: this.propertyType.toOpenApi(genericsParameters)
+            },
         }
     }
 

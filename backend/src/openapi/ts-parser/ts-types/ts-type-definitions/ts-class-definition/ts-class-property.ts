@@ -3,6 +3,7 @@ import { TsProperty } from '../../ts-property';
 import { TsDecorator } from '~/openapi/ts-parser/ts-decorator';
 import { ITsExpression } from '~/openapi/ts-parser/model';
 import { TsClass } from './ts-class-definition';
+import { TsGenericsList } from '../../ts-generics-list/ts-generics-list';
 
 export abstract class TsClassProperty extends TsProperty {
     public value: ITsExpression<unknown> | undefined;
@@ -17,11 +18,13 @@ export abstract class TsClassProperty extends TsProperty {
         super('');
     }
 
-    public toOpenApi(): { [key: string]: any } {
+    public toOpenApi(genericParameters?: TsGenericsList): { property: { [key: string]: any }} {
         return {
-            [this.name]: this.propertyType?.toOpenApi() ??
-                ((this.value as any).toOpenApi ? (this.value as any).toOpenApi() : undefined) ??
-                { type: 'unknown' },
+            property: {
+                [this.name]: this.propertyType?.toOpenApi(genericParameters) ??
+                    ((this.value as any).toOpenApi ? (this.value as any).toOpenApi(genericParameters) : undefined) ??
+                    { type: 'unknown' },
+            }
         }
     }
 }

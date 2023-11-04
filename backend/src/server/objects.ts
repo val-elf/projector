@@ -5,7 +5,7 @@ import { Service } from '../network/service';
 import md5 from 'md5';
 import { config } from '~/config';
 import { DbBridge } from '~/backend/core/db-bridge';
-import { IFile, IPreviewed } from '~/backend/entities/models';
+import { IDbObject, IFile, IPreviewed } from '~/backend/entities/models';
 import { EMethod, Response, Route, Router } from '~/network';
 
 // @OA:tag
@@ -22,9 +22,12 @@ export class ObjectsRouter implements IRouter {
 	}
 
 	// @OA:route
+	// security: [APIKeyHeader:[]]
 	// description: Get full information about database object
+	// parameters: [objectId: Id of object]
+	// responses: [200: Object definition]
 	@Route(EMethod.GET, '/dbobjects/:objectId')
-	public async getObject(key) {
+	public async getObject(key): Promise<IDbObject> {
 		console.warn('[API] Get DbObject', key);
 		return await this.model.getDbObject(key.objectId);
 	}
@@ -34,7 +37,7 @@ export class ObjectsRouter implements IRouter {
 		response.setError(new Error('Not found'), 404);
 	}
 
-	public async getPreviewHash(model, objectId) {
+	public async getPreviewHash(model, objectId): Promise<string> {
 		let obj = await model.find({ _id: objectId }, { }, {});
 		obj = obj.pop();
 		if (obj.preview && obj.preview.hash) return obj.preview.hash;
@@ -48,8 +51,11 @@ export class ObjectsRouter implements IRouter {
 
 	// @OA:route
 	// description: Get preview image of database object by its type
+	// security: [APIKeyHeader:[]]
+	// parameters: [objectId: Id of object, type: Type of object]
+	// responses: [200: Preview image]
 	@Route(EMethod.GET, '/dbobjects/:objectId/preview/:type')
-	public async getObjectPreviewByType(key, ...args: any[]) {
+	public async getObjectPreviewByType(key, ...args: any[]): Promise<void> {
 		console.warn('[API] Get DbObject preview by type', key, args);
 
 		const { request, response } = this.app;
@@ -60,8 +66,11 @@ export class ObjectsRouter implements IRouter {
 
 	// @OA:route
 	// description: Get preview image of database object
+	// security: [APIKeyHeader:[]]
+	// parameters: [objectId: Id of object]
+	// responses: [200: Preview image]
 	@Route(EMethod.GET, '/dbobjects/:objectId/preview')
-	public async getObjectPreview(key) {
+	public async getObjectPreview(key): Promise<void> {
 		console.warn('[API] Get DbObject preview', key);
 
 		const { request, response } = this.app;

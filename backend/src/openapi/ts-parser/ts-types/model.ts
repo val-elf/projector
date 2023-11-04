@@ -42,7 +42,7 @@ export enum ETsTypeKind {
     Type,
 }
 
-export interface ITsProperty extends ITsEntity, IOAContainer<IOAProperty> {
+export interface ITsProperty extends ITsEntity, IOAContainer<IOAProperty>, IOpenApiSerializable {
     name: string;
     propertyType: ITsType;
     definition?: IOAProperty;

@@ -1,9 +1,10 @@
 import { IRouter } from '../backend/core/models';
 import { Service } from '../network/service';
 import { navigation } from '../_navigation/navigation';
+import { EMethod, Route, Router } from '~/network';
 
 const navData = navigation();
-
+@Router()
 export class NavigationsRouter implements IRouter {
 	model;
 	private app: Service;
@@ -14,7 +15,8 @@ export class NavigationsRouter implements IRouter {
 		app.get('/navigation', this.getNavigation);
 	}
 
-	getNavigation = async () => {
+	@Route(EMethod.GET, '/navigation')
+	getNavigation(): any[] {
 		console.warn('[API] Get navigation', navData);
 		try{
 			const dataRes = [];

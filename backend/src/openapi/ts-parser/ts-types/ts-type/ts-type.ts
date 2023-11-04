@@ -7,6 +7,7 @@ import { TsGenericsList } from '../ts-generics-list/ts-generics-list';
 import util from 'util';
 import { TsTypeService } from '~/openapi/services/ts-type.service';
 import { TsGenericParameterItem } from '../ts-generics-list/ts-generic-parameter-item';
+import { mergeDeep } from '~/openapi/utils';
 
 declare const UtilityTypes: TsType[];
 
@@ -52,10 +53,9 @@ export abstract class TsTypeBase extends TsEntity implements ITsType{
         } else if (this.properties) {
             return {
                 type: 'object',
-                properties: this.properties.reduce((acc, prop) => {
-                    acc[prop.name] = prop.propertyType.toOpenApi(genericParameters);
-                    return acc;
-                }, {}),
+                ...(this.properties.reduce((acc, prop) => {
+                    return mergeDeep(acc, prop.toOpenApi(genericParameters));
+                }, {})),
             };
         }
     }

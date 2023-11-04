@@ -137,9 +137,9 @@ export class FilesRouter implements IRouter {
 	// parameters: [objectId: Id of the specified object]
 	// responses: [200: File items for the specified object]
 	@Route(EMethod.GET, '/dbobject/:objectId/files')
-	public async getOwnerFiles(key): Promise<IFile[]> {
+	public async getOwnerFiles(key): Promise<IFindList<IFile>> {
 		console.warn('[API] Get owner files', key);
-		return ((await this.model.getOwnerFiles(key.objectId, key._metadata)) as IFindList<IFile>).result;
+		return await this.model.getOwnerFiles(key.objectId, key._metadata);
 	}
 }
 

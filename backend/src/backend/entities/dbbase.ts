@@ -7,7 +7,7 @@ import { getToken, isArray, isObject, isString, prepareHash } from './utils';
 
 import { EntityControllerBase, IEntityController } from '../core/entity-processor';
 import { DbBridge, DbModel } from '../core';
-import { ICommonEntity, IFindList, TFindListResult, TObjectId } from '../core/models';
+import { ICommonEntity, IFindList, TObjectId } from '../core/models';
 import { Tags } from './tags';
 
 const USER_LOGOUT_MESSAGE = "User must be authorized";
@@ -296,10 +296,7 @@ export class DbObjectAncestor<T extends ICommonEntity, C extends ICommonEntity =
 		return nitem;
 	}
 
-	protected preapareItemsList<T extends ICommonEntity>(source: TFindListResult<T>): IFindList<T> | { count: number }{
-		const counter:{ count: number } = (source as unknown as { count: number });
-		if (counter) return counter;
-
+	protected preapareItemsList<T extends ICommonEntity>(source: IFindList<T>): IFindList<T> {
 		const list = source as IFindList<T>;
 		const options = list.options as unknown as IFilterOptions;
 		/* this is should be moved to DbObject */
