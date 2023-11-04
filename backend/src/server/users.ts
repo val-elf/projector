@@ -72,6 +72,7 @@ export class UsersRouter implements IRouter {
 	// security: [APIKeyHeader:[]]
 	// description: Delete particular user
 	// parameters: [userId: User ID]
+	// requestBody: [user]
 	// responses: [200: Update existing user]
 	@Route(EMethod.DELETE, '/users/:userId')
 	public async updateUser(key, user: IUser): Promise<IUser> {
@@ -82,26 +83,26 @@ export class UsersRouter implements IRouter {
 	// @OA:route
 	// security: [APIKeyHeader:[]]
 	// description: Create new user
-	// requestBody: [item: IUser]
+	// requestBody: [user]
 	// responses: [200: Created user]
 	@Route(EMethod.POST, '/users')
-	public async createUser(key, items: Pick<IUser, 'login' | 'password'>): Promise<IUser> {
-		console.warn('[API] Create New User', key, items);
-		const user = await this.model.createUser(items);
-		console.log('Result user', user);
-		return user;
+	public async createUser(key, user: Pick<IUser, 'login' | 'password'>): Promise<IUser> {
+		console.warn('[API] Create New User', key, user);
+		const createdUser = await this.model.createUser(user);
+		console.log('Result user', createdUser);
+		return createdUser;
 		// return { abc: true };
 	}
 
 	// @OA:route
 	// description: Login
-	// requestBody: [item: IUser]
+	// requestBody: [item]
 	// responses: [200: Session token]
 	@Route(EMethod.POST, '/login')
-	public async loginUser(key, items): Promise<{ sessionToken: TObjectId, userId: TObjectId }> {
+	public async loginUser(key, item: { login: string; password: string }): Promise<{ sessionToken: TObjectId, userId: TObjectId }> {
 		const { request, response } = this.app;
-		console.warn('[API] Login User', key, items);
-		const session = await this.model.authorize(items.login, items.password);
+		console.warn('[API] Login User', key, item);
+		const session = await this.model.authorize(item.login, item.password);
 		if (request.session) {
 			(request.session as any).user = null;
 		}

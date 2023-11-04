@@ -40,13 +40,13 @@ export class TsGenericServiceType extends TsTypeBase {
         } else {
             if (genericBase.referencedTypeName) {
                 const genericDefinition = TsTypeService.getService().findTsTypeDefinition(genericBase.referencedTypeName);
-                if (genericDefinition && genericDefinition.schema) {
-                    return genericBase.toOpenApi(genericParameters);
-                } else {
-                    return genericDefinition.definitionType.toOpenApi(genericList);
+                if (genericDefinition) {
+                    if (!genericDefinition.schema) {
+                        return genericDefinition.definitionType.toOpenApi(genericList);
+                    }
                 }
             }
-            return genericBase.toOpenApi();
+            return genericBase.toOpenApi(genericParameters);
         }
     }
 

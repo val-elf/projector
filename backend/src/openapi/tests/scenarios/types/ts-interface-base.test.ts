@@ -65,6 +65,7 @@ class TsInterfaceBaseTest extends BaseTest {
     public static checkForIntefaceExtendsByOmitWithGenerics() {
         const interfaceDefinition = this.tsFile.types[4] as TsInterfaceDefinition;
         assert(interfaceDefinition);
+        console.log('OMIT output:', interfaceDefinition.toOpenApi());
     }
 
     public static checkInterfaceWithAdditionalProperties() {
@@ -132,7 +133,9 @@ describe('Interface type definition checking', async () => {
         TsInterfaceBaseTest.checkInterfaceWithUsingAdditionalProperties();
     });
 
-    it.todo('Checking for interface with partial modifyer', () => {
+    it.skip
+    //.todo
+    ('Checking for interface with partial modifyer', () => {
         TsInterfaceBaseTest.checkInterfaceWithPartialModifyer();
     });
 });

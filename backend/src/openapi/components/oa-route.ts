@@ -10,6 +10,8 @@ import { CommonOADefinition } from "./common-oa-definition";
 import { EDeclarationType, IOARoute, IPathSecurityDefinition, IPathsDefinition, IResponsesDefinition, OADefinition } from "./model";
 import { OpenApiInstance } from "./openApi";
 
+const TypeService = TsTypeService.getService();
+
 const PREPARE_PATH = (path: string) => path.replace(/:(\w+)/g, '{$1}').replace(/(^[\"\'\`]|[\"\'\`]$)/g, '');
 
 interface ITagResponse {
@@ -127,16 +129,32 @@ export class OARoute extends OADefinition implements IOARoute {
                     },
                 }
             }
-        } else {
-            const { item } = requestBody as { item: string };
-            return {
-                content: {
-                    'application/json': {
-                        schema: { $ref: `#/components/schemas/${item}` },
-                    },
+        }
+        const schema = {};
+        const result = { content: { 'application/json': { schema } } };
+        if (typeof requestBody === 'string' || Array.isArray(requestBody)) {
+            const itemType = typeof requestBody === 'string' ? requestBody : requestBody[0] as string;
+            const definition = TypeService.findTsTypeDefinition(itemType);
+            if (definition) {
+                if (definition.schema) {
+                    Object.assign(schema,  { $ref: `#/components/schemas/${requestBody}` });
+                } else {
+                    Object.assign(schema, definition.toOpenApi());
+                }
+            } else {
+                // it could be funciton's parameter name
+                const param = this._method.parameters.get(itemType);
+                if (param) {
+                    Object.assign(schema, param.parameterType.toOpenApi());
+                } else {
+                    Object.assign(schema, { $ref: `#/components/schemas/${requestBody}` });
                 }
             }
+        } else {
+            const { item } = requestBody as { item: string };
+            Object.assign(schema, { $ref: `#/components/schemas/${item}` });
         }
+        return result;
 
     }
 

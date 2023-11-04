@@ -82,6 +82,7 @@ export class TsInterfaceBodyParser extends TsBaseCommentParser {
                 return this.readPropertyDefinition();
             }
             case ETsEntitySymbolTypes.Semicolon:
+            case ETsEntitySymbolTypes.Comma:
                 this.unlock();
                 this.index += entity.length;
                 this.lock();
@@ -103,7 +104,7 @@ export class TsInterfaceBodyParser extends TsBaseCommentParser {
         if (entityType) return entityType;
         if (entity === 'set') return ETsEntitySymbolTypes.Set;
         if (entity === 'get') return ETsEntitySymbolTypes.Get;
-        if (entity === ';') return ETsEntitySymbolTypes.Semicolon;
+        if (entity === ',') return ETsEntitySymbolTypes.Comma;
         if (this.isEntityName(entity)) return ETsEntitySymbolTypes.EntityName;
     }
 

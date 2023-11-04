@@ -21,9 +21,10 @@ export class TsInterfacePropertyParser extends TsParserBase {
     public static readProperty(parent: ITsParser, owner: TsTypeOwner): ITsProperty {
         const parser = new TsInterfacePropertyParser(parent);
         try {
-            console.group('Read interface property');
+            console.group('Read interface property', (parent as any).current.substring(0, 20));
             return parser.readInterfaceProperty(owner);
         } finally {
+            console.log('End of reading user interface property');
             console.groupEnd();
         }
     }
@@ -43,7 +44,7 @@ export class TsInterfacePropertyParser extends TsParserBase {
         const entityResult = super.analyseEntity(entity, entityType, propertyData);
         if (entityResult) return entityResult;
 
-        // console.log('Interface property parser readin entity:', entity, entityType);
+        console.log('Interface property parser readin entity:', entity, entityType);
         switch(entityType) {
             case ETsEntitySymbolTypes.EntityName:
                 propertyData.name = entity;
@@ -68,6 +69,7 @@ export class TsInterfacePropertyParser extends TsParserBase {
                     type,
                     decorators
                 );
+                console.log('Retun property');
                 return property;
         }
     }
@@ -77,6 +79,7 @@ export class TsInterfacePropertyParser extends TsParserBase {
         if (entityType) return entityType;
 
         if (entity === '?') return ETsEntitySymbolTypes.Optional;
+        if (entity === ',') return ETsEntitySymbolTypes.Comma;
         if (entity === 'readonly') return ETsEntitySymbolTypes.Readonly;
         if (this.isEntityName(entity, true)) return ETsEntitySymbolTypes.EntityName;
     }

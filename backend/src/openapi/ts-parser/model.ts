@@ -59,6 +59,7 @@ export interface ITsExpression<T> extends ITsEntity {
 
 export interface ITsParametersList extends ITsEntity {
     parameters: ITsParameter[];
+    get(parameterName: string): ITsParameter | undefined;
 }
 
 export interface ITsArgumentsList extends ITsEntity {

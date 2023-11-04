@@ -16,4 +16,8 @@ export class TsParametersList extends TsEntity implements ITsParametersList {
     public addParameters(parameters: ITsParameter[]) {
         this.parameters.push(...parameters);
     }
+
+    public get(parameterName: string): ITsParameter | undefined {
+        return this.parameters.find(p => p.name === parameterName);
+    }
 }
