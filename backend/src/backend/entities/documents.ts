@@ -1,3 +1,4 @@
+import { utils } from '~/utils/utils';
 import { DbBridge, DbModel } from '../core';
 import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
@@ -5,14 +6,19 @@ import { PermissionsCheck } from './decorators/permissions-check';
 import { Files } from './files';
 import { IInitDocument, IDocument, IFile } from './models';
 
+type TDocumentUpdate = IInitDocument & Partial<IFile>;
+
 @DbModel({ model: 'documents' })
-export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
-	private fileManager = DbBridge.getInstance<Files>('files');
+export class Documents extends DbObjectAncestor<IDocument, TDocumentUpdate> {
+	private get fileManager() {
+		return DbBridge.getInstance<Files>('files');
+	}
 
 	@PermissionsCheck({ permissions: [] })
 	async createDocument(doc: IInitDocument, ownerId: string) {
 		this.setOwners([ownerId]);
-		return this.model.create(doc);
+		const document = await utils.preparePreview<TDocumentUpdate>(doc);
+		return this.model.create(document);
 	}
 
 	private prepareDocumentFile(doc: IDocument, file: IFile) {
@@ -28,6 +34,7 @@ export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getDocuments(owner: string): Promise<IFindList<IDocument>> {
+		console.log('Getting documents with owner', owner);
 		this.setOwners(owner);
 		const list = (await this.model.findList()) as IFindList<IDocument>;
 
@@ -64,7 +71,8 @@ export class Documents extends DbObjectAncestor<IDocument, IInitDocument> {
 
 	@PermissionsCheck({ permissions: [] })
 	async updateDocument(document: IInitDocument) {
-		return this.model.updateItem(document);
+		const updateItem = await utils.preparePreview<TDocumentUpdate>(document);
+		return this.model.updateItem(updateItem);
 	}
 
 	@PermissionsCheck({ permissions: [] })

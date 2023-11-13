@@ -13,10 +13,6 @@ import { IArtifact, IInitArtifact } from '~/backend/entities/models';
 export class ArtifactRouter implements IRouter {
     public model: Artifacts;
 
-    private async _prepareArtifact(item) {
-        await utils.preparePreview(item.preview);
-    }
-
     configure(app: Service) {
         this.model = new Artifacts(app);
     }
@@ -52,9 +48,7 @@ export class ArtifactRouter implements IRouter {
     @Route(EMethod.POST, '/projects/:projectId/artifacts')
     public async createArtifact(key, item: IInitArtifact): Promise<IArtifact> {
         console.warn('[API] Create Artifact', key);
-        await this._prepareArtifact(item);
-        const createdItem = { ...item, owners: [], };
-        return await this.model.createArtifact(createdItem, key.projectId);
+        return await this.model.createArtifact(item, key.projectId);
     }
 
     // @OA:route
@@ -66,7 +60,6 @@ export class ArtifactRouter implements IRouter {
     @Route(EMethod.PUT, '/artifacts/:artifactId')
     public async updateArtifact(key, item: IInitArtifact): Promise<IArtifact> {
         console.warn('[API] Update Artifact', key);
-        await this._prepareArtifact(item);
         return await this.model.updateArtifact(item);
     }
 

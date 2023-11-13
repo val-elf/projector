@@ -175,7 +175,7 @@ export abstract class Service {
 					instance.model.processMetadata(args[0]._metadata);
 				}
 				const callbackResult = await (instance ? callback.call(instance, ...args) : callback(...args));
-				if (callbackResult) response.set(callbackResult);
+				response.set(callbackResult);
 				response.send(res);
 			} catch (error) {
 				console.error(error);

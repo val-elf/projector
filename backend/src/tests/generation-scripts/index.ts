@@ -1,4 +1,5 @@
 import { GenerateArtifacts } from './generate-artifacts';
+import { GenerateCategorySchemas } from './generate-category-schemas';
 import { GenerateCategories } from './generate-categories';
 import { GenerateCharacters } from './generate-characters';
 import { DatabaseGenerator } from './generate-database';
@@ -17,6 +18,7 @@ export const generators = [
     GenerateVendors,
     GenerateUsers,
     AuthenticateUser,
+    GenerateCategorySchemas,
     GenerateProjects,
     GenerateArtifacts,
     GenerateCharacters,

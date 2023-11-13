@@ -261,6 +261,7 @@ export class DbBridge<TEntity extends ICommonEntity, TInitEntity extends ICommon
 		if (controller?.preCreate) {
 			cp = await controller.preCreate(cp);
 		}
+		cp = this.itemUpdate$.next(cp as TInitEntity);
 		const created = await this.dbModel.create(cp);
 		const item =this.itemLoad$.next(created.toObject() as TEntity);
 		return item;

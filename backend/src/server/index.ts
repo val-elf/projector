@@ -1,6 +1,7 @@
 export * from './objects';
 export * from './artifacts';
 export * from './categories';
+export * from './category-schemas';
 export * from './characters';
 export * from './documents';
 export * from './files';

@@ -1,11 +1,14 @@
+import { utils } from '~/utils/utils';
 import { DbModel } from '../core';
 import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IInitLocation, ILocation, IMetadata } from './models';
+import { IInitLocation, ILocation, IMetadata, IPreviewed } from './models';
+
+type TLocationUpdate = IInitLocation & Partial<IPreviewed>;
 
 @DbModel({ model: 'locations' })
-export class Locations extends DbObjectAncestor<ILocation, IInitLocation> {
+export class Locations extends DbObjectAncestor<ILocation, TLocationUpdate> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getLocationsList(projectId: TObjectId, metadata: IMetadata) {
@@ -24,7 +27,7 @@ export class Locations extends DbObjectAncestor<ILocation, IInitLocation> {
 			}, [projectId, metadata.orderByType]);
 		}*/
 		this.setOwners([projectId]);
-		return ((await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)) as IFindList<ILocation>).result;
+		return (await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
@@ -35,13 +38,15 @@ export class Locations extends DbObjectAncestor<ILocation, IInitLocation> {
 	@PermissionsCheck({ permissions: [] })
 	public async createLocation(projectId: string, item: IInitLocation) {
 		this.setOwners([projectId]);
-		return this.model.create(item);
+		const location = await utils.preparePreview<TLocationUpdate>(item);
+		return this.model.create(location);
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async updateLocation(_id: string, item: IInitLocation) {
 		if (item._id !== _id) throw new Error('Invalid location id');
-		return this.model.updateItem(item);
+		const location = await utils.preparePreview<TLocationUpdate>(item);
+		return this.model.updateItem(location);
 	}
 
 	@PermissionsCheck({ permissions: [] })

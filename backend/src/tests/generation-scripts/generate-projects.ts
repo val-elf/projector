@@ -1,4 +1,4 @@
-import { IInitPreviewed, IInitProject, IProject } from '~/backend/entities/models';
+import { IInitProject, IProject } from '~/backend/entities/models';
 import { core } from '../core';
 import { IGenerationScript } from '../model';
 import { utils } from '../utils';
@@ -21,7 +21,7 @@ export class GenerateProjects implements IGenerationScript {
         this.tags = utils.textGenerator.getAtoms(50, 50, 9, true);
     }
 
-    private getRandomTags(maxcount = 5) {
+    private getRandomTags(maxcount = 5): string[] {
         const tags = [];
         const _tags = [...this.tags];
         for(let a = 0; a < maxcount; a++) {
@@ -47,16 +47,16 @@ export class GenerateProjects implements IGenerationScript {
         }
     }
 
-    private async createProject(): Promise<IInitProject> {
+    private async createProject(): Promise<IInitProject & { tags: string[] }> {
         const name = utils.textGenerator.genPhrase(1, 3, Math.round(Math.random()*5 + 10), true);
         const description = utils.textGenerator.getText(Math.round(Math.random() * 5) + 3);
         const preview = await utils.loadImage();
         const tags = this.getRandomTags(Math.floor(Math.random() * 3)+ 3);
-        return Promise.resolve({
+        return {
             name,
             description,
             preview,
             tags
-        });
+        };
     }
 }

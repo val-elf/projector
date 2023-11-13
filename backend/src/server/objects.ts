@@ -104,14 +104,14 @@ export class ObjectsRouter implements IRouter {
 
 			if (preview.preview) {
 				const content = Buffer.from(object.preview.preview, 'base64');
-				response.setStream(content);
+				response.set(content);
 			} else if (type === 'files') {
 				const file = object as IFile;
 				const tid = file._transcode;
 				const transcoder = file.transcoder || config.transcoder;
 				const tpreview = await http.get(`${transcoder}preview-data?tid=${tid}`);
 				const opreview = JSON.parse(tpreview.toString());
-				response.setStream(Buffer.from(opreview.preview, 'base64'));
+				response.set(Buffer.from(opreview.preview, 'base64'));
 			}
 		} catch (error) {
 			console.error('err', error);

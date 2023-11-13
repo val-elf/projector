@@ -1,25 +1,31 @@
 import { DbBridge, DbModel } from "../core";
 import md5 from "md5";
-import { IUser, IRole, ISession, IServerUser } from './models';
+import { IUser, IRole, ISession, IServerUser, IInitUser } from './models';
 import { PermissionsCheck } from './decorators/permissions-check';
 import { DbObjectAncestor } from './dbbase';
+import { TObjectId } from '../core/models';
 
 @DbModel({ model: 'users' })
-export class Users extends DbObjectAncestor<IUser, IUser> {
+export class Users extends DbObjectAncestor<IUser, IInitUser> {
 	private roles = DbBridge.getBridge<IRole>('roles');
 	private sessions = DbBridge.getBridge<ISession>('sessions');
 
-	public async getUser(userId, internal = false) {
-		if (!internal) {
+	public async getUser(userId?: TObjectId): Promise<IUser> {
+		if (!userId) {
 			return await this.getCurrentUser();
 		}
-		const user = { ...await this.model.getItem(userId) } as IServerUser;
+		return await this.model.getItem(userId);
+	}
+
+	public async getUserWithRoles(userId): Promise<IServerUser> {
+		const user = await this.model.getItem(userId);
+		const result: IServerUser = { ...user, roles: [] };
 		if(user._roles && user._roles.length) {
 			const roles = await this.roles.find({ _id: {$in: user._roles }});
-			user.roles = roles;
+			result.roles = roles;
 			delete user.password;
-			return user;
-		} else return user;
+		}
+		return result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
@@ -36,7 +42,7 @@ export class Users extends DbObjectAncestor<IUser, IUser> {
 		const sessionItems = await this.sessions.find(this.fixIds({ _id: sessionId, expired: { $ne: true } }));
 		if(sessionItems && sessionItems[0]) {
 			const itm = sessionItems[0];
-			return this.getUser(itm.user, true);
+			return this.getUserWithRoles(itm.user);
 		} else throw new Error("Session not found");
 	}
 
@@ -54,10 +60,15 @@ export class Users extends DbObjectAncestor<IUser, IUser> {
 		throw new Error("User or password is incorrect");
 	}
 
-	public async createUser(user: Pick<IUser, "login" | "password">) {
+	public async createUser(user: Pick<IInitUser, "login" | "password">) {
 		user.password = md5(`${user.login}:${user.password}`);
 		return await this.model.create(user);
 	}
+
+	public async updateUser(userId: TObjectId, user: IInitUser): Promise<IUser> {
+		return await this.model.updateItem(user);
+	}
+
 
 	public async logout(sessionId) {
 		await this.sessions.update({ _id: sessionId }, { expired: true });

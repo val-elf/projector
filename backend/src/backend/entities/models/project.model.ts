@@ -1,4 +1,4 @@
-import { ICommonEntity } from '~/backend/core/models';
+import { ICommonEntity, TObjectId } from '~/backend/core/models';
 import { IDbObjectBase, IInitPreviewed, IPreviewed } from './db-base.models';
 
 interface IBaseProject {
@@ -9,6 +9,12 @@ interface IBaseProject {
     // @OA:property
     // description: Project description
     description?: string;
+
+    // @OA:property
+    // description: Project base settings
+    settings?: {
+        _schema?: TObjectId;
+    };
 }
 
 // @OA:schema

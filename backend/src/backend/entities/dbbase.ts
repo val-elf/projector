@@ -138,24 +138,20 @@ export abstract class DbObjectBase<T, C> extends EntityControllerBase<T, C> {
         return DbObjectBase.fixIds(item);
     }
 
-	protected static fixIds(item) {
-		if(item === null || item === undefined) return item;
+	protected static fixIds(item: (TObjectId | string)[] | Object): ObjectId[] | Object | undefined {
+		if(item === null || item === undefined) return undefined;
 
-		if (typeof item === 'string') {
-			return ObjectId.isValid(item) ? new ObjectId(item) : item;
-		}
-
-		if (isArray(item)) {
-			return item.map(aitem => aitem instanceof ObjectId ?
+		if (Array.isArray(item)) {
+			return item.map(aitem => aitem instanceof ObjectId || !ObjectId.isValid(aitem) ?
 				aitem :
-				this.fixIds(aitem)
+				new ObjectId(aitem)
 			);
 		}
 
 		Object.keys(item).forEach(prp => {
 			if(prp.match(/(^|\.)_/) && isString(item[prp]) && ObjectId.isValid(item[prp])) {
 				item[prp] = new ObjectId(item[prp]);
-			} else if(isArray(item[prp]) || isObject(item[prp])) {
+			} else if(Array.isArray(item[prp]) || isObject(item[prp])) {
 				item[prp] = this.fixIds(item[prp]);
 			}
 		});
@@ -166,6 +162,9 @@ export abstract class DbObjectBase<T, C> extends EntityControllerBase<T, C> {
 		return args.map(a => DbObjectBase.fixIds(a));
 	}
 }
+
+type TOwnerFullDefinition = { id: TObjectId; type: string };
+export type TOwnerIdentity = TObjectId | TOwnerFullDefinition;
 
 @DbModel({
 	owner: {
@@ -182,17 +181,49 @@ export class DbObjectAncestor<T extends ICommonEntity, C extends ICommonEntity =
 		super(app);
 	}
 
-	protected setOwners(ownerIds: TObjectId | TObjectId[]) {
-		if (!isArray(ownerIds)) ownerIds = [(ownerIds as string)];
-		this.model.transaction.data.ownerIds = [...(ownerIds as TObjectId[])];
+	protected setOwners(ownerIds: TOwnerIdentity | TOwnerIdentity[]) {
+		if (!isArray(ownerIds)) ownerIds = [(ownerIds as TOwnerIdentity)];
+		this.model.transaction.data.ownerIds = [...(ownerIds as TOwnerIdentity[])];
 		// console.log('Set owners', ownerIds, this.model.transaction, this.model.modelName);
+	}
+
+	protected prepareOwners(owners: TOwnerIdentity[], useComplexOwners): any {
+		const result = owners.reduce((acc, owner) => {
+			const baseName = useComplexOwners ? '__owners._id' : '__dbobject._owners';
+			const obj = {};
+			if (typeof owner === 'string') {
+				Object.assign(obj, { [baseName]: { $in: [new ObjectId(owner)] } });
+			} else if (owner?.constructor?.name === 'ObjectId') {
+				Object.assign(obj, { [baseName]: { $in: [owner] } });
+			} else if (owner.id || (owner as any).type) {
+				const fullIdentity: TOwnerFullDefinition = owner as TOwnerFullDefinition;
+				if (fullIdentity.id) {
+					Object.assign(obj, {
+						[baseName]: { $in: [new ObjectId(fullIdentity.id)] },
+						'__owners.type': { $in: [fullIdentity.type] },
+					});
+				} else {
+					Object.assign(obj,{
+						'__owners.type': {
+							$nin: [fullIdentity.type]
+						}
+					});
+				}
+			}
+
+			return {
+				...acc,
+				...obj,
+			}
+		}, {});
+		return result;
 	}
 
 	public async preCreate(item: T & { tags?: string[] }, owners?: (ObjectId | string)[]): Promise<T> {
 		const dbModel = DbBridge.getBridge<IDbObject, IDbObject>('dbobjects');
 		const user = await this.getCurrentUser();
 		const { ownerIds } = this.model.transaction.data;
-		owners = DbObjectBase.fixIds([user._id, ...(owners ?? []), ...(ownerIds ?? [])]);
+		const fixedOwners = DbObjectBase.fixIds([user._id, ...(owners ?? []), ...(ownerIds ?? [])]);
 		// console.log('OWNERS:', owners, this.model.transaction);
 		const dbObject: Partial<IDbObject> = {
 			type: this.model.modelName,
@@ -201,7 +232,7 @@ export class DbObjectAncestor<T extends ICommonEntity, C extends ICommonEntity =
 				_dt: new Date(),
 				_user: user._id,
 			},
-			_owners: owners,
+			_owners: fixedOwners as ObjectId[],
 		}
 		const res = await dbModel.create(dbObject);
 
@@ -233,50 +264,61 @@ export class DbObjectAncestor<T extends ICommonEntity, C extends ICommonEntity =
 		$projection?: any,
 	}>
 	{
-		const aggregate = [
+		const { ownerIds } = this.model.transaction.data;
+		owners = [...(owners ?? []), ...(ownerIds ?? [])];
+		const useComplexOwners = owners?.some(owner => typeof owner !== 'string' || !ObjectId.isValid(owner)) ?? false;
+		const aggregate: any[] = [
 			{
 				$lookup: {
 					from: 'dbobjects',
 					localField: '_id',
 					foreignField: '_id',
-					as: '__owner'
+					as: '__dbobject'
 				}
 			},
 			{
 				$unwind: {
-					path: '$__owner',
+					path: '$__dbobject',
 					preserveNullAndEmptyArrays: true,
 				}
 			},
+			(useComplexOwners ? {
+				$lookup: {
+					from: 'dbobjects',
+					localField: '__dbobject._owners',
+					foreignField: '_id',
+					as: '__owners'
+				}
+			} : undefined),
 			{
 				$addFields: {
-					'_created': '$__owner._created',
-					'_updated': { '$cond': [ '$__owner._updated', '$__owner._updated', '$__owner._created'] },
+					'_created': '$__dbobject._created',
+					'_updated': { '$cond': [ '$__dbobject._updated', '$__dbobject._updated', '$__dbobject._created'] },
 				},
 			}
-		];
+		].filter(a => a);
 
 		const { includeOwner, showCreateDate, showUpdateDate } = this.model.transaction;
-		const { ownerIds } = this.model.transaction.data;
-		owners = [...(owners ?? []), ...(ownerIds ?? [])];
-		const match = {
-			'__owner._deleted': { $exists: false }
+		const $match = {
+			'__dbobject._deleted': { $exists: false }
 		};
+		aggregate.push({ $match });
+
 		if (owners.length) {
-			match['__owner._owners'] = { $in: DbObjectBase.fixIds(owners) };
+			Object.assign($match, this.prepareOwners(owners, useComplexOwners));
 		}
 
 		const projection = {
+			__owners: 0,
 			...(!showCreateDate ? { '_created': 0 } : {}),
 			...(!showUpdateDate ? { '_updated': 0 } : {}),
-			...(!includeOwner ? { '__owner': 0 } : {}),
+			...(!includeOwner ? { '__dbobject': 0 } : {}),
 		}
 
-		const result = DbObjectBase.fixIds({
+		const result = {
 			$aggregate: aggregate,
-			$match: match,
 			$projection: projection,
-		});
+		};
 
 		return Promise.resolve(result);
 	}

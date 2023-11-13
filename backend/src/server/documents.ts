@@ -36,7 +36,7 @@ export class DocumentsRouter implements IRouter {
 	@Route(EMethod.POST, '/owner/:ownerId/documents')
 	public async createDocument(key, data: IInitDocument): Promise<IDocument> {
 		console.warn('[API] create Document', key);
-		return await this.model.createDocument(data, key.owner);
+		return await this.model.createDocument(data, key.ownerId);
 	}
 
 	// @OA:route
@@ -47,7 +47,7 @@ export class DocumentsRouter implements IRouter {
 	@Route(EMethod.GET, '/owner/:ownerId/documents')
 	public async getOwnerDocuments(key): Promise<IFindList<IDocument>> {
 		console.warn('[API] Get Owner Documents', key);
-		const list = await this.model.getDocuments(key.owner);
+		const list = await this.model.getDocuments(key.ownerId);
 		return list;
 	}
 
@@ -59,7 +59,7 @@ export class DocumentsRouter implements IRouter {
 	@Route(EMethod.DELETE, '/documents/:documentId')
 	public async deleteDocument(key): Promise<{ deleted: boolean }> {
 		console.warn('[API] Delete Owner Document', key);
-		const deleted = await this.model.removeDocument(key.document);
+		const deleted = await this.model.removeDocument(key.documentId);
 		return { deleted };
 	}
 
@@ -84,6 +84,6 @@ export class DocumentsRouter implements IRouter {
 	@Route(EMethod.GET, '/documents/:documentId')
 	public async getDocument(key): Promise<IDocument> {
 		console.warn('[API] Get Document', key);
-		return await this.model.getDocument(key.document);
+		return await this.model.getDocument(key.documentId);
 	}
 }

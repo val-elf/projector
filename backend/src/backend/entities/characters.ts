@@ -1,11 +1,16 @@
+import { utils } from '~/utils/utils';
 import { DbBridge, DbModel } from '../core';
 import { IFindList, TObjectId } from '../core/models';
 import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IArtifact, ICharacter, IDbObject, IInitCharacter, IMetadata, IOwned, IUser } from './models';
+import { IArtifact, ICharacter, IDbObject, IInitCharacter, IMetadata, IOwned, IPreviewed, IUser } from './models';
 
+type TCharacterUpdate = IInitCharacter & Partial<IPreviewed>;
+const updateCharacterToDb = async (character: IInitCharacter): Promise<TCharacterUpdate> => {
+	return await utils.preparePreview<TCharacterUpdate>(character);
+}
 @DbModel({ model: 'characters' })
-export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
+export class Characters extends DbObjectAncestor<ICharacter, TCharacterUpdate> {
 	artifactModel = DbBridge.getBridge<IArtifact>('artifacts');
 	dbObjectModel = DbBridge.getBridge<IDbObject>('dbobjects');
 
@@ -16,13 +21,15 @@ export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 		user?: IUser
 	) {
 		this.setOwners([projectId]);
-		return await this.model.create(character);
+		const createItem = await updateCharacterToDb(character);
+		return await this.model.create(createItem);
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async updateCharacter(characterId: string, character: IInitCharacter) {
 		if (characterId !== character._id) throw new Error('Character id mismatch');
-		const result = await this.model.updateItem(character);
+		const updateItem = await updateCharacterToDb(character);
+		const result = await this.model.updateItem(updateItem);
 		// delete character.preview.preview;
 		return result;
 	}
@@ -34,7 +41,7 @@ export class Characters extends DbObjectAncestor<ICharacter, IInitCharacter> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getCharacters(projectId: string, metadata: IMetadata){
-		this.setOwners([projectId]);
+		this.setOwners(projectId);
 
 		/*if(metadata._id){
 			if(!(metadata._id instanceof Array)) metadata._id = [metadata._id as string];

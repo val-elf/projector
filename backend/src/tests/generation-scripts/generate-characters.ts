@@ -8,7 +8,7 @@ import { TObjectId } from '~/backend/core/models';
 export class GenerateCharacters implements IGenerationScript {
 
     public async *generate() {
-        const projects = await GenerateProjects.getRandomProjects();
+        const projects = await GenerateProjects.getRandomProjects(10);
         const projectIds = projects.map(p => p._id);
 
         // generate new characters
@@ -25,8 +25,11 @@ export class GenerateCharacters implements IGenerationScript {
 
     private async *generateNewCharacters(projectIds: TObjectId[]) {
         for await(const projectId of projectIds) {
-            const character = await this.createCharacter();
-            const characters = await core.post(`/projects/${projectId}/characters`, character);
+            const charactersCount = Math.round(Math.random() * 25) + 3;
+            for(let a = 0; a < charactersCount; a++) {
+                const character = await this.createCharacter();
+                yield await core.post(`/projects/${projectId}/characters`, character);
+            }
         }
     }
 
@@ -36,8 +39,13 @@ export class GenerateCharacters implements IGenerationScript {
     }
 
     private async *updateExistingCharacter(character: ICharacter) {
-        const { _id } = character;
-        await core.put(`/characters/${_id}`, character);
+        const { _id, _coretype, _hash, preview, ...updateItem } = character;
+        Object.assign(updateItem, {
+            _id,
+            name: utils.textGenerator.getEntities(2, 2, Math.round(Math.random()*5 + 10), true),
+            description: utils.textGenerator.getText(Math.round(Math.random() * 5) + 3),
+        });
+        await core.put(`/characters/${_id}`, updateItem);
         const ucharacter = await core.get(`/characters/${_id}?updateDate&createDate`);
         yield true;
     }

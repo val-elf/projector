@@ -36,7 +36,7 @@ export class UsersRouter implements IRouter {
 	// parameters: [userId: User ID]
 	// responses: [200: User instance]
 	@Route(EMethod.GET, '/users/:userId')
-	public async getUser(key): Promise<IUser | IServerUser> {
+	public async getUser(key): Promise<IServerUser> {
 		console.warn('[API] Get Single User', key);
 		const { request, response } = this.app;
 		if(key.userId === 'current'){
@@ -46,7 +46,7 @@ export class UsersRouter implements IRouter {
 			}
 
 			var _sessionId = getToken(request);
-			const rsession = request.session as any;
+			const rsession = request.session as { user?: IServerUser };
 			if(_sessionId) {
 				if(rsession && rsession.user){
 					return rsession.user;
@@ -65,7 +65,7 @@ export class UsersRouter implements IRouter {
 			}
 			sessionFail();
 
-		} else return await this.model.getUser(key.userId);
+		} else return await this.model.getUserWithRoles(key.userId);
 	}
 
 	// @OA:route
@@ -75,7 +75,7 @@ export class UsersRouter implements IRouter {
 	// requestBody: [user]
 	// responses: [200: Update existing user]
 	@Route(EMethod.DELETE, '/users/:userId')
-	public async updateUser(key, user: IUser): Promise<IUser> {
+	public async deleteUser(key, user: IUser): Promise<IUser> {
 		console.warn('[API] Update Users', key, user);
 		return Promise.resolve(user);
 	}
@@ -123,6 +123,19 @@ export class UsersRouter implements IRouter {
 		await this.model.logout(getToken(request));
 		response.cookies['session_id'] = { value: undefined };
 		return { logout: true };
+	}
+
+
+	// @OA:route
+	// description: Update user
+	// security: [APIKeyHeader:[]]
+	// parameters: [userId: User ID]
+	// requestBody: [user]
+	// responses: [200: Updated user]
+	@Route(EMethod.PUT, '/users/:userId')
+	public async updateUser(key, user: IUser): Promise<IUser> {
+		console.warn('[API] Update User', key, user);
+		return await this.model.updateUser(key.userId, user);
 	}
 
 }

@@ -17,10 +17,6 @@ export class CharactersRouter implements IRouter {
 		this.model = new Characters(app);
 	}
 
-	private async _prepareCharacter(character: IInitCharacter){
-		await utils.preparePreview(character.preview);
-	}
-
 	// @OA:route
 	// description: Get count of characters
 	// security: [APIKeyHeader: []]
@@ -41,7 +37,6 @@ export class CharactersRouter implements IRouter {
 	@Route(EMethod.POST, '/projects/:projectId/characters')
 	public async createCharacter(key, item: IInitCharacter): Promise<ICharacter> {
 		console.warn('[API] Create new character', key);
-		await this._prepareCharacter(item);
 		return await this.model.createCharacter(item, key.projectId);
 	}
 
@@ -77,9 +72,8 @@ export class CharactersRouter implements IRouter {
 	// requestBody: [item: IInitCharacter]
 	// responses: [200: Character Item, 401: Bad Request]
 	@Route(EMethod.PUT, '/characters/:characterId')
-	public async updateCharacter(key, character): Promise<ICharacter> {
+	public async updateCharacter(key, character: IInitCharacter): Promise<ICharacter> {
 		console.warn('[API] Update Character', key);
-		await this._prepareCharacter(character);
 		return await this.model.updateCharacter(key.characterId, character);
 	}
 

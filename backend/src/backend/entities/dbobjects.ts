@@ -25,13 +25,13 @@ export class DbObjectController extends DbObjectBase<IDbObject, IDbObject> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getObjectsWithTags(tagIds: TObjectId[], projectId?: TObjectId) {
-		let query = { _tags: { $in: tagIds } };
+		let query: any = { _tags: { $in: tagIds } };
 		if (projectId) {
 			Object.assign(query,
 				{ $or: [ { _owners: { $in: [projectId] } }, { _id: projectId } ] }
 			);
 		}
-		query = this.fixIds(query);
+		query = this.fixIds(query) as Object;
         console.log('Search for tags:', query['$or']);
 		return await this.model.find(this.fixIds(query));
 	}
