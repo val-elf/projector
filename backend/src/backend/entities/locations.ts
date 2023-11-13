@@ -1,12 +1,14 @@
-import { DbModel } from '../core/db-bridge';
-import { TObjectId } from '../core/models';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { utils } from '~/utils/utils';
+import { DbModel } from '../core';
+import { IFindList, TObjectId } from '../core/models';
+import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { ILocation, IMetadata, IUser } from './models/db.models';
-import { objId } from './utils';
+import { IInitLocation, ILocation, IMetadata, IPreviewed } from './models';
+
+type TLocationUpdate = IInitLocation & Partial<IPreviewed>;
 
 @DbModel({ model: 'locations' })
-export class Locations extends DbObjectAncestor<ILocation> {
+export class Locations extends DbObjectAncestor<ILocation, TLocationUpdate> {
 
 	@PermissionsCheck({ permissions: [] })
 	public async getLocationsList(projectId: TObjectId, metadata: IMetadata) {
@@ -24,28 +26,31 @@ export class Locations extends DbObjectAncestor<ILocation> {
 				});
 			}, [projectId, metadata.orderByType]);
 		}*/
-		return await this.model.findList({_project: projectId}, metadata);
+		this.setOwners([projectId]);
+		return (await this.model.findList(undefined, { 'preview.preview': 0 }, metadata)).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async getLocationItem(locationId) {
-		return await this.model.find({_id: locationId});
+		return (await this.model.find({_id: locationId}))[0];
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async createLocation(item: ILocation, user?: IUser) {
-		const nitem = DbObjectController.normalize(item, user);
-		return this.model.create(nitem);
+	public async createLocation(projectId: string, item: IInitLocation) {
+		this.setOwners([projectId]);
+		const location = await utils.preparePreview<TLocationUpdate>(item);
+		return this.model.create(location);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateLocation(item: ILocation, user?: IUser) {
-		item = DbObjectController.normalize(item, user);
-		return this.model.updateItem(item);
+	public async updateLocation(_id: string, item: IInitLocation) {
+		if (item._id !== _id) throw new Error('Invalid location id');
+		const location = await utils.preparePreview<TLocationUpdate>(item);
+		return this.model.updateItem(location);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async deleteLocation(itemId, user?: IUser) {
-		return this.deleteItem(itemId, user);
+	public async deleteLocation(itemId) {
+		return this.deleteItem(itemId);
 	}
 }

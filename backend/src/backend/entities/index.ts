@@ -1,4 +1,5 @@
 export * from "./artifacts";
+export * from "./category-schema";
 export * from "./categories";
 export * from "./characters";
 export * from "./documents";

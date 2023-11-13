@@ -1,0 +1,2403 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Projector Backend",
+        "version": "1.0.0"
+    },
+    "components": {
+        "securitySchemes": {
+            "APIKeyHeader": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization"
+            }
+        },
+        "security": {
+            "APIKeyHeader": []
+        },
+        "schemas": {
+            "TShape": {
+                "description": "Array of the 2D coordinates",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "$ref": "#/components/schemas/ICoord2D"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/artifacts/{artifactId}": {
+            "get": {
+                "description": "Get artifact by its ID",
+                "operationId": "getArtifactsById",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Artifacts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "artifactId",
+                        "description": "Artifact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Selected artifact by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/IArtifact"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update existing artifact",
+                "operationId": "updateArtifact",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Artifacts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "artifactId",
+                        "description": "Artifact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Artifact object that needs to be updated",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Artifact"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Artifact updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientArtifact"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete artifact by its ID",
+                "operationId": "deleteArtifact",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Artifacts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "artifactId",
+                        "description": "Artifact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Artifact deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/artifacts": {
+            "post": {
+                "description": "Create new artifact",
+                "operationId": "createArtifact",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Artifacts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Artifact object that needs to be added to the store",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialArtifact"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Artifact created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientArtifact"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/characters/count": {
+            "get": {
+                "description": "Get count of characters",
+                "operationId": "getCharactersCount",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Count of characters",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/characters": {
+            "post": {
+                "description": "Create new character",
+                "operationId": "createCharacter",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialCharacter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Character created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientCharacter"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "Get characters list",
+                "operationId": "getCharacters",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Characters list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientCharacter"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/characters/{characterId}": {
+            "get": {
+                "description": "Get character",
+                "operationId": "getCharacter",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "characterId",
+                        "description": "Character ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Character",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Character"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update character",
+                "operationId": "updateCharacter",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "characterId",
+                        "description": "Character ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialCharacter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Character updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Character"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete character",
+                "operationId": "deleteCharacter",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Characters"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "characterId",
+                        "description": "Character ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Character deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/characters/{characterId}/involvement": {
+            "get": {
+                "description": "Get character's artifacts",
+                "operationId": "getCharacterArtifacts",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Artifacts"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "characterId",
+                        "description": "Character ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Character's artifacts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientArtifact"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/owner/{owner}/documents": {
+            "post": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Create a document",
+                "description": "Create a document",
+                "operationId": "createDocument",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Document"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDocument"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Get owner documents",
+                "description": "Get owner documents",
+                "operationId": "getOwnerDocuments",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "ownerId",
+                        "description": "Owner ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully get owner documents",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientDocument"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/{document}": {
+            "delete": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Delete a document",
+                "description": "Delete a document",
+                "operationId": "deleteDocument",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "document",
+                        "description": "Document ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/{documentId}": {
+            "put": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Update a document",
+                "description": "Update a document",
+                "operationId": "updateDocument",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "documentId",
+                        "description": "Document ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Document"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDocument"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Documents"
+                ],
+                "summary": "Get a document",
+                "description": "Get a document",
+                "operationId": "getDocument",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "documentId",
+                        "description": "Document ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully get document",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientDocument"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/upload": {
+            "post": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Upload a file",
+                "description": "Upload a file",
+                "operationId": "uploadFile",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successfully uploaded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientFile"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/file/{fileId}/status": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Get file transcoding status",
+                "description": "Get file transcoding status",
+                "operationId": "getFileStatus",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "fileId",
+                        "schema": null,
+                        "type": "string",
+                        "required": true,
+                        "description": "File ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "transcoding file status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientFile"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/files/{fileId}": {
+            "delete": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Delete a file",
+                "description": "Delete a file",
+                "operationId": "deleteFile",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "fileId",
+                        "schema": null,
+                        "type": "string",
+                        "required": true,
+                        "description": "File ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/file/{fileId}": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Get file info",
+                "description": "Get file info",
+                "operationId": "getFileInfo",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "fileId",
+                        "description": "File ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientFile"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/download/{fileId}": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Get files list",
+                "description": "Download file",
+                "operationId": "downloadFile",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "fileId",
+                        "description": "File ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "file",
+                        "content": {
+                            "binary/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dbobject/{objectId}/files": {
+            "get": {
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "Get files list for abstract object",
+                "description": "Get files list for abstract object",
+                "operationId": "getOwnerFiles",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "objectId",
+                        "description": "Object ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "files list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientFile"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/locations": {
+            "get": {
+                "description": "Get list of locations",
+                "operationId": "getLocationsList",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of locations",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Location"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/locations/{locationId}": {
+            "get": {
+                "description": "Get location by its ID",
+                "operationId": "getLocationItem",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "locationId",
+                        "description": "Location ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update location",
+                "operationId": "updateLocation",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "locationId",
+                        "description": "Location ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/InitialLocation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{project}/locations": {
+            "post": {
+                "description": "Create new location",
+                "operationId": "createLocation",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/InitialLocation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/locations/{location}": {
+            "delete": {
+                "description": "Delete location",
+                "operationId": "deleteLocation",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "locationId",
+                        "description": "Location ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "deleted": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dbobjects/{objectId}": {
+            "get": {
+                "description": "Get full information about database object",
+                "operationId": "getDbObjectsCount",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "DbObjects"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "objectId",
+                        "description": "Object ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DbObject information structure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DbObject"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dbobjects/{objectId}/preview/{type}": {
+            "get": {
+                "description": "Get preview image of database object by its type",
+                "operationId": "getDbObjectPreviewByType",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "DbObjects"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "objectId",
+                        "description": "Object ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "path",
+                        "name": "type",
+                        "description": "Object type",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DbObject preview image",
+                        "content": {
+                            "image/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dbobjects/{objectId}/preview": {
+            "get": {
+                "description": "Get preview image of database object",
+                "operationId": "getDbObjectPreview",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "DbObjects"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "objectId",
+                        "description": "Object ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "type",
+                        "description": "Object type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "DbObject preview image",
+                        "content": {
+                            "image/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects": {
+            "get": {
+                "description": "Get list of projects",
+                "operationId": "getProjectsList",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "count",
+                        "description": "Count of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "description": "Page number (use without 'offset')",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "description": "Offset from start (use without 'page')",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "sort",
+                        "description": "Sort by field",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "dir",
+                        "description": "Sort direction",
+                        "required": false,
+                        "default": 1,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of projects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Project"
+                                            }
+                                        },
+                                        "options": {
+                                            "type": "object",
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                },
+                                                "hasMore": {
+                                                    "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}": {
+            "get": {
+                "description": "Get project by ID",
+                "operationId": "getProject",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Project",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update project",
+                "operationId": "updateProject",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Project data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialProject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Project",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/tags": {
+            "get": {
+                "description": "Get project's tags list",
+                "operationId": "getProjectsTagsList",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tags",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Tag"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dbobject/{objectId}/tags": {
+            "get": {
+                "description": "Get object's tags list",
+                "operationId": "getObjectTagsList",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "objectId",
+                        "description": "Object ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of tags for the object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/searchByTag": {
+            "get": {
+                "description": "Search objects by tag",
+                "operationId": "searchObjectsByTag",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "description": "Search string",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of objects",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DbObject"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/projects/{projectId}/timelines": {
+            "get": {
+                "description": "Get list of timelines",
+                "operationId": "getTimelinesList",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timelines"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of timelines",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Timeline"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new timeline",
+                "operationId": "createTimeline",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timelines"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "projectId",
+                        "description": "Project ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialTimeline"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Timeline created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Timeline"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/timelines": {
+            "put": {
+                "description": "Update timeline",
+                "operationId": "updateTimeline",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timelines"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Timeline"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Timeline updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientTimeline"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/timelines/{timelineId}": {
+            "get": {
+                "description": "Get timeline",
+                "operationId": "getTimeline",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timelines"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "timelineId",
+                        "description": "Timeline ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Timeline",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Timeline"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete timeline",
+                "operationId": "deleteTimeline",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timelines"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "timelineId",
+                        "description": "Timeline ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Timeline deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "delete": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/timespots": {
+            "put": {
+                "description": "Update timespot",
+                "operationId": "updateTimespot",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timespots"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "timespotId",
+                        "description": "Timespot ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Timespot"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Timespot updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientTimespot"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/timeline/{timelineId}/timespots": {
+            "post": {
+                "description": "Create timespot",
+                "operationId": "createTimespot",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timespots"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "timelineId",
+                        "description": "Timeline ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InitialTimespot"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Timespot created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClientTimespot"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "Get timespots",
+                "operationId": "getTimespots",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "tags": [
+                    "Timespots"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "timelineId",
+                        "description": "Timeline ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Timespots",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClientTimespot"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Characters",
+            "description": "Project's characters management API"
+        },
+        {
+            "name": "Documents",
+            "description": "Documents management API"
+        },
+        {
+            "name": "Files",
+            "description": "Files management API"
+        },
+        {
+            "name": "Locations",
+            "description": "Project's locations management API"
+        },
+        {
+            "name": "DbObjects",
+            "description": "Project's dbobjects management API"
+        },
+        {
+            "name": "Projects",
+            "description": "Projects management API"
+        },
+        {
+            "name": "Tags",
+            "description": "Project's tags management API"
+        },
+        {
+            "name": "Timelines",
+            "description": "Project's timelines management API"
+        },
+        {
+            "name": "Timespots",
+            "description": "Timespots management API"
+        }
+    ]
+}

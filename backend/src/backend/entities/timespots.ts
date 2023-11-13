@@ -1,33 +1,34 @@
-import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor, DbObjectBase, DbObjectController } from './dbobjects';
+import { DbModel } from '../core';
+import { TObjectId } from '../core/models';
+import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { ITimespot, IUser } from './models/db.models';
+import { IInitTimespot, ITimespot } from './models';
 
 @DbModel({ model: 'timespots' })
-export class Timespots extends DbObjectAncestor<ITimespot> {
+export class Timespots extends DbObjectAncestor<ITimespot, IInitTimespot> {
 
 	@PermissionsCheck({ permissions: [] })
-	public async update(timespot, user?: IUser) {
-		// const user = this.app.getCurrentUser();
-		timespot = DbObjectController.normalize(timespot, user);
-		timespot.$unset = {}
-		if(timespot.endOffsetX === null){
-			delete timespot.endOffsetX;
-			timespot.$unset.endOffsetX = "";
+	public async update(timespotId: TObjectId, timespot: IInitTimespot) {
+		if (timespotId !== timespot._id) {
+			throw new Error('Timespot ID does not match');
 		}
-		if(!Object.keys(timespot.$unset).length) delete timespot.$unset;
 		return this.model.updateItem(timespot);
 	}
 
+	public async findByOwner(ownerId: TObjectId) {
+		this.setOwners([ownerId]);
+		return this.model.find()[0];
+	}
+
 	@PermissionsCheck({ permissions: [] })
-	public async createTimespot(timespot, user?: IUser) {
-		timespot = DbObjectController.normalize(timespot, user);
+	public async createTimespot(timelineId: TObjectId, timespot: IInitTimespot) {
+		this.setOwners([timelineId]);
 		return this.model.create(timespot);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async deleteTimespot(timespotId, user?: IUser) {
+	public async deleteTimespot(timespotId: TObjectId) {
 		// const user = await this.app.getCurrentUser()
-		return this.deleteItem(timespotId, user);
+		return this.deleteItem(timespotId);
 	}
 }

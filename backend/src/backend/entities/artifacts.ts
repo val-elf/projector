@@ -1,33 +1,42 @@
-import { DbModel } from '../core/db-bridge';
-import { TObjectId } from '../core/models';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { DbModel } from '../core';
+import { IFindList, TObjectId } from '../core/models';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IArtifact, IEntityList, IMetadata, IUser } from './models/db.models';
+import { IArtifact, IInitArtifact, IMetadata, IPreviewed } from './models';
 import { Service } from '~/network/service';
+import { DbObjectAncestor } from './dbbase';
+import { utils } from '~/utils/utils';
+
+type TArtifactUpdate = IInitArtifact & Partial<IPreviewed>;
 
 @DbModel({
 	model: 'artifacts',
 })
-export class Artifacts extends DbObjectAncestor<IArtifact> {
-	constructor(app: Service) { super(app); }
+export class Artifacts extends DbObjectAncestor<IArtifact, TArtifactUpdate> {
+	constructor(app: Service) {
+		super(app);
+	}
 
 	@PermissionsCheck({ permissions: [] })
-	async getArtifactsList(projectId: TObjectId, metadata: IMetadata): Promise<IEntityList<IArtifact>> {
-		const arg: any = { _project: projectId };
+	async getArtifactsList(projectId: TObjectId, metadata: IMetadata): Promise<IArtifact[]> {
+		this.setOwners(projectId);
+		const arg: any = {};
+		/*
 		if (metadata.hasContent) arg.hasContent = metadata.hasContent === 'true';
 		if (metadata.character) {
 			arg.characters = {
 				_character: metadata.character
 			}
 		}
+		*/
 		const items = await this.model.findList(arg, { 'preview.preview': 0 }, metadata);
-		return this.preapareItemsList<IArtifact>(items) as IEntityList<IArtifact>;
+		return (items as IFindList<IArtifact>).result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async createArtifact(item: IArtifact, user?: IUser) {
-		item = DbObjectController.normalize(item, user);
-		return this.model.create(item);
+	async createArtifact(item: IInitArtifact, projectId: string) {
+		this.setOwners([projectId]);
+		const artifact = await utils.preparePreview<TArtifactUpdate>(item);
+		return this.model.create(artifact);
 	}
 
 	@PermissionsCheck({ permissions: [] })
@@ -36,14 +45,14 @@ export class Artifacts extends DbObjectAncestor<IArtifact> {
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async updateArtifact(item: IArtifact, user?: IUser) {
-		const nitem = DbObjectController.normalize(item, user);
-		return this.model.updateItem(nitem);
+	async updateArtifact(item: IInitArtifact): Promise<IArtifact> {
+		const artifact = await utils.preparePreview<TArtifactUpdate>(item);
+		return this.model.updateItem(artifact);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	async deleteArtifact(itemId: string, user?: IUser) {
-		return this.deleteItem(itemId, user);
+	async deleteArtifact(itemId: string) {
+		return this.deleteItem(itemId);
 	}
 }
 

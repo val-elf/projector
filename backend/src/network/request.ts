@@ -6,7 +6,19 @@ import { Session } from 'express-session';
 
 const { Transform } = stream;
 
-class DuplexDataReader extends Transform {
+export interface IDuplextDataReaderResult {
+	content: Buffer;
+	header: {
+		filename: string;
+		name: string;
+		contentType: string;
+	};
+}
+export interface IDuplexDataReader {
+	getData(): Promise<IDuplextDataReaderResult>;
+}
+
+class DuplexDataReader<T> extends Transform implements IDuplexDataReader {
 	private vm!: Request;
 
 	constructor(opts: stream.TransformOptions, vm: Request) {
@@ -14,7 +26,7 @@ class DuplexDataReader extends Transform {
 		this.vm = vm;
 	}
 
-	getData() {
+	getData(): Promise<IDuplextDataReaderResult>{
 		return new Promise((resolve) => {
 			const result = [];
 			this.on('data', chunk => { result.push(chunk); });
@@ -29,6 +41,7 @@ export class Request {
 	options: any;
 	cookies: any;
 	session: Session;
+	context: { [key: string]: any } = {};
 	headers: any;
 	hostname: string;
 	boundary: any;
@@ -36,7 +49,7 @@ export class Request {
 	url: string;
 	args: any;
 	origArgs: any;
-	body: DuplexDataReader;
+	body: DuplexDataReader<unknown>;
 	multipart: any = {};
 
 	constructor(options) {
@@ -166,11 +179,11 @@ export class Request {
 			});
 		});
 
-		dest.parsed = {
+		Object.assign(dest, {
 			filename: dest['Content-Disposition'] && dest['Content-Disposition'].filename,
 			name: dest['Content-Disposition'] && dest['Content-Disposition'].name,
-			'content-type': dest['Content-Type'] && dest['Content-Type'].value
-		}
+			contentType: dest['Content-Type'] && dest['Content-Type'].value
+		});
 	}
 
 	getBoundary(req) {

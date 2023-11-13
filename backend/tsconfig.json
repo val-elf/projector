@@ -9,6 +9,8 @@
         "sourceMap": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
         "downlevelIteration": true,
         "noUnusedLocals": false,
         "typeRoots": ["./node_modules/@types", "./typings"],
@@ -16,7 +18,8 @@
         "baseUrl": "./src",
         "rootDir": "./src",
         "lib": [
-            "es2020"
+            "es2020",
+            "dom"
         ],
         "paths": {
             "~/*": ["./*"]
@@ -30,6 +33,10 @@
             }
         ]
     },
+    "exclude": [
+        "./src/**/*.spec.ts", "./src/**/*.test.ts",
+        "./dist/**/*"
+    ],
     "awesomeTypescriptLoaderOptions": {
         "useCache": true
     }

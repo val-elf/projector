@@ -1,35 +1,42 @@
-import { DbModel } from '../core/db-bridge';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { DbBridge, DbModel } from '../core';
+import { CategorySchemas } from './category-schema';
+import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IProject, IUser } from './models/db.models';
+import { IInitProject, IPreviewed, IProject, IUser } from './models';
 
+type TProjectUpdate = Partial<IInitProject> & Partial<IPreviewed>;
 
-@DbModel({ model: 'projects' })
-export class Projects extends DbObjectAncestor<IProject> {
+@DbModel({
+	model: 'projects',
+})
+export class Projects extends DbObjectAncestor<IProject, TProjectUpdate> {
+
+	private get schemaManager() {
+		return DbBridge.getInstance<CategorySchemas>('category-schemas');
+	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async getProjects(metadata, user?: IUser) {
-		const meta = {
-			sort: {'_update._dt': -1},
-			...metadata
+	public async getProjects(metadata: any, user?: IUser) {
+		metadata = {
+			sort: { '_updated._dt': -1 },
+			...metadata,
 		};
-		return await this.model.findList({'_create._user': user._id }, { 'preview.preview': 0 }, meta);
+		this.setOwners([user._id]);
+		return await this.model.findList(undefined, { 'preview.preview': 0 }, metadata);
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async getProject(projectId) {
-		return this.model.getItem({_id: projectId});
+		return this.model.getItem(projectId);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async createProject(project, user?: IUser) {
-		const _project = DbObjectController.normalize(project, user);
-		return this.model.create(_project);
+	public async createProject(project: TProjectUpdate) {
+		return this.model.create(project);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateProject(project: IProject, user?: IUser) {
-		const _project = DbObjectController.normalize(project, user);
-		return this.model.updateItem(_project);
+	public async updateProject(project: TProjectUpdate) {
+		return this.model.updateItem(project);
 	}
 };

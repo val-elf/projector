@@ -1,68 +1,86 @@
-import { DbBridge, DbModel } from '../core/db-bridge';
-import { TFindList, TObjectId } from '../core/models';
-import { DbObjectAncestor, DbObjectController } from './dbobjects';
+import { utils } from '~/utils/utils';
+import { DbBridge, DbModel } from '../core';
+import { IFindList, TObjectId } from '../core/models';
+import { DbObjectAncestor } from './dbbase';
 import { PermissionsCheck } from './decorators/permissions-check';
-import { IArtifact, ICharacter, IMetadata, IUser } from './models/db.models';
+import { IArtifact, ICharacter, IDbObject, IInitCharacter, IMetadata, IOwned, IPreviewed, IUser } from './models';
 
+type TCharacterUpdate = IInitCharacter & Partial<IPreviewed>;
+const updateCharacterToDb = async (character: IInitCharacter): Promise<TCharacterUpdate> => {
+	return await utils.preparePreview<TCharacterUpdate>(character);
+}
 @DbModel({ model: 'characters' })
-export class Characters extends DbObjectAncestor<ICharacter> {
+export class Characters extends DbObjectAncestor<ICharacter, TCharacterUpdate> {
 	artifactModel = DbBridge.getBridge<IArtifact>('artifacts');
+	dbObjectModel = DbBridge.getBridge<IDbObject>('dbobjects');
 
 	@PermissionsCheck({ permissions: [] })
-	public async createCharacter(character: ICharacter, user?: IUser) {
-		character = DbObjectController.normalize(character, user);
-		return await this.model.create(character);
+	public async createCharacter(
+		character: IInitCharacter,
+		projectId: string,
+		user?: IUser
+	) {
+		this.setOwners([projectId]);
+		const createItem = await updateCharacterToDb(character);
+		return await this.model.create(createItem);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async updateCharacter(character: ICharacter, user?: IUser) {
-		character = DbObjectController.normalize(character, user);
-		character = await this.model.updateItem(character);
-		delete character.preview.preview;
-		return character;
+	public async updateCharacter(characterId: string, character: IInitCharacter) {
+		if (characterId !== character._id) throw new Error('Character id mismatch');
+		const updateItem = await updateCharacterToDb(character);
+		const result = await this.model.updateItem(updateItem);
+		// delete character.preview.preview;
+		return result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async deleteCharacter(charId: TObjectId, user?: IUser) {
-		return this.deleteItem(charId, user);
+	public async deleteCharacter(charId: TObjectId) {
+		return this.deleteItem(charId);
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async getCharacters(project, metadata: IMetadata, user?: IUser){
-		const meta = Object.assign({
-			sort: {'_update._dt': -1, '_create._dt': -1}
-		}, metadata);
+	public async getCharacters(projectId: string, metadata: IMetadata){
+		this.setOwners(projectId);
 
-		const prms = Object.assign({'_create._user': user._id}, project);
-
-		if(metadata._id){
+		/*if(metadata._id){
 			if(!(metadata._id instanceof Array)) metadata._id = [metadata._id as string];
 			prms._id = {$in: metadata._id.map(item => {
 				if(item === 'undefined') return undefined;
 				return item;
 			})};
-		}
+		}*/
 
-		const list = await this.model.findList(prms, { 'preview.preview': 0 }, meta);
-		return list;
+		const list = (await this.model.findList({}, { 'preview.preview': 0 }, metadata)) as IFindList<ICharacter>;
+		return list.result;
 	}
 
 	@PermissionsCheck({ permissions: [] })
-	public async getCharactersArtifacts(characterId: TObjectId) {
-		const list = await this.artifactModel.findList({ 'characters._character': characterId }, { 'preview.preview': 0 }, {});
-		return (list as TFindList<IArtifact>).result
-			.filter(art => art.characters.find(char => char._id.toString() === characterId))
-			.map(art => {
+	public async getCharacterArtifacts(characterId: TObjectId) {
+		const list = await this.artifactModel.findList(
+			{ '__owners': { '$in': [characterId] } },
+			{ 'preview.preview': 0 }
+		);
+
+		return (list as IFindList<IArtifact & IOwned>).result;
+			// .filter(art => art.characters.find(char => char._id.toString() === characterId))
+			/*.map(async art => {
+				const charObjects = await this.dbObjectModel
+					.findList(
+						{ '_id': { '$in': art.__owner._owners }, 'type': 'characters', 'status': 'normal' },
+						{ 'preview.preview': 0 }
+					);
 				const charInfo = art.characters.find(char => char._id.toString() === characterId);
 				const { role, description } = charInfo;
 				const { _id: _artifact, name, preview, type, subtype } = art;
 				return { _artifact, name, preview, type, subtype, role, description };
-			});
+			})*/
 	}
 
 	@PermissionsCheck({ permissions: [] })
 	public async getCharactersCountFor(projectId, user?: IUser) {
-		return this.model.getCountOf({'_create._user': user._id, _project: projectId});
+		this.setOwners([projectId, user?._id]);
+		return this.model.getCountOf({});
 	}
 
 	@PermissionsCheck({ permissions: [] })

@@ -2,12 +2,12 @@
 // All rights reserved.
 // Redistribution and use are permitted under the modified BSD license
 // available at https://github.com/MaxMotovilov/adstream-js-frameworks/wiki/License
-
-const Buffer = require('buffer').Buffer;
-const stream = require('stream');
+import {Buffer} from 'buffer';
+import stream from 'stream';
 
 export class Response {
 	body: any;
+	stream: stream.Readable;
 	status: number;
 	headers: any;
 	cookies: any;
@@ -32,8 +32,9 @@ export class Response {
 		}
 
 		if(this.error) {
+			if (!this.body) this.body = {};
 			this.body._error = {
-				...(this.body._error || {}),
+				...(this.body?._error ?? {}),
 				message: this.error.message ?? this.error,
 				...(this.error.content ? { content: this.error.content } : {}),
 				...(this.error.stack ? { backtrace: this.error.stack.split( /\n\s*/ ).slice(1) } : {})
@@ -44,9 +45,9 @@ export class Response {
 			resp.cookie(key, this.cookies[key].value, this.cookies[key].params);
 		}, this);
 
-		if(this.body instanceof stream.Readable) {
-			this.body.pipe(resp);
-			this.body.on('error', (error) => {
+		if(this.stream) {
+			this.stream.pipe(resp);
+			this.stream.on('error', (error) => {
 				resp.writeHead(
 					404
 				);
@@ -82,28 +83,38 @@ export class Response {
 			return Object.assign( new Error( msg ), { httpCode: code }, headers ? { httpHeaders: headers } : {} );
 	}
 
-	fail( a, b, c, d ) {
+	/*fail( a, b, c, d ) {
 		if( a.reject )	a.reject( this._fail( b, c, d ) );
 		else throw this._fail( a, b, c );
-	}
+	}*/
 
-	set( val ) {
+	set(val: any) {
+		if (this.stream) return;
 		var result;
-		if(val instanceof Array) this.body = [];
-		if(val instanceof Buffer){
+		if(val === undefined || val === null) {
+			if (!(this.body instanceof Buffer)) {
+				this.body = undefined;
+			}
+		}
+		else if(val instanceof Array) this.body = [...val];
+		else if(val instanceof Buffer){
 			this.body = val;
 			result = this.body;
 		}
 		else if(val instanceof stream.Readable){
 			this.body = val;
 			result = this.body;
-		} else
+		} else {
+			if (!this.body) {
+				this.body = {};
+			}
 			result = Object.assign(this.body, val );
+		}
 		return result;
 	}
 
-	setStream(stream){
-		this.body = stream;
+	setStream(stream: stream.Readable){
+		this.stream = stream;
 	}
 
 	setHeader( name, value ) {
